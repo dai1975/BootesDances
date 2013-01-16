@@ -1,0 +1,35 @@
+# -*- coding: utf-8 -*-
+
+import os.path
+import copy
+
+def get_targets():
+   rets = {}
+   subs = Glob('*/SConscript')
+   for sub in subs:
+       a = os.path.split(sub.__str__())
+       subdir  = os.path.basename(a[0])
+       subfile = os.path.join(subdir, a[1])
+       rets[subdir] = subfile
+   return rets
+
+Import('env', 'config')
+
+targets = get_targets()
+r = []
+for subdir,subfile in targets.items():
+    wdir = '%s/%s' % (config.WorkDir, subdir)
+    config = copy.copy(config)
+    config.WorkDir = wdir
+    env = env.Clone()
+    sc = SConscript('DirectShow/%s'%subfile, exports=['env','config'], variant_dir=wdir, duplicate=False)
+    r.append(sc)
+
+Return('r')
+
+# Local Variables:
+# mode: python
+# coding: utf-8-unix
+# indent-tabs-mode: nil
+# tab-width: 3
+# End:

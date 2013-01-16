@@ -1,0 +1,156 @@
+# -*- coding: utf-8 -*-
+
+proto_sources = [
+    'include/bootes/dances/proto/Motion.proto',
+    'include/bootes/dances/proto/Stage.proto',
+]
+
+sources = [
+    'src/cegui/cegui.cpp',
+    'src/cegui/DynamicFont.cpp',
+    'src/cegui/DialogWindowLayout.cpp',
+    'src/cegui/DialogWindow.cpp',
+    'src/cegui/FileDialogLayout.cpp',
+    'src/cegui/FileDialog.cpp',
+    'src/cegui/Direct3D9GeometryBuffer.cpp',
+    'src/motion/Motion.cpp',
+    'src/motion/WiimoteMotionSimple.cpp',
+    'src/move/MoveModel.cpp',
+    'src/move/MoveModelLine.cpp',
+    'src/move/MoveModelSpline.cpp',
+    'src/move/MoveModelEllipse.cpp',
+    'src/move/MoveConverter.cpp',
+    'src/move/MoveSequence.cpp',
+    'src/view/stage/renderer/MoveRendererResource.cpp',
+    'src/view/stage/renderer/MoveRenderer.cpp',
+    'src/view/stage/renderer/MoveRendererPlay.cpp',
+    'src/view/stage/renderer/MoveRendererEdit.cpp',
+    'src/view/stage/MovePresenterImpl.cpp',
+    'src/view/stage/MoveEditorImpl.cpp',
+    'src/view/stage/WiimoteHandlerImpl.cpp',
+    'src/view/stage/MoviePlayer.cpp',
+    'src/view/stage/StageManagerProxy.cpp',
+    'src/view/Scene.cpp',
+    'src/view/TextureView.cpp',
+    'src/view/GameView.cpp',
+    'src/view/RootViewPlay.cpp',
+    'src/view/editor/CeguiTextureImage.cpp',
+    'src/view/editor/EditorDefines.cpp',
+    'src/view/editor/ValueWindow.cpp',
+    'src/view/editor/WiimoteWindow.cpp',
+    'src/view/editor/TimeGrid.cpp',
+    'src/view/editor/TimeEditWindow.cpp',
+    'src/view/editor/PenWindow.cpp',
+    'src/view/editor/EditWindow.cpp',
+    'src/view/editor/EditorView.cpp',
+    'src/view/RootViewEdit.cpp',
+    'src/app/BootesWiimote.cpp',
+    'src/app/BootesGame.cpp',
+    'src/app/BootesFoundation.cpp',
+    'src/app/link.cpp',
+    'src/app/main.cpp',
+]
+
+datafiles = [
+    'fonts/DejaVuSans-10.font',
+    'fonts/DejaVuSans.ttf',
+    'fonts/ipamp.font',
+    'fonts/ipamp.ttf',
+    'imagesets/TaharezLook.imageset',
+    'imagesets/TaharezLook.tga',
+    'imagesets/PenButton.imageset',
+    'imagesets/PenButton.png',
+    'imagesets/ribbon2.png',
+    'imagesets/dot.png',
+    'imagesets/star2.png',
+    'imagesets/grid32.png',
+    'imagesets/timecell32.png',
+    'layouts/DefaultPenButton.layout',
+    'layouts/FileWindow.layout',
+    'layouts/ScreenContextMenu.layout',
+    'layouts/EllipseButton.layout',
+	 'layouts/LineButton.layout',
+    'layouts/SplineButton.layout',
+    'layouts/RootWindow.layout',
+    'layouts/TimeGridContextMenu.layout',
+    'looknfeel/TaharezLook.looknfeel',
+    'looknfeel/app.looknfeel',
+    'schemes/TaharezLook.scheme',
+]
+
+import os.path
+Import('env','config')
+
+env['CPPDEFINES'] += ['_CRT_SECURE_NO_DEPRECATE',
+                      'WIN32', '_WINDOWS', '_UNICODE', 'UNICODE',
+                      'CEGUI_STATIC']
+env['LINKFLAGS'] += ['/SUBSYSTEM:WINDOWS', '/DYNAMICBASE', '/NXCOMPAT',
+                     '/MACHINE:X86', '/ERRORREPORT:PROMPT']
+
+env['CPPPATH'] += [
+    '#BootesDances/include',
+    '#BootesLib/include',
+    '#DirectShowTexture/include',
+    '%s'%config.BoostDir,
+    '%s/cegui/include'%config.CeguiDir,
+    '%s/Samples/multimedia/directshow/baseclasses'%config.WindowsSdkDir,
+    '%s/Include'%config.WindowsSdkDir,
+    '%s/Include'%config.DirectXSdkDir,
+    '%s/src'%config.ProtoDir,
+    ]
+env['LIBPATH'] += [
+    '%s'%config.OutDir,
+    '%s/lib/static'%config.CeguiDepDir,
+    '%s/lib'%config.CeguiDir,
+    '%s/Lib'%config.WindowsSdkDir,
+    '%s/Lib/x86'%config.DirectXSdkDir,
+    '%s/lib/wnet/i386'%config.WindowsDdkDir,
+    ]
+
+env['LIBS'] += [ 'kernel32', 'user32', 'gdi32', 'winspool', 'comdlg32', 'advapi32', 'shell32',
+                 'ole32', 'oleaut32', 'uuid', 'odbc32', 'odbccp32' ]
+env['LIBS'] += ['d3d9', 'd3dx9', 'dxguid', 'winmm', 'hid', 'setupapi',
+                'libprotobuf', 'libprotoc' ]
+env['LIBS'] += config.CeguiLibs[ config.Build ]
+env['LIBS'] += [ 'BootesLib','DirectShowTexture','wiiyourself-tr-bootes' ]
+if config.Build == 'release':
+    config.ProtoBinDir = '%s/vsprojects/Release' % config.ProtoDir
+    env['LIBS']    += ['strmbas']
+else:
+    config.ProtoBinDir = '%s/vsprojects/Debug' % config.ProtoDir
+    env['LIBS']    += ['strmbasd']
+pass
+env['LIBPATH'] += [config.ProtoBinDir]
+
+def genprotoc(source, target, env, for_signature):
+    srcdir = os.path.dirname(source[0].__str__())
+    return '%s/protoc.exe -I=%s --cpp_out=%s %s' % (config.ProtoBinDir, srcdir, srcdir, source[0])
+
+env.Append(BUILDERS = {
+        'ProtoBuf': Builder(generator=genprotoc, suffix='.pb.cc', src_suffix='.proto')
+        })
+
+r = []
+objs = []
+for f in proto_sources:
+    cpp = env.ProtoBuf(f)
+    outpath = os.path.join(config.WorkDir, '%s.o'%f)
+    objs += [ env.Object(outpath, cpp) ]
+for f in sources:
+    outpath = os.path.join(config.WorkDir, '%s.o'%f)
+    objs += [ env.Object(outpath, f) ]
+r += [ env.Program('%s/BootesDances'%config.OutDir, objs) ]
+
+for f in datafiles:
+    f = 'datafiles/%s'%f
+    d = os.path.dirname(f)
+    r += [ env.Install('%s/%s'%(config.OutDir,d), '#BootesDances/%s'%f) ]
+
+Return('r')
+
+# Local Variables:
+# mode: python
+# coding: utf-8-dos
+# indent-tabs-mode: nil
+# tab-width: 3
+# End:

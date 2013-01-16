@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<GUILayout>
+  <Window Type="TaharezLook/PopupMenu" Name="TimeGrid/ContextMenu" >
+    <Property Name="Visible" Value="False" />
+    <Property Name="FadeInTime" Value="0" />
+    <Property Name="FadeOutTime" Value="0" />
+    <Property Name="ItemSpacing" Value="2" />
+    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+    <Property Name="ClippedByParent" Value="False" />
+    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0,42},{0,119.174}}" />
+    <Property Name="AutoResizeEnabled" Value="True" />
+
+    <Window Type="TaharezLook/MenuItem" Name="TimeGrid/ContextMenu/ChainPrev" >
+      <Property Name="Text" Value="chain to previous" />
+      <Property Name="Tooltip" Value="chain to previous" />
+      <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+      <Property Name="UnifiedAreaRect" Value="{{0,2},{0,2},{0,39},{0,23}}" />
+    </Window>
+
+    <Window Type="TaharezLook/MenuItem" Name="TimeGrid/ContextMenu/ChainNext" >
+      <Property Name="Text" Value="chain to next" />
+      <Property Name="Tooltip" Value="chain to next" />
+      <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+      <Property Name="UnifiedAreaRect" Value="{{0,2},{0,2},{0,39},{0,23}}" />
+    </Window>
+
+    <Window Type="TaharezLook/MenuItem" Name="TimeGrid/ContextMenu/BreakPrev" >
+      <Property Name="Text" Value="break previous link" />
+      <Property Name="Tooltip" Value="break previous link" />
+      <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+      <Property Name="UnifiedAreaRect" Value="{{0,2},{0,2},{0,39},{0,23}}" />
+    </Window>
+
+    <Window Type="TaharezLook/MenuItem" Name="TimeGrid/ContextMenu/BreakNext" >
+      <Property Name="Text" Value="break next link" />
+      <Property Name="Tooltip" Value="break next link" />
+      <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+      <Property Name="UnifiedAreaRect" Value="{{0,2},{0,2},{0,39},{0,23}}" />
+    </Window>
+
+  </Window>
+</GUILayout>

@@ -1,0 +1,58 @@
+# -*- coding: utf-8 -*-
+
+sources = """
+amextra.cpp
+amfilter.cpp
+amvideo.cpp
+arithutil.cpp
+combase.cpp
+cprop.cpp
+ctlutil.cpp
+ddmm.cpp
+dllentry.cpp
+dllsetup.cpp
+mtype.cpp
+outputq.cpp
+perflog.cpp
+pstream.cpp
+pullpin.cpp
+refclock.cpp
+renbase.cpp
+schedule.cpp
+seekpt.cpp
+source.cpp
+strmctl.cpp
+sysclock.cpp
+transfrm.cpp
+transip.cpp
+videoctl.cpp
+vtrans.cpp
+winctrl.cpp
+winutil.cpp
+wxdebug.cpp
+wxlist.cpp
+wxutil.cpp
+""".split()
+
+import os.path
+Import('env','config')
+SRCDIR = '%s/Samples/multimedia/directshow/baseclasses'%config.WindowsSdkDir
+
+env['CPPDEFINES'] += ['WIN32', '_WINDOWS', '_UNICODE', 'UNICODE' ]
+env['CPPPATH'] += [ SRCDIR, '%s/Include'%config.WindowsSdkDir ]
+
+r = []
+objs = []
+for f in sources:
+    srcpath = os.path.join(SRCDIR, f)
+    outpath = os.path.join(config.WorkDir, '%s.o'%f)
+    objs += [ env.Object(outpath, srcpath) ]
+r += [ env.StaticLibrary('%s/strmbasd'%config.OutDir, objs) ]
+Return('r')
+
+# Local Variables:
+# mode: python
+# coding: utf-8-unix
+# indent-tabs-mode: nil
+# tab-width: 3
+# End:

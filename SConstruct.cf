@@ -1,0 +1,51 @@
+# -*- coding: utf-8 -*-
+
+def create_config():
+   import socket
+   host = socket.gethostname()
+   class Config: pass
+   cfg = Config()
+   if host == 'denpa':
+       #cfg.vcver          = '10.0Exp'
+       cfg.vcver          = '9.0Exp'
+       cfg.WindowsSdkDir  = 'd:/Program Files/Microsoft SDKs/Windows/v7.1'
+       cfg.DirectXSdkDir  = 'd:/Program Files (x86)/Microsoft DirectX SDK (June 2010)'
+       cfg.WindowsDdkDir  = 'd:/WinDDK/7600.16385.1',
+       cfg.BoostDir       = 'd:/_opt/boost/boost_1_46_1'
+       cfg.CeguiDir       = 'd:/_opt/CEGUI/CEGUI-0.7.5'
+       cfg.CeguiDepDir    = 'd:/_opt/CEGUI/dependencies-0.7.x-r2-vc9'
+       #cfg.CeguiDepDir    = 'd:/_opt/CEGUI/dependencies-0.7.x-r3-vc10'
+       cfg.SdlDir         = 'd:/_opt/SDL-1.2.15'
+       cfg.GlutDir        = 'd:/_opt/GLUT'
+       cfg.ProtoDir       = 'd:/_opt/protobuf-2.4.1'
+       cfg.WorkDir        = 'd:/tmp/scons/work'
+       cfg.OutDir         = 'd:/tmp/scons/out'
+   elif host == 's5':
+       cfg.vcver          = '10.0Exp'
+       cfg.WindowsSdkDir  = 'c:/Program Files/Microsoft SDKs/Windows/v7.1'
+       cfg.DirectXSdkDir  = 'c:/Program Files (x86)/Microsoft DirectX SDK (June 2010)'
+       cfg.WindowsDdkDir  = 'c:/WinDDK/7600.16385.1',
+       cfg.BoostDir       = 'c:/_opt/boost/boost_1_46_1'
+       cfg.CeguiDir       = 'c:/_opt/CEGUI/CEGUI-0.7.5'
+       cfg.CeguiDepDir    = 'c:/_opt/CEGUI/CEGUI-DEPS-0.7.x-r3-vc10/dependencies'
+       cfg.ProtoDir       = 'c:/_opt/protobuf-2.4.1'
+       cfg.WorkDir        = 'c:/tmp/scons/work'
+       cfg.OutDir         = 'c:/tmp/scons/out'
+   else:
+       raise Exception("unknown host: %s"%host)
+   pass
+   cfg.CeguiLibs = {
+      'debug': [
+         'freetype_d', 'pcre_d', 'SILLY_d', 'expat_d', 'zlib_d', 'jpeg_d', 'libpng_d',
+         'CEGUIBase_Static_d', 'CEGUISILLYImageCodec_Static_d', 'CEGUIExpatParser_Static_d',
+         'CEGUIFalagardWRBase_Static_d', 'CEGUIDirect3D9Renderer_Static_d'
+         ]
+      }
+   return cfg
+
+# Local Variables:
+# mode: python
+# coding: utf-8-unix
+# indent-tabs-mode: nil
+# tab-width: 3
+# End:

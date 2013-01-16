@@ -1,0 +1,25 @@
+BootesDances is copyrighted free software by Daisuke Kanda <dai1975@gmail.com>.
+You can redistribute it and/or modify it under either the terms of the
+GPL2.0 or GPL with any later major version and the latest minor version.
+(see the file License-GPL2.0.txt and License-GPL3.0.txt).
+
+================================================================================
+
+DejaVuSans.ttf is a international TrueType font from the excellent DejaVu font
+package, which is distributed under the conditions of the Bitstream Vera Fonts
+Copyright, which can be found in the DejaVu package.
+
+DejaVu fonts 2.2 (c)2004-2006 Stepan Roh and DejaVu fonts team
+--------------------------------------------------------------
+
+The DejaVu fonts are a font family based on the Bitstream Vera Fonts
+(http://gnome.org/fonts/). Its purpose is to provide a wider range of
+characters (see status.txt for more information) while maintaining the
+original look and feel.
+
+DejaVu fonts are based on Bitstream Vera fonts version 1.10.
+
+================================================================================
+IPA Font is a font copyrighted by IPA.
+This is licensed under the IPA Font License v1.0.
+(see License-IPAFont1.0.txt)

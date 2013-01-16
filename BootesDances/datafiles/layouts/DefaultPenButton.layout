@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GUILayout>
+<Window Type="app/ToggleImageButton" Name="DefaultPenButton">
+	<Property Name="UnifiedPosition" Value="{{0,0},{0,0}}" />
+	<Property Name="UnifiedSize" Value="{{0,32},{0,32}}" />
+	<Property Name="NormalImage"     Value="set:PenButton image:DefaultNormal" />
+	<Property Name="HoverImage"      Value="set:PenButton image:DefaultHover"  />
+	<Property Name="PushedImage"     Value="set:PenButton image:DefaultPushed" />
+	<Property Name="PushedHoverImage"     Value="set:PenButton image:DefaultPushedHover" />
+	<Property Name="DisabledImage"   Value="set:PenButton image:DefaultDisabled" />
+</Window>
+
+</GUILayout>

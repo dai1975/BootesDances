@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<GUILayout>
+  <Window Type="TaharezLook/FrameWindow" Name="File">
+    <Property Name="TitlebarFont" Value="CommonWealth-10" />
+    <Property Name="TitlebarEnabled" Value="True" />
+    <Property Name="Text" Value="File" />
+    <Property Name="InheritsAlpha" Value="False" />
+    <Property Name="UnifiedMaxSize" Value="{ {1,0}, {1,0} }" />
+    <Property Name="UnifiedSize" Value="{ {0,200}, {0,400} }" />
+    <Property Name="UnifiedAreaRect" Value="{ {0,0}, {0,0}, {1,0}, {1,0} }" />
+
+    <Window Type="TaharezLook/ListBox" Name="FileList">
+    </Window>
+  </Window>
+</GUILayout>

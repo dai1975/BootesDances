@@ -1,0 +1,40 @@
+import "Motion.proto";
+package pb;
+
+message Point {
+  required float x = 1;
+  required float y = 2;
+}
+
+message Move {
+  required string uuid = 1;
+  required int64 time0 = 2; //100ns
+  required int64 time1 = 3; //100ns
+  required bool  chainnext = 4;
+
+  repeated Motion motions = 10;
+
+  message Line {
+    repeated Point points = 1;
+  } optional Line line = 100;
+
+  message Ellipse {
+    required Point center = 1;
+    required Point radius = 2;
+    required float angle0 = 3;
+    required float angle1 = 4;
+    required bool  direction = 5;
+  } optional Ellipse ellipse = 101;
+
+  message Spline {
+    repeated Point points = 1;
+  } optional Spline spline = 102;
+}
+
+message Stage {
+  required int32    version   = 1;
+  required string   name      = 2;
+  required string   moviepath = 3;
+  required bool     hflip     = 4;
+  repeated Move moves  = 10;
+}

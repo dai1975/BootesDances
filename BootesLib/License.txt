@@ -1,0 +1,4 @@
+BootesLib is copyrighted free software by Daisuke Kanda <dai1975@gmail.com>.
+You can redistribute it and/or modify it under either the terms of the
+LGPL2.1 or LGPL with any later major version and the latest minor version.
+(see the file License-LGPL2.1.txt and License-LGPL3.0.txt).

@@ -1,0 +1,49 @@
+# -*- coding: utf-8 -*-
+
+sources = """
+src/framework/Game.cpp
+src/framework/GameImpl.cpp
+src/framework/TaskManager.cpp
+src/framework/EventManagerImpl.cpp
+src/framework/Task.cpp
+src/framework/Foundation.cpp
+src/framework/FoundationImpl.cpp
+src/framework/WiimoteProxy.cpp
+src/framework/Wiimote.cpp
+src/util/Timer.cpp
+src/util/TChar.cpp
+src/d3dx9/Font.cpp
+src/d3dx9/DrawTexture.cpp
+src/d3dx9/ResourceView.cpp
+src/d3dx9/Board.cpp
+src/d3dx9/Label.cpp
+src/BootesLib.cpp
+""".split()
+
+import os.path
+Import('env','config')
+
+env['CPPDEFINES'] += ['WIN32', '_WINDOWS', '_UNICODE', 'UNICODE' ]
+env['CPPPATH'] += [
+    '#BootesLib/include',
+    '#Wiimote/WiiYourself!_1.15-tr-bootes',
+    '%s'%config.BoostDir,
+    '%s/Samples/multimedia/directshow/baseclasses'%config.WindowsSdkDir,
+    '%s/Include'%config.WindowsSdkDir,
+    '%s/Include'%config.DirectXSdkDir,
+    ]
+
+r = []
+objs = []
+for f in sources:
+    outpath = os.path.join(config.WorkDir, '%s.o'%f)
+    objs += [ env.Object(outpath, f) ]
+r += [ env.StaticLibrary('%s/BootesLib'%config.OutDir, objs) ]
+Return('r')
+
+# Local Variables:
+# mode: python
+# coding: utf-8-dos
+# indent-tabs-mode: nil
+# tab-width: 3
+# End:

@@ -1,0 +1,3 @@
+DirectShowTexture is copyrighted free software by Daisuke Kanda <dai1975@gmail.com>.
+You can redistribute it and/or modify it under either the terms of the
+2-clause BSDL (see the file License-2cBSDL.txt).

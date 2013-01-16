@@ -1,0 +1,36 @@
+# -*- coding: utf-8 -*-
+
+sources = """
+src/CharConverter.cpp
+src/TexAllocator.cpp
+src/TexInputPin.cpp
+src/TexMediaSample.cpp
+src/TexPlayer.cpp
+src/TexRenderer.cpp
+""".split()
+
+import os.path
+Import('env','config')
+
+env['CPPDEFINES'] += ['WIN32', '_WINDOWS', '_UNICODE', 'UNICODE' ]
+env['CPPPATH'] += [
+    '#DirectShowTexture/include',
+    '%s/Samples/multimedia/directshow/baseclasses'%config.WindowsSdkDir,
+    '%s/Include'%config.WindowsSdkDir,
+    '%s/Include'%config.DirectXSdkDir,
+    ]
+
+r = []
+objs = []
+for f in sources:
+    outpath = os.path.join(config.WorkDir, '%s.o'%f)
+    objs += [ env.Object(outpath, f) ]
+r += [ env.StaticLibrary('%s/DirectShowTexture'%config.OutDir, objs) ]
+Return('r')
+
+# Local Variables:
+# mode: python
+# coding: utf-8-dos
+# indent-tabs-mode: nil
+# tab-width: 3
+# End:

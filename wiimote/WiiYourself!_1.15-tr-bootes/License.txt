@@ -1,0 +1,15 @@
+
+WiiYourself!_1.15-tr-bootes
+
+This is derived from
+  parent)
+     wiimote-tr support version developed by unknown
+     ( http://dl.dropbox.com/u/14624144/wiimote.cpp )
+
+  grandparent)
+     WiiYourself! v1.15
+     ( http://gl.tter.org )
+
+
+I permit to copy/modify/other right against this software under the lisence same to WiiYourself!'s
+see License-WiiYourself!_1.15.txt for detail.

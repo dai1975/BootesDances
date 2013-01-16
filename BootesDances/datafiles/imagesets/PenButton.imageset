@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<Imageset Name="PenButton" Imagefile="PenButton.png" >
+	<Image Name="LineNormal"      XPos="0"  YPos="0"   Width="32" Height="32" />
+	<Image Name="LineHover"       XPos="0"  YPos="32"  Width="32" Height="32" />
+	<Image Name="LinePushed"      XPos="0"  YPos="64"  Width="32" Height="32" />
+	<Image Name="LinePushedHover" XPos="0"  YPos="96"  Width="32" Height="32" />
+	<Image Name="LineDisabled"    XPos="0"  YPos="128" Width="32" Height="32" />
+
+	<Image Name="SplineNormal"      XPos="32"  YPos="0"   Width="32" Height="32" />
+	<Image Name="SplineHover"       XPos="32"  YPos="32"  Width="32" Height="32" />
+	<Image Name="SplinePushed"      XPos="32"  YPos="64"  Width="32" Height="32" />
+	<Image Name="SplinePushedHover" XPos="32"  YPos="96"  Width="32" Height="32" />
+	<Image Name="SplineDisabled"    XPos="32"  YPos="128" Width="32" Height="32" />
+
+	<Image Name="EllipseNormal"      XPos="64"  YPos="0"   Width="32" Height="32" />
+	<Image Name="EllipseHover"       XPos="64"  YPos="32"  Width="32" Height="32" />
+	<Image Name="EllipsePushed"      XPos="64"  YPos="64"  Width="32" Height="32" />
+	<Image Name="EllipsePushedHover" XPos="64"  YPos="96"  Width="32" Height="32" />
+	<Image Name="EllipseDisabled"    XPos="64"  YPos="128" Width="32" Height="32" />
+
+	<Image Name="DefaultNormal"      XPos="96"  YPos="0"   Width="32" Height="32" />
+	<Image Name="DefaultHover"       XPos="96"  YPos="32"  Width="32" Height="32" />
+	<Image Name="DefaultPushed"      XPos="96"  YPos="64"  Width="32" Height="32" />
+	<Image Name="DefaultPushedHover" XPos="96"  YPos="96"  Width="32" Height="32" />
+	<Image Name="DefaultDisabled"    XPos="96"  YPos="128" Width="32" Height="32" />
+</Imageset>

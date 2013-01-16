@@ -1,0 +1,73 @@
+# -*- coding: utf-8 -*-
+
+TOPDIR = '#wiimote'
+SRCDIR = '%s/WiiYourself!_1.15-tr-bootes'%TOPDIR
+DEMODIR = '%s/Demo'%SRCDIR
+
+def wiiyourself_cflags(env,config):
+    env['CPPDEFINES'] += ['WIN32', '_WINDOWS', '_UNICODE', 'UNICODE']
+    env['CPPPATH'] += [
+        '%s/Include'%env['MSVS']['VCINSTALLDIR'],
+        '%s/Include'%config.WindowsSdkDir,
+        '%s/inc/ddk'%config.WindowsDdkDir, '%s/inc/api'%config.WindowsDdkDir,
+        ]
+
+def wiiyourself_ldflags(env,config):
+    wiiyourself_cflags(env,config)
+    env['LIBPATH'] += [
+        '%s'%config.OutDir,
+        '%s/Lib'%config.WindowsSdkDir,
+        '%s/lib/wnet/i386'%config.WindowsDdkDir,
+        ]
+    env['LIBS'] += ['wiiyourself-tr-bootes', 'winmm', 'hid', 'setupapi']
+    env['LINKFLAGS'] += ['/SUBSYSTEM:CONSOLE', '/DYNAMICBASE', '/NXCOMPAT',
+                         '/MACHINE:X86', '/ERRORREPORT:PROMPT']
+
+def build_wiiyourself_lib(env,config):
+    wiiyourself_sources = """
+       wiimote-tr-bootes.cpp
+       """.split()
+    wiimote_sources = """
+       """.split()
+
+    wiiyourself_cflags(env,config)
+    r = []
+    objs = []
+    for f in wiiyourself_sources:
+        srcpath = '%s/%s'%(SRCDIR,f)
+        outpath = os.path.join(config.WorkDir, 'src/wiiyourself/%s.o'%f)
+        objs += [ env.Object(outpath, srcpath) ]
+        pass
+    r += [ env.StaticLibrary('%s/wiiyourself-tr-bootes'%config.OutDir, objs) ]
+    return r
+
+def build_wiiyourself_example(env,config):
+    wiiyourself_ldflags(env,config)
+
+    r = []
+    objs = []
+    for f in ['Demo-bootes.cpp']:
+        srcpath = '%s/%s'%(DEMODIR,f)
+        outpath = os.path.join(config.WorkDir, 'wiiyourself-example/%s.o'%f)
+        objs += [ env.Object(outpath, srcpath) ]
+        pass
+    r += [ env.Program('%s/wiiyourself-example'%config.OutDir, objs) ]
+    for f in ['1kSine16 (3130).raw', '1kSine16 (3130).wav',
+              'Daisy16 (3130).raw', 'Daisy16 (3130).wav']:
+        r += [ env.Install(config.OutDir, '%s/%s'%(DEMODIR,f) ) ]
+    return r
+
+import os.path
+Import('env','config')
+
+r = []
+r += build_wiiyourself_lib(env.Clone(), config)
+r += build_wiiyourself_example(env.Clone(), config)
+Return('r')
+
+# Local Variables:
+# mode: python
+# coding: utf-8-dos
+# indent-tabs-mode: nil
+# tab-width: 3
+# End:
