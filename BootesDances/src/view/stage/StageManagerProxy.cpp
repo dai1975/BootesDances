@@ -8,7 +8,12 @@
 #include <sys/types.h>
 #include <share.h>
 #include <fcntl.h>
-
+#include "../../move/MoveModelLine.h"
+#include "../../move/MoveModelSpline.h"
+#include "../../move/MoveModelEllipse.h"
+#include "../../move/guide/GuideRibbonLine.pb.h"
+#include "../../move/guide/GuideRibbonSpline.pb.h"
+#include "../../move/guide/GuideRibbonEllipse.pb.h"
 
 StageManagerProxy::StageManagerProxy()
 {
@@ -288,6 +293,64 @@ void StageManagerProxy::doSave(const TCHAR* path)
       return;
    }
 
+   ::pb::Stage2 *pStage = new ::pb::Stage2();
+   pStage->set_version(1);
+   pStage->set_name(_pStage->name());
+   pStage->set_moviepath(_pStage->moviepath());
+   for (MoveSequence::iterator i = _moves.begin(); i != _moves.end(); ++i) {
+      IMoveModel* rea0 = *i;
+      pb::Move2* iMove  = pStage->add_moves();
+      pb::Guide* iGuide = iMove->mutable_guide();
+      switch (rea0->getType()) {
+      case IMoveModel::T_LINE: {
+         MoveModelLine* rea = static_cast< MoveModelLine* >(rea0);
+         ::pb::GuideRibbonLine obj;
+         const IMoveModel::t_points& points = rea->getEditPoints();
+         for (size_t i=0; i<points.size(); ++i) {
+            pb::Point* p = obj.add_points();
+            p->set_x( points[i].x );
+            p->set_y( points[i].y );
+         }
+         google::protobuf::io::StringOutputStream os(iGuide->mutable_code());
+         google::protobuf::TextFormat::Print(obj, &os);
+         iGuide->set_type("GuideRibbonLine");
+      } break;
+
+      case IMoveModel::T_SPLINE: {
+         MoveModelSpline* rea = static_cast< MoveModelSpline* >(rea0);
+         ::pb::GuideRibbonSpline obj;
+         const IMoveModel::t_points& points = rea->getEditPoints();
+         for (size_t i=0; i<points.size(); ++i) {
+            pb::Point* p = obj.add_points();
+            p->set_x( points[i].x );
+            p->set_y( points[i].y );
+         }
+         google::protobuf::io::StringOutputStream os(iGuide->mutable_code());
+         google::protobuf::TextFormat::Print(obj, &os);
+         iGuide->set_type("GuideRibbonSpline");
+      } break;
+
+      case IMoveModel::T_ELLIPSE: {
+         MoveModelEllipse* rea = static_cast< MoveModelEllipse* >(rea0);
+         ::pb::GuideRibbonEllipse obj;
+         obj.mutable_center()->set_x( rea->getCenterX() );
+         obj.mutable_center()->set_y( rea->getCenterY() );
+         obj.mutable_radius()->set_x( rea->getRadiusX() );
+         obj.mutable_radius()->set_y( rea->getRadiusY() );
+         obj.set_angle0( rea->getBeginAngle() );
+         obj.set_angle1( rea->getEndAngle() );
+         obj.set_direction( rea->getDirection() );
+         google::protobuf::io::StringOutputStream os(iGuide->mutable_code());
+         google::protobuf::TextFormat::Print(obj, &os);
+         iGuide->set_type("GuideRibbonEllipse");
+      } break;
+      }
+      iMove->set_uuid(rea0->getUuid());
+      iMove->set_time0(rea0->getBeginTime());
+      iMove->set_time1(rea0->getEndTime());
+      iMove->set_chainnext(_moves.isChainNext(i));
+   }
+/*
    _pStage->clear_moves();
    _pStage->set_version(1);
    for (MoveSequence::iterator i = _moves.begin(); i != _moves.end(); ++i) {
@@ -296,7 +359,7 @@ void StageManagerProxy::doSave(const TCHAR* path)
       _pStage->add_moves()->operator=(*pr);
       delete pr;
    }
-
+*/
    {
       std::basic_string< TCHAR > tc_path, tc_tmp, tc_old;
       tc_path.append(_dir).append(_T("\\")).append(path);
@@ -310,7 +373,7 @@ void StageManagerProxy::doSave(const TCHAR* path)
          if (err != 0) { goto fail; }
       
          google::protobuf::io::FileOutputStream out(fd);
-         bool b = google::protobuf::TextFormat::Print(*_pStage, &out);
+         bool b = google::protobuf::TextFormat::Print(*pStage, &out);
          out.Flush();
          out.Close();
          //_close(fd);

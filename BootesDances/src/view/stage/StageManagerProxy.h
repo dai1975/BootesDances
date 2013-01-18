@@ -7,6 +7,7 @@
 #include "MovePresenterImpl.h"
 #include "MoveEditorImpl.h"
 #include "WiimoteHandlerImpl.h"
+#include "Stage.h"
 #include <bootes/dances/proto/stage.pb.h>
 #include <bootes/dances/EvMovie.h>
 #include <bootes/dances/EvStage.h>

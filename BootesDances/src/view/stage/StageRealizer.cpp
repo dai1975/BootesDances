@@ -11,7 +11,7 @@ bool StageRealizer::Idealize(::pb::Stage2* pOut, const Stage* pIn)
    const MoveSequence& seq = pIn->seq;
    for (MoveSequence::const_iterator i = seq.begin(); i != seq.end(); ++i) {
       ::pb::Move2* p = pOut->add_moves();
-      MoveRealizer::Idealize(p, *i);
+      if (! MoveRealizer::Idealize(p, *i)) { return false; }
       p->set_chainnext( seq.isChainNext(i) );
    }
    return true;

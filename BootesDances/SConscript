@@ -3,6 +3,9 @@
 proto_sources = [
     'include/bootes/dances/proto/Motion.proto',
     'include/bootes/dances/proto/Stage.proto',
+    'src/move/guide/GuideRibbonLine.proto',
+    'src/move/guide/GuideRibbonSpline.proto',
+    'src/move/guide/GuideRibbonEllipse.proto',
 ]
 
 sources = [
@@ -123,8 +126,13 @@ pass
 env['LIBPATH'] += [config.ProtoBinDir]
 
 def genprotoc(source, target, env, for_signature):
+    #incdir = 'BootesDances/include/bootes/dances/proto'
+    incdir = 'BootesDances\include'
     srcdir = os.path.dirname(source[0].__str__())
-    return '%s/protoc.exe -I=%s --cpp_out=%s %s' % (config.ProtoBinDir, srcdir, srcdir, source[0])
+    if (srcdir.startswith(incdir)):
+        return '%s/protoc.exe -I=%s       --cpp_out=%s %s' % (config.ProtoBinDir, incdir, incdir, source[0])
+    else:
+        return '%s/protoc.exe -I=%s -I=%s --cpp_out=%s %s' % (config.ProtoBinDir, incdir, srcdir, srcdir, source[0])
 
 env.Append(BUILDERS = {
         'ProtoBuf': Builder(generator=genprotoc, suffix='.pb.cc', src_suffix='.proto')

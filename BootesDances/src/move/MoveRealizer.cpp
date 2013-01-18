@@ -43,7 +43,9 @@ bool MoveRealizer::Realize(IMove** ppOut, const pb::Move* pIn)
 bool MoveRealizer::Idealize(::pb::Move2* pOut, const IMove* pIn)
 {
    if (pIn->getGuide()) {
-      GuideRealizer::Idealize(pOut->mutable_guide(), pIn->getGuide());
+      if (! GuideRealizer::Idealize(pOut->mutable_guide(), pIn->getGuide())) {
+         return false;
+      }
    }
 
    pOut->set_uuid(pIn->getUuid());

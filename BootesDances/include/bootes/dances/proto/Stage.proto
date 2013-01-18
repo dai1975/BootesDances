@@ -1,4 +1,4 @@
-import "Motion.proto";
+import "bootes/dances/proto/Motion.proto";
 package pb;
 
 message Point {
@@ -37,4 +37,25 @@ message Stage {
   required string   moviepath = 3;
   required bool     hflip     = 4;
   repeated Move moves  = 10;
+}
+
+//--------------------------------------------------
+message Guide {
+  required string type = 1;
+  required bytes  code = 2;
+}
+message Move2 {
+  required string uuid = 1;
+  required int64 time0 = 2; //100ns
+  required int64 time1 = 3; //100ns
+  required bool  chainnext = 4;
+
+  required Guide guide = 10;
+}
+
+message Stage2 {
+  required int32    version   = 1;
+  required string   name      = 2;
+  required string   moviepath = 3;
+  repeated Move2 moves  = 10;
 }
