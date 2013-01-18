@@ -1,0 +1,18 @@
+import "bootes/dances/proto/Stage.proto";
+
+package pb;
+
+message MotionWiimoteSimple {
+  required int32 stept = 1;
+
+  message Entry {
+    required int32 t     = 1;
+    required pb.Motion.Accel accel = 2;
+    required pb.Motion.Gyro  gyro  = 3;
+    required pb.Motion.Gyro  orien = 4;
+  }
+
+  repeated Entry minseq = 2;
+  repeated Entry maxseq = 3;
+}
+

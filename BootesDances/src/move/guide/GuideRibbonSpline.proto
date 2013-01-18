@@ -1,0 +1,8 @@
+import "bootes/dances/proto/Stage.proto";
+
+package pb;
+
+message GuideRibbonSpline {
+  repeated Point points = 1;
+}
+

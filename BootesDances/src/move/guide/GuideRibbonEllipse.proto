@@ -1,0 +1,12 @@
+import "bootes/dances/proto/Stage.proto";
+
+package pb;
+
+message GuideRibbonEllipse {
+  required Point center = 1;
+  required Point radius = 2;
+  required float angle0 = 3;
+  required float angle1 = 4;
+  required bool  direction = 5;
+}
+
