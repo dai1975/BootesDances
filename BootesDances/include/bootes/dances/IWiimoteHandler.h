@@ -7,9 +7,9 @@
 class IWiimoteHandler
 {
 public:
-   virtual void teachClear(const IMoveModel*) = 0;
+   virtual void teachClear(const IMove*) = 0;
 
-   virtual void teachBegin(const IMoveModel*) = 0;
+   virtual void teachBegin(const IMove*) = 0;
    virtual void teachCommit(bool succeed) = 0;
    virtual void teachRollback() = 0;
 

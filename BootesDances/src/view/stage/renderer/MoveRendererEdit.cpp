@@ -66,7 +66,7 @@ bool sIsInSquare(float x, float y, const MoveRenderer::TriangleVertex* vtx)
 
 };
 
-void MoveRendererEdit::onRender(const Scene* scene, const MoveSequence* moves, double currentTime, int elapsedTime)
+void MoveRendererEdit::onRender(const Scene* scene, const MoveSequence* pSeq, double currentTime, int elapsedTime)
 {
    IDirect3DDevice9* pDev = g_pFnd->getD3D9Device();
    __int64 t0 = scene->clock().clock;
@@ -74,50 +74,51 @@ void MoveRendererEdit::onRender(const Scene* scene, const MoveSequence* moves, d
    LONG h     = scene->videoinfo().height;
 
    // 現時刻に表示するガイドを得る
-   std::vector< const IMoveModel* > models;
+   std::vector< const IMove* > moves;
    {
-      MoveSequence::const_iterator i = moves->searchAt(t0, true);
+      MoveSequence::const_iterator i = pSeq->searchAt(t0, true);
       if (*i == NULL) { return; }
       MoveSequence::const_iterator i0 = i.group_begin();
       MoveSequence::const_iterator i1 = i.group_end();
       size_t n = 0;
       for (i=i0; i!=i1; ++i) { ++n; }
-      models.resize(n);
+      moves.resize(n);
 
       size_t a = 0;
       for (i=i0; i!=i1; ++i) {
-         models[a++] = *i;
+         moves[a++] = *i;
       }
    }
 
-   ModelEditee edit_src, selected;
-   IMoveModel* edit_tmp;
+   MoveEditee edit_src, selected;
+   IMove* edit_tmp;
    bool isSelecting = _pEditor->editeeSelected(&selected);
-   bool isEditing = _pEditor->editing(&edit_src, &edit_tmp);
+   bool isEditing   = _pEditor->editing(&edit_src, &edit_tmp);
 
    const std::vector< D3DXVECTOR3 >* points;
    _rendered.clear();
-   _rendered.resize(models.size());
-   for (size_t i=0; i<models.size(); ++i) {
-      const MoveModel* model = static_cast< const MoveModel* >(models[i]);
-      _rendered[i].model = model;
-      {
-         points = &model->getPlayPoints();
+   _rendered.resize(moves.size());
+   for (size_t i=0; i<moves.size(); ++i) {
+      const IMove* pMove = moves[i];
+      const IGuide* pGuide = pMove->getGuide();
+      _rendered[i].pMove = pMove;
+
+      if (pGuide) {
+         points = &pGuide->getPlayPoints();
          DWORD color;
          BLEND_MODE blend = BLEND_DIFFUSEALPHA_TEXALPHA;
-         if (isEditing && model == edit_src.model) {
+         if (isEditing && pMove == edit_src.pMove) {
             color = D3DCOLOR_ARGB(128, 0, 0, 0); //移動元は少し暗く
-         } else if (isSelecting && model == selected.model) {
+         } else if (isSelecting && pMove == selected.pMove) {
             color = D3DCOLOR_ARGB(128, 0, 255, 0);
          } else {
             color = D3DCOLOR_ARGB(0, 255, 255, 255);
          }
          pointsToTriangles(_rendered[i].ribbon_vtx, *points, _width, _height, color);
          drawTriangles(pDev, _rendered[i].ribbon_vtx, TEX_RIBBON, blend);
-      }
-      {
-         points = &model->getEditPoints();
-         DWORD color = D3DCOLOR_ARGB(255,0,0,0);
+
+         points = &pGuide->getEditPoints();
+         color = D3DCOLOR_ARGB(255,0,0,0);
          pointsToPointList(_rendered[i].edit_vtx, *points, _width, _height, color);
          drawPointList(pDev, _rendered[i].edit_vtx, 10.0f, TEX_DOT);
       }
@@ -125,30 +126,33 @@ void MoveRendererEdit::onRender(const Scene* scene, const MoveSequence* moves, d
 
    if (isEditing) {
       std::vector< TriangleVertex > vtx;
-      points = &static_cast< MoveModel* >(edit_tmp)->getPlayPoints();
-      DWORD color = D3DCOLOR_ARGB(128, 0, 0, 255);
-      BLEND_MODE blend = BLEND_DIFFUSEALPHA_TEXALPHA;
-      pointsToTriangles(vtx, *points, w, h, color);
-      drawTriangles(pDev, vtx, TEX_RIBBON, blend);
+      IGuide* pGuide = edit_tmp->getGuide();
+      if (pGuide) {
+         points = &pGuide->getPlayPoints();
+         DWORD color = D3DCOLOR_ARGB(128, 0, 0, 255);
+         BLEND_MODE blend = BLEND_DIFFUSEALPHA_TEXALPHA;
+         pointsToTriangles(vtx, *points, w, h, color);
+         drawTriangles(pDev, vtx, TEX_RIBBON, blend);
+      }
    }
 
    _width = w;
    _height = h;
 }
 
-size_t MoveRendererEdit::getRenderedModels(std::vector<const IMoveModel*>* v) const
+size_t MoveRendererEdit::getRenderedModels(std::vector<const IMove*>* v) const
 {
    size_t n = _rendered.size();
    if (v != NULL) {
       v->resize(n);
       for (size_t i=0; i<n; ++i) {
-         v->at(i) = _rendered[i].model;
+         v->at(i) = _rendered[i].pMove;
       }
    }
    return n;
 }
 
-bool MoveRendererEdit::presentLocated(float rx, float ry, ModelEditee* o) const
+bool MoveRendererEdit::presentLocated(float rx, float ry, MoveEditee* o) const
 {
    float x = rx * _width;
    float y = ry * _height;
@@ -159,7 +163,7 @@ bool MoveRendererEdit::presentLocated(float rx, float ry, ModelEditee* o) const
       for (size_t j=0; j<vtx.size(); ++j) {
          if ((vtx[j].x - 10 <= x && x <= vtx[j].x + 10) &&
             (vtx[j].y - 10 <= y && y <= vtx[j].y + 10)) {
-               o->model = i->model;
+               o->pMove = i->pMove;
                o->joint = j;
                return true;
          }
@@ -172,22 +176,22 @@ bool MoveRendererEdit::presentLocated(float rx, float ry, ModelEditee* o) const
 
       for (size_t j=0; j<vtx.size()-2; j+=2) {
          if (sIsInSquare(x, y, &vtx[j])) {
-            o->model = i->model;
+            o->pMove = i->pMove;
             o->joint = -1;
             return true;
          }
       }
    }
-   o->model = NULL;
+   o->pMove = NULL;
    o->joint = -1;
    return false;
 }
 
-bool MoveRendererEdit::presentNearest(float rx, float ry, ModelEditee* o) const
+bool MoveRendererEdit::presentNearest(float rx, float ry, MoveEditee* o) const
 {
    float x = rx * _width;
    float y = ry * _height;
-   o->model = NULL;
+   o->pMove = NULL;
    o->joint = -1;
    float min = 100.0f;
 
@@ -199,21 +203,21 @@ bool MoveRendererEdit::presentNearest(float rx, float ry, ModelEditee* o) const
          float dx = vtx[j].x - x;
          float dy = vtx[j].y - y;
          float d = dx*dx + dy*dy;
-         if (o->model == NULL || d < min) {
-            o->model = i->model;
+         if (o->pMove == NULL || d < min) {
+            o->pMove = i->pMove;
             o->joint = j;
             min = d;
          }
       }
    }
-   return (o->model != NULL);
+   return (o->pMove != NULL);
 }
 
-bool MoveRendererEdit::presentNearestEdge(float rx, float ry, ModelEditee* o) const
+bool MoveRendererEdit::presentNearestEdge(float rx, float ry, MoveEditee* o) const
 {
    float x = rx * _width;
    float y = ry * _height;
-   o->model = NULL;
+   o->pMove = NULL;
    o->joint = -1;
    float min = 100.0f;
 
@@ -226,16 +230,15 @@ bool MoveRendererEdit::presentNearestEdge(float rx, float ry, ModelEditee* o) co
          float dx = vtx[j].x - x;
          float dy = vtx[j].y - y;
          float d = dx*dx + dy*dy;
-         if (o->model == NULL || d < min) {
-            o->model = i->model;
+         if (o->pMove == NULL || d < min) {
+            o->pMove = i->pMove;
             o->joint = j;
             min = d;
          }
       }
    }
-   return (o->model != NULL);
+   return (o->pMove != NULL);
 }
-
 
 /**
  * Local Variables:

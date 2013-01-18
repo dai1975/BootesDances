@@ -2,13 +2,13 @@
 #define BOOTESDANCES_MOVE_MOVESEQUENCE_H
 
 #include "../include.h"
-#include "MoveModel.h"
+#include <bootes/dances/IMove.h>
 #include <vector>
 
 /*
 MoveSequence は、時系列に沿った一連の Move の順序集合を提供する。
 個々の Move は [開始時刻,終了時刻) を持つ。
-MoveSequence は、MoveModel が時間的に重ならないようにしている。 
+MoveSequence は、Move が時間的に重ならないようにしている。 
 */
 class MoveSequence
 {
@@ -21,7 +21,7 @@ public:
       inline iterator& operator=(const iterator&);
       inline friend bool operator==(const iterator& l, const iterator& r);
       inline friend bool operator!=(const iterator& l, const iterator& r);
-      inline IMoveModel* operator*();
+      inline IMove* operator*();
       inline bool is_group() const;
       inline iterator&  operator++();
       inline iterator   operator++(int);
@@ -37,7 +37,7 @@ public:
       inline const_iterator& operator=(const const_iterator&);
       inline friend bool operator==(const const_iterator& l, const const_iterator& r);
       inline friend bool operator!=(const const_iterator& l, const const_iterator& r);
-      inline const IMoveModel* operator*() const;
+      inline const IMove* operator*() const;
       inline bool is_group() const;
       inline const_iterator&  operator++();
       inline const_iterator   operator++(int);
@@ -71,37 +71,37 @@ public:
    std::pair<iterator,iterator> search(__int64 t0, __int64 t1);
    std::pair<const_iterator,const_iterator> search(__int64 t0, __int64 t1) const;
 
-   iterator search(const IMoveModel*);
-   const_iterator search(const IMoveModel*) const;
+   iterator search(const IMove*);
+   const_iterator search(const IMove*) const;
 
-   bool isChainPrev(iterator& i) const;
-   bool isChainNext(iterator& i) const;
-   bool isChainPrev(const_iterator& i) const;
-   bool isChainNext(const_iterator& i) const;
+   bool isChainPrev(const iterator& i) const;
+   bool isChainNext(const iterator& i) const;
+   bool isChainPrev(const const_iterator& i) const;
+   bool isChainNext(const const_iterator& i) const;
 
    //次のMoveと連結または切断する
-   bool chainNext(iterator& i, bool chain);
+   bool chainNext(const iterator& i, bool chain);
    //前のMoveと連結または切断する
-   bool chainPrev(iterator& i, bool chain);
+   bool chainPrev(const iterator& i, bool chain);
    // 削除する。削除された MoveModel を返す。
-   IMoveModel* remove(iterator& i);
+   IMove* remove(iterator& i);
    // old を取り除き、rep を追加する。削除された MoveModel を返す。
-   IMoveModel* replace(iterator& old, IMoveModel* rep);
+   IMove* replace(iterator& old, IMove* rep);
 
    // 新たな MoveModel を追加する。時間が重なると失敗。
-   iterator add(IMoveModel*);
+   iterator add(IMove*);
    // MoveModel 情報を消去する。登録してあった MoveModel を返す。
-   size_t clear(std::vector<IMoveModel*>* = NULL);
+   size_t clear(std::vector<IMove*>* = NULL);
 
 private:
    struct Entry {
-      IMoveModel* model;
+      IMove* pMove;
       Entry *next, *prev;
       bool  group; //次の要素とグループになっているかどうか
-      inline Entry(): model(NULL), next(NULL), prev(NULL), group(false) { }
+      inline Entry(): pMove(NULL), next(NULL), prev(NULL), group(false) { }
       inline Entry(const Entry& r) { operator=(r); }
       inline Entry& operator=(const Entry& r) {
-         model = r.model;
+         pMove = r.pMove;
          next  = r.next;
          prev  = r.prev;
          group = r.group;
@@ -121,18 +121,32 @@ inline bool operator==(const MoveSequence::iterator& l, const MoveSequence::iter
 { return l.e == r.e; }
 inline bool operator!=(const MoveSequence::iterator& l, const MoveSequence::iterator& r)
 { return l.e != r.e; }
-inline IMoveModel* MoveSequence::iterator::operator*()
-{ return e->model; }
+inline IMove* MoveSequence::iterator::operator*()
+{ return e->pMove; }
 inline bool MoveSequence::iterator::is_group() const
 { return e->group; }
 inline MoveSequence::iterator&  MoveSequence::iterator::operator++()
-{ e = e->next; return *this; }
+{
+   e = e->next;
+   return *this;
+}
 inline MoveSequence::iterator   MoveSequence::iterator::operator++(int)
-{ iterator r(e); e = e->next; return r; }
+{
+   iterator r(e);
+   e = e->next;
+   return r;
+}
 inline MoveSequence::iterator&  MoveSequence::iterator::operator--()
-{ e = e->prev; return *this; }
+{
+   e = e->prev;
+   return *this;
+}
 inline MoveSequence::iterator   MoveSequence::iterator::operator--(int)
-{ iterator r(e); e = e->prev; return r; }
+{
+   iterator r(e);
+   e = e->prev;
+   return r;
+}
 
 inline MoveSequence::iterator   MoveSequence::iterator::group_begin()
 {
@@ -157,18 +171,32 @@ inline bool operator==(const MoveSequence::const_iterator& l, const MoveSequence
 { return l.e == r.e; }
 inline bool operator!=(const MoveSequence::const_iterator& l, const MoveSequence::const_iterator& r)
 { return l.e != r.e; }
-inline const IMoveModel* MoveSequence::const_iterator::operator*() const
-{ return e->model; }
+inline const IMove* MoveSequence::const_iterator::operator*() const
+{ return e->pMove; }
 inline bool MoveSequence::const_iterator::is_group() const
 { return e->group; }
 inline MoveSequence::const_iterator&  MoveSequence::const_iterator::operator++()
-{ e = e->next; return *this; }
+{
+   e = e->next;
+   return *this;
+}
 inline MoveSequence::const_iterator   MoveSequence::const_iterator::operator++(int)
-{ const_iterator r(e); e = e->next; return r; }
+{
+   const_iterator r(e);
+   e = e->next;
+   return r;
+}
 inline MoveSequence::const_iterator&  MoveSequence::const_iterator::operator--()
-{ e = e->prev; return *this; }
+{
+   e = e->prev;
+   return *this;
+}
 inline MoveSequence::const_iterator   MoveSequence::const_iterator::operator--(int)
-{ const_iterator r(e); e = e->prev; return r; }
+{
+   const_iterator r(e);
+   e = e->prev;
+   return r;
+}
 inline MoveSequence::const_iterator   MoveSequence::const_iterator::group_begin() const
 {
    const Entry *e0 = e;

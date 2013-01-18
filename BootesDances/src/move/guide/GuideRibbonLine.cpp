@@ -42,13 +42,30 @@ bool GuideRibbonLine::idealize(::pb::Guide* pOut) const
 
    return true;
 }
-/* realize
-   ::pb::GuideRibbonLine line;
-   google::protobuf::io::ArrayInputStream in(pOut->code().data(), pOut->code().size());
-   if (! google::protobuf::TextFormat::Parse(&in, &line)) {
+
+bool GuideRibbonLine::realize(const ::pb::Guide* pIn)
+{
+   if (pIn->type().compare(GuideRibbonLine::TYPE) != 0) { return false; }
+
+   ::pb::GuideRibbonLine idea;
+   google::protobuf::io::ArrayInputStream in(pIn->code().data(), pIn->code().size());
+   if (! google::protobuf::TextFormat::Parse(&in, &idea)) {
       return false;
    }
-*/
+
+   if (idea.points_size() < 1) { return false; }
+
+   IGuide::t_points points;
+   points.resize(idea.points_size());
+   for (size_t i=0; i<points.size(); ++i) {
+      points[i].x = idea.points(i).x();
+      points[i].y = idea.points(i).y();
+      points[i].z = 0;
+   }
+   this->init(points);
+
+   return true;
+}
 
 void GuideRibbonLine::init(float x0, float y0, float x1, float y1)
 {

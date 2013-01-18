@@ -1,38 +1,24 @@
 #include "MoveRealizer.h"
 #include "Move.h"
 #include "guide/GuideRealizer.h"
-#include "guide/GuideRibbonLine.h"
-#include "guide/GuideRibbonEllipse.h"
-#include "guide/GuideRibbonSpline.h"
+#include "motion/MotionRealizer.h"
 
-namespace {
-GuideRibbonLine* RealizeLine(const pb::Move::Line* idea);
-//pb::Move* IdealizeLine(const MoveModelLine* rea);
-
-GuideRibbonEllipse* RealizeEllipse(const pb::Move::Ellipse* idea);
-//pb::Move* IdealizeEllipse(const MoveModelEllipse* rea);
-
-GuideRibbonSpline* RealizeSpline(const pb::Move::Spline* idea);
-//pb::Move* IdealizeSpline(const MoveModelSpline* rea);
-}
 
 bool MoveRealizer::Realize(IMove** ppOut, const pb::Move* pIn)
 {
-   IGuide* guide = NULL;
-   if (pIn->has_line()) {
-      guide = RealizeLine(&pIn->line());
-   } else if (pIn->has_ellipse()) {
-      guide = RealizeEllipse(&pIn->ellipse());
-   } else if (pIn->has_spline()) {
-      guide = RealizeSpline(&pIn->spline());
+   IGuide* pGuide = NULL;
+   IMotion* pMotion = NULL;
+   if (! GuideRealizer::Realize(&pGuide, &pIn->guide())) { return false; }
+   if (pIn->has_motion()) {
+      if (! MotionRealizer::Realize(&pMotion, &pIn->motion())) { return false; }
    } else {
-      return false;
+      if (! MotionRealizer::Realize(&pMotion, NULL)) { return false; }
    }
 
    Move* move = new Move();
-   if (guide) {
-      move->setGuide(guide);
-   }
+   move->setGuide(pGuide);
+   move->setMotion(pMotion);
+
    move->setTime(pIn->time0(), pIn->time1());
    move->setUuid(pIn->uuid().c_str());
 
@@ -40,10 +26,15 @@ bool MoveRealizer::Realize(IMove** ppOut, const pb::Move* pIn)
    return true;
 }
 
-bool MoveRealizer::Idealize(::pb::Move2* pOut, const IMove* pIn)
+bool MoveRealizer::Idealize(::pb::Move* pOut, const IMove* pIn)
 {
    if (pIn->getGuide()) {
       if (! GuideRealizer::Idealize(pOut->mutable_guide(), pIn->getGuide())) {
+         return false;
+      }
+   }
+   if (pIn->getMotion()) {
+      if (! MotionRealizer::Idealize(pOut->mutable_motion(), pIn->getMotion())) {
          return false;
       }
    }
@@ -55,6 +46,7 @@ bool MoveRealizer::Idealize(::pb::Move2* pOut, const IMove* pIn)
    return true;
 }
 
+#if 0
 namespace {
 
    template <typename IT, typename RT>
@@ -152,6 +144,7 @@ pb::Move* IdealizeEllipse(const GuideRibbonEllipse* rea)
 }
 */
 }
+#endif
 
 /**
  * Local Variables:

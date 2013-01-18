@@ -184,19 +184,17 @@ void GameView::onRender(double currentTime, int elapsedTime)
    IDirect3DDevice9* pDev = g_pFnd->getD3D9Device();
    if (pDev == NULL) { return; }
 
-   const ::pb::Stage* pStage = _pStageManager->getStage();
-   if (pStage == NULL) { return; }
+   if (! _pStageManager->isEnabled()) { return; }
 
    Scene scene = _pMoviePlayer->getScene(true);
    if (scene.texture() == NULL) { return; }
 
    pDev->EndScene();
-   onRender0(pDev, &scene, pStage, currentTime, elapsedTime);
+   onRender0(pDev, &scene, currentTime, elapsedTime);
    pDev->BeginScene();
 }
 
-void GameView::onRender0(IDirect3DDevice9* pDev, const Scene* scene, const ::pb::Stage* pStage,
-                        double currentTime, int elapsedTime)
+void GameView::onRender0(IDirect3DDevice9* pDev, const Scene* scene, double currentTime, int elapsedTime)
 {
    HRESULT hr;
    ::bootes::lib::util::Timer timer;

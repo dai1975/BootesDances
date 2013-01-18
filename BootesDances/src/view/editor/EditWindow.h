@@ -98,8 +98,8 @@ private:
    int _pen_main, _pen_sub;
    bool _isThumbTrack;
    float _rx0, _ry0;
-   ModelEditee _menu_editee;
-   IMoveModel* _copied_move;
+   MoveEditee _menu_editee;
+   IMove* _copied_move;
 
    CEGUI::Window*    _pFrame;
    PenWindow*   _pPenWin;
@@ -123,7 +123,7 @@ private:
    };
    int _teach_stage;
    ::bootes::cegui::DialogWindow *_pTeachDialog, *_pTeachResultDialog, *_pTeachContDialog;
-   const IMoveModel* _pTeachModel;
+   const IMove* _pTeachMove;
 
    enum {
       SIDE_WIDTH = 200,

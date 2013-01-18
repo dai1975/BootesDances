@@ -15,8 +15,8 @@ public:
    explicit MovePresenterImpl(bool editable);
    virtual ~MovePresenterImpl();
 
-   virtual bool init(MoveSequence*, IMoveEditor*);
-   void clear();
+   virtual bool initStage(MoveSequence*, IMoveEditor*);
+   //void clear();
 
  public:
    void onLostDevice();
@@ -24,10 +24,10 @@ public:
    void onRender(const Scene* scene, double currentTime, int elapsedTime);
 
  public:
-   virtual size_t getRenderedModels(std::vector<const IMoveModel*>*) const;
-   virtual bool   presentLocated(float rx, float ry, ModelEditee* o) const;
-   virtual bool   presentNearest(float rx, float ry, ModelEditee* o) const;
-   virtual bool   presentNearestEdge(float rx, float ry, ModelEditee* o) const;
+   virtual size_t getRenderedModels(std::vector<const IMove*>*) const;
+   virtual bool   presentLocated(float rx, float ry, MoveEditee* o) const;
+   virtual bool   presentNearest(float rx, float ry, MoveEditee* o) const;
+   virtual bool   presentNearestEdge(float rx, float ry, MoveEditee* o) const;
 
  protected:
    virtual void onEvent(const ::bootes::lib::framework::Event* ev);

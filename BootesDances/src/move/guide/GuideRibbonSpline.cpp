@@ -72,6 +72,31 @@ bool GuideRibbonSpline::idealize(::pb::Guide* pOut) const
    return true;
 }
 
+bool GuideRibbonSpline::realize(const ::pb::Guide* pIn)
+{
+   if (pIn->type().compare(GuideRibbonSpline::TYPE) != 0) { return false; }
+
+   ::pb::GuideRibbonSpline idea;
+   google::protobuf::io::ArrayInputStream in(pIn->code().data(), pIn->code().size());
+   if (! google::protobuf::TextFormat::Parse(&in, &idea)) {
+      return false;
+   }
+
+   if (idea.points_size() < 3) { return false; }
+   if (idea.points_size() % 2 != 1) { return false; }
+
+   IGuide::t_points points;
+   points.resize(idea.points_size());
+   for (size_t i=0; i<points.size(); ++i) {
+      points[i].x = idea.points(i).x();
+      points[i].y = idea.points(i).y();
+      points[i].z = 0;
+   }
+   this->init(points);
+
+   return true;
+}
+
 bool GuideRibbonSpline::setOnlinePoint(size_t idx, float x, float y)
 {
    D3DXVECTOR3 p(x,y,0);

@@ -3,12 +3,11 @@
 
 #include "../../include.h"
 #include "../../move/MoveSequence.h"
+#include "Stage.h"
 #include "MoviePlayer.h"
 #include "MovePresenterImpl.h"
 #include "MoveEditorImpl.h"
 #include "WiimoteHandlerImpl.h"
-#include "Stage.h"
-#include <bootes/dances/proto/stage.pb.h>
 #include <bootes/dances/EvMovie.h>
 #include <bootes/dances/EvStage.h>
 
@@ -20,8 +19,9 @@ class StageManagerProxy: public ::bootes::lib::framework::EventListener
    bool init(const TCHAR* dir, bool editable, D3DPOOL pool);
 
  public:
-   inline bool hasStage() const { return (_pStage != NULL); }
-   inline ::pb::Stage* getStage() const { return _pStage; }
+   inline bool isEnabled() const { return _enabled; }
+   //inline ::pb::Stage* getStage() const { return _pStage; }
+   IMove* createMove(IGuide* p) const;
    inline ISceneSequencer*   getSceneSequencer() { return _pMoviePlayer; }
    inline IMovePresenter*    getMovePresenter()  { return _pMovePresenter; }
    inline IMoveEditor*       getMoveEditor()     { return _pMoveEditor; }
@@ -29,7 +29,7 @@ class StageManagerProxy: public ::bootes::lib::framework::EventListener
 
    inline MoviePlayer*       getMoviePlayer()       { return _pMoviePlayer; }
    inline MovePresenterImpl* getMovePresenterImpl() { return _pMovePresenter; }
-   inline MoveSequence*      getMoveSequence()      { return &_moves; }
+   inline MoveSequence*      getMoveSequence()      { return (_pStage)? &_pStage->seq: NULL; }
 
  public:
    static DWORD WINAPI ThreadProc(LPVOID);
@@ -56,7 +56,7 @@ class StageManagerProxy: public ::bootes::lib::framework::EventListener
    void doSeek(const EvSeekMovie*);
 
  private:
-   void clear();
+   bool initStage();
 
    HANDLE _thread_handle;
    DWORD  _thread_id;
@@ -66,13 +66,15 @@ class StageManagerProxy: public ::bootes::lib::framework::EventListener
    ::bootes::lib::framework::Event *_command;
 
    std::basic_string< TCHAR > _dir;
-   pb::Stage* _pStage;
+   //pb::Stage2* _pStage;
+   bool _enabled;
 
-   MoveSequence        _moves;
-   MoviePlayer*        _pMoviePlayer;
-   MovePresenterImpl*  _pMovePresenter;
-   MoveEditorImpl*     _pMoveEditor;
-   WiimoteHandlerImpl* _pWiimoteHandler;
+   //MoveSequence        _moves;
+   Stage              *_pStage;
+   MoviePlayer        *_pMoviePlayer;
+   MovePresenterImpl  *_pMovePresenter;
+   MoveEditorImpl     *_pMoveEditor;
+   WiimoteHandlerImpl *_pWiimoteHandler;
 };
 
 #endif

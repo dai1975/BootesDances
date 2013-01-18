@@ -124,21 +124,23 @@ void MoveRendererPlay::onRender(const Scene* scene, const MoveSequence* moves, d
   }
 
    for (MoveSequence::const_iterator i=i0; i!=i1; ) {
-      MoveSequence::const_iterator g0 = i;
-      MoveSequence::const_iterator g1 = i.group_end();
+      MoveSequence::const_iterator j0 = i;
+      MoveSequence::const_iterator j1 = i.group_end();
       size_t n = 0;
-      for (i=g0; i!=g1; ++i) { ++n; }
+      for (i=j0; i!=j1; ++i) { ++n; }
 
-      const IMoveModel* model = *g0;
       // 開始時刻前の Move は縮小表示
       float scale = 1.0f;
-      if (t0 < model->getBeginTime()) {
-         float dt = (float)model->getBeginTime() - t0;
-         scale = 1.0f - (dt / interval);
-         if (scale < 0.0f) {
-            scale = 0.0f;
-         } else if (1.0f < scale) {
-            scale = 1.0f;
+      {
+         const IMove* pMove = *j0;
+         if (t0 < pMove->getBeginTime()) {
+            float dt = (float)pMove->getBeginTime() - t0;
+            scale = 1.0f - (dt / interval);
+            if (scale < 0.0f) {
+               scale = 0.0f;
+            } else if (1.0f < scale) {
+               scale = 1.0f;
+            }
          }
       }
 
@@ -146,51 +148,56 @@ void MoveRendererPlay::onRender(const Scene* scene, const MoveSequence* moves, d
       {
          std::vector< const std::vector< D3DXVECTOR3 >* > vpoints(n);
          size_t vi = 0;
-         for (MoveSequence::const_iterator g=g0; g!=g1; ++g) {
-            const MoveModel* m = static_cast< const MoveModel* >(*g0);
-            vpoints[vi++] = &m->getPlayPoints();
+         for (MoveSequence::const_iterator j=j0; j!=j1; ++j) {
+            const IGuide* pGuide = (*j)->getGuide();
+            if (pGuide) {
+               vpoints[vi++] = &pGuide->getPlayPoints();
+            }
          }
          center = GetCenter(width, height, vpoints);
       }
 
       //描画
-      for (MoveSequence::const_iterator g=g0; g!=g1; ++g) {
-         const MoveModel* m = static_cast< const MoveModel* >(*g);
+      for (MoveSequence::const_iterator j=j0; j!=j1; ++j) {
+         const IMove*   pMove   = *j;
+         const IGuide*  pGuide  = pMove->getGuide();
+         const IMotion* pMotion = pMove->getMotion();
          std::vector< TriangleVertex > vtx;
          DWORD color;
 
-         { //モデル描画
-            const std::vector< D3DXVECTOR3 >& points = m->getPlayPoints();
-            switch (m->getMotionTestState()) {
-            case MoveModel::MOTION_TEST_FAILED:
-               color = D3DCOLOR_ARGB(128,255,0,0);
-               break;
-            default:
-               {
-                  unsigned char a = static_cast<int>((255 * scale));
-                  color = D3DCOLOR_ARGB(255-a,0,0,0);
+         if (pGuide) { //モデル描画
+            color = D3DCOLOR_ARGB(0,0,0,0);
+            const std::vector< D3DXVECTOR3 >& points = pGuide->getPlayPoints();
+            if (pMotion) {
+               switch (pMotion->getTestState()) {
+               case IMotion::TEST_FAILED:
+                  color = D3DCOLOR_ARGB(128,255,0,0);
+                  break;
+               default:
+                  {
+                     unsigned char a = static_cast<int>((255 * scale));
+                     color = D3DCOLOR_ARGB(255-a,0,0,0);
+                  }
+                  break;
                }
-               break;
             }
             pointsToTriangles(vtx, points, width, height, color);
             scaleVertex(vtx, center, scale);
             drawTriangles(pDev, vtx, TEX_RIBBON, BLEND_DIFFUSEALPHA_TEXALPHA);
          }
 
-         { //マーカー描画
+         if (pGuide) { //マーカー描画
             color = D3DCOLOR_ARGB(255, 255, 255, 0);
-            switch (m->getMotionTeachState()) {
-            case MoveModel::MOTION_TEACH_TEACHING:
-               color = D3DCOLOR_ARGB(255, 255, 0, 0);
-            default:
-               {
-                  D3DXVECTOR3 v = m->getPlayPointAt(scene->clock().clock);
-                  getMarkerTriangles(vtx, v, width, height, color);
-                  scaleVertex(vtx, center, scale);
-                  drawTriangles(pDev, vtx, TEX_MARKER, BLEND_MODULATE_TEXALPHA);
+            if (pMotion) {
+               switch (pMotion->getTeachState()) {
+               case IMotion::TEACH_TEACHING:
+                  color = D3DCOLOR_ARGB(255, 255, 0, 0);
                }
-               break;
             }
+            D3DXVECTOR3 v = pGuide->getPlayPointAt(scene->clock().clock);
+            getMarkerTriangles(vtx, v, width, height, color);
+            scaleVertex(vtx, center, scale);
+            drawTriangles(pDev, vtx, TEX_MARKER, BLEND_MODULATE_TEXALPHA);
          }
       }
    };

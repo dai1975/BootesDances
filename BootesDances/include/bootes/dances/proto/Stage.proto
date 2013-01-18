@@ -1,4 +1,3 @@
-import "bootes/dances/proto/Motion.proto";
 package pb;
 
 message Point {
@@ -6,56 +5,41 @@ message Point {
   required float y = 2;
 }
 
+message Guide {
+  required string type = 1;
+  required bytes  code = 10;
+}
+
+message Motion {
+  required string type = 1;
+  required bytes  code = 10;
+
+  message Accel {
+    required float x = 1;
+    required float y = 2;
+    required float z = 3;
+  }
+  message Gyro {
+    required float yaw   = 1;
+    required float pitch = 2;
+    required float roll  = 3;
+  }
+}
+
 message Move {
-  required string uuid = 1;
-  required int64 time0 = 2; //100ns
-  required int64 time1 = 3; //100ns
-  required bool  chainnext = 4;
+  required string uuid  = 1;
+  required int64  time0 = 2; //100ns
+  required int64  time1 = 3; //100ns
+  required bool   chainnext = 4;
 
-  repeated Motion motions = 10;
-
-  message Line {
-    repeated Point points = 1;
-  } optional Line line = 100;
-
-  message Ellipse {
-    required Point center = 1;
-    required Point radius = 2;
-    required float angle0 = 3;
-    required float angle1 = 4;
-    required bool  direction = 5;
-  } optional Ellipse ellipse = 101;
-
-  message Spline {
-    repeated Point points = 1;
-  } optional Spline spline = 102;
+  required Guide  guide  = 10;
+  optional Motion motion = 11;
 }
 
 message Stage {
   required int32    version   = 1;
   required string   name      = 2;
   required string   moviepath = 3;
-  required bool     hflip     = 4;
+
   repeated Move moves  = 10;
-}
-
-//--------------------------------------------------
-message Guide {
-  required string type = 1;
-  required bytes  code = 2;
-}
-message Move2 {
-  required string uuid = 1;
-  required int64 time0 = 2; //100ns
-  required int64 time1 = 3; //100ns
-  required bool  chainnext = 4;
-
-  required Guide guide = 10;
-}
-
-message Stage2 {
-  required int32    version   = 1;
-  required string   name      = 2;
-  required string   moviepath = 3;
-  repeated Move2 moves  = 10;
 }

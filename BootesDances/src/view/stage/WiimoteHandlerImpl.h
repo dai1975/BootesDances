@@ -15,11 +15,11 @@ public:
    WiimoteHandlerImpl();
    virtual ~WiimoteHandlerImpl();
 
-   bool init(MoveSequence*);
-   void clear();
+   bool initStage(MoveSequence*);
+   //void clear();
 
-   virtual void teachClear(const IMoveModel*);
-   virtual void teachBegin(const IMoveModel*);
+   virtual void teachClear(const IMove*);
+   virtual void teachBegin(const IMove*);
    virtual void teachCommit(bool succeed);
    virtual void teachRollback();
 
@@ -42,10 +42,10 @@ private:
    void testClear();
 
    MoveSequence *_pMoves;
-   MoveModel* _pTestMove;
+   IMove* _pTestMove;
    TEST_MODE _test_mode;
    //MODE _ready_mode;
-   MoveModel* _pTeachMove;
+   IMove* _pTeachMove;
    bool _play;
 };
 

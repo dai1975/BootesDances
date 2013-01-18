@@ -3,7 +3,6 @@
 
 #include "../../../include.h"
 #include "MoveRenderer.h"
-#include <bootes/dances/EvMovie.h>
 #include <vector>
 
 class MoveRendererPlay: public MoveRenderer

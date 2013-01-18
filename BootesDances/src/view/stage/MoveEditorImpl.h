@@ -11,34 +11,33 @@ public:
    explicit MoveEditorImpl();
    virtual ~MoveEditorImpl();
 
-   bool init(MoveSequence*);
-   void clear();
+   bool initStage(MoveSequence*);
 
 public:
-   virtual size_t getModels(std::vector< const IMoveModel* >* pRet);
-   virtual bool addModel(IMoveModel*, __int64 t0, __int64 t1);
+   virtual size_t getModels(std::vector< const IMove* >* pRet);
+   virtual bool addModel(IMove*, __int64 t0, __int64 t1);
 
-   virtual bool isChainPrev(const IMoveModel*) const;
-   virtual bool isChainNext(const IMoveModel*) const;
-   virtual bool chainPrev(const IMoveModel*, bool chain);
-   virtual bool chainNext(const IMoveModel*, bool chain);
+   virtual bool isChainPrev(const IMove*) const;
+   virtual bool isChainNext(const IMove*) const;
+   virtual bool chainPrev(const IMove*, bool chain);
+   virtual bool chainNext(const IMove*, bool chain);
 
    virtual void editClear();
 
-   virtual bool editeeSelect(const ModelEditee&);
-   virtual bool editeeSelected(ModelEditee*) const;
+   virtual bool editeeSelect(const MoveEditee&);
+   virtual bool editeeSelected(MoveEditee*) const;
    virtual bool editeeDeleteSelected();
 
    virtual bool editBegin();
-   virtual bool editing(ModelEditee*, IMoveModel**) const;
+   virtual bool editing(MoveEditee*, IMove**) const;
    virtual bool editCommit();
    virtual void editRollback();
 
 private:
    MoveSequence* _moves;
-   ModelEditee _select;
-   ModelEditee _edit_src;
-   IMoveModel *_edit_model;
+   MoveEditee _select;
+   MoveEditee _edit_src;
+   IMove *_edit_move;
 };
 
 #endif

@@ -14,8 +14,8 @@ public:
    virtual IMotion* clone() const;
 
    static const std::string TYPE;
-//   virtual bool marshal(::pb::Motion2* out) const;
-//   virtual bool unmarshal(const ::pb::Motion* in);
+   virtual bool idealize(::pb::Motion* pOut) const;
+   virtual bool realize(const ::pb::Motion* pIn);
 
    virtual void teachClear(); //!< モーション定義をクリアする。
 

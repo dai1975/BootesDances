@@ -7,7 +7,7 @@
 class MoveRealizer
 {
 public:
-   static bool Idealize(::pb::Move2*, const IMove*);
+   static bool Idealize(::pb::Move*, const IMove*);
    static bool Realize(IMove**, const pb::Move*);
 };
 

@@ -22,18 +22,18 @@ public:
    virtual void onRender(const Scene* scene, const MoveSequence* moves, double currentTime, int elapsedTime);
 
 public:
-   size_t getRenderedModels(std::vector<const IMoveModel*>* v) const;
-   bool presentLocated(float rx, float ry, ModelEditee* o) const;
-   bool presentNearest(float rx, float ry, ModelEditee* o) const;
-   bool presentNearestEdge(float rx, float ry, ModelEditee* o) const;
+   size_t getRenderedModels(std::vector<const IMove*>* v) const;
+   bool presentLocated(float rx, float ry, MoveEditee* o) const;
+   bool presentNearest(float rx, float ry, MoveEditee* o) const;
+   bool presentNearestEdge(float rx, float ry, MoveEditee* o) const;
 
 private:
    struct Rendered {
-      const IMoveModel* model;
+      const IMove* pMove;
       std::vector< TriangleVertex > ribbon_vtx;
       std::vector< PointVertex > edit_vtx;
-      Rendered(): model(NULL) { }
-      Rendered(const Rendered& r):model(r.model) {
+      Rendered(): pMove(NULL) { }
+      Rendered(const Rendered& r): pMove(r.pMove) {
          std::copy(r.ribbon_vtx.begin(), r.ribbon_vtx.end(), ribbon_vtx.begin());
          std::copy(r.edit_vtx.begin(), r.edit_vtx.end(), edit_vtx.begin());
       }

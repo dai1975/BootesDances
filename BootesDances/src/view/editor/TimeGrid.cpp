@@ -26,7 +26,7 @@ TimeGrid::TimeGrid(const CEGUI::String& type,
    _min_resolution = 20;
    _videoInfo.size_100ns = 0;
 
-   _menuModel = NULL;
+   _menuMove = NULL;
 }
 
 TimeGrid::~TimeGrid()
@@ -185,54 +185,54 @@ __int64 TimeGrid::getTimeAt(float x)
    return static_cast< __int64 >(t);
 }
 
-CEGUI::Rect TimeGrid::getCellRect(const IMoveModel* model)
+CEGUI::Rect TimeGrid::getCellRect(const IMove* move)
 {
    const CEGUI::Size size = getPixelSize();
    float w = size.d_width;
    float h = size.d_height;
 
-   float t0 = ((float)model->getBeginTime()) / (10*1000*1000);
-   float t1 = ((float)model->getEndTime()) / (10*1000*1000);
+   float t0 = ((float)move->getBeginTime()) / (10*1000*1000);
+   float t1 = ((float)move->getEndTime()) / (10*1000*1000);
    float px0 = 0 + (t0 * PIXEL_GRID_X) / _resolution;
    float px1 = 0 + (t1 * PIXEL_GRID_X) / _resolution;
 
    return CEGUI::Rect(px0, AXIS_HEIGHT, px1, AXIS_HEIGHT+h);
 }
 
-const IMoveModel* TimeGrid::getModel(float x, float y)
+const IMove* TimeGrid::getMove(float x, float y)
 {
-   if (! g_pGame->getStageManager()->hasStage()) { return NULL; }
+   if (! g_pGame->getStageManager()->isEnabled()) { return NULL; }
 
    CEGUI::Point point(x,y);
-   std::vector< const IMoveModel* > models;
-   g_pGame->getStageManager()->getMoveEditor()->getModels(&models);
-   for (size_t i=0; i<models.size(); ++i) {
-      CEGUI::Rect r = getCellRect(models[i]);
+   std::vector< const IMove* > moves;
+   g_pGame->getStageManager()->getMoveEditor()->getModels(&moves);
+   for (size_t i=0; i<moves.size(); ++i) {
+      CEGUI::Rect r = getCellRect(moves[i]);
       if (r.isPointInRect(point)) {
-         return models[i];
+         return moves[i];
       }
    }
    return NULL;
 }
-const IMoveModel* TimeGrid::getModelEdge(float x, float y, bool* left)
+const IMove* TimeGrid::getMoveEdge(float x, float y, bool* left)
 {
-   if (! g_pGame->getStageManager()->hasStage()) { return NULL; }
+   if (! g_pGame->getStageManager()->isEnabled()) { return NULL; }
 
-   std::vector< const IMoveModel* > models;
-   g_pGame->getStageManager()->getMoveEditor()->getModels(&models);
+   std::vector< const IMove* > moves;
+   g_pGame->getStageManager()->getMoveEditor()->getModels(&moves);
 
-   const IMoveModel* p0 = NULL;
+   const IMove* p0 = NULL;
    bool l0 = true;
    float x0;
-   for (size_t i=0; i<models.size(); ++i) {
-      CEGUI::Rect r = getCellRect(models[i]);
+   for (size_t i=0; i<moves.size(); ++i) {
+      CEGUI::Rect r = getCellRect(moves[i]);
       if (y < r.d_top || r.d_bottom < y) { continue; }
       //近傍に複数の境界線がある場合は、
       //同じ側にある場合は近い方を選び、異なる側にある場合は選択不可とする
       if (r.d_left - 5 <= x && x < r.d_left) { //後方近傍に帯の左側がある
          if (p0 != NULL && x0 < x) { return NULL; } //前方後方ともにあるので選択しない
          if (p0 == NULL) { //すでに存在していた場合、それは必ず前方。そちらを優先。
-            p0 = models[i];
+            p0 = moves[i];
             l0 = true;
             x0 = r.d_left;
          }
@@ -240,7 +240,7 @@ const IMoveModel* TimeGrid::getModelEdge(float x, float y, bool* left)
       if (r.d_left <= x && x < r.d_left + 5) { //前方近傍に帯の左側がある
          if (p0 != NULL && x < x0) { return NULL; }
          if (true) { //自分に近い方、すなわち後方を優先
-            p0 = models[i];
+            p0 = moves[i];
             l0 = true;
             x0 = r.d_left;
          }
@@ -248,7 +248,7 @@ const IMoveModel* TimeGrid::getModelEdge(float x, float y, bool* left)
       if (r.d_right - 5 <= x && x < r.d_right) {
          if (p0 != NULL && x0 < x) { return NULL; } //後方近傍に帯の右側がある
          if (p0 == NULL) {
-            p0 = models[i];
+            p0 = moves[i];
             l0 = false;
             x0 = r.d_right;
          }
@@ -256,7 +256,7 @@ const IMoveModel* TimeGrid::getModelEdge(float x, float y, bool* left)
       if (r.d_right <= x && x < r.d_right + 5) { //前方近傍に帯の左側がある
          if (p0 != NULL && x < x0) { return NULL; }
          if (true) {
-            p0 = models[i];
+            p0 = moves[i];
             l0 = false;
             x0 = r.d_right;
          }
@@ -269,7 +269,7 @@ const IMoveModel* TimeGrid::getModelEdge(float x, float y, bool* left)
 
 void TimeGrid::drawGrid(const CEGUI::Rect& rect)
 {
-   if (! g_pGame->getStageManager()->hasStage()) { return; }
+   if (! g_pGame->getStageManager()->isEnabled()) { return; }
 
    {
       float w = rect.d_right - rect.d_left;
@@ -278,31 +278,31 @@ void TimeGrid::drawGrid(const CEGUI::Rect& rect)
       _mygeo->appendBoard(rect, trect, color, _tex_grid);
    }
 
-   std::vector< const IMoveModel* > models;
+   std::vector< const IMove* > moves;
    IMoveEditor* pEditor = g_pGame->getStageManager()->getMoveEditor();
    ISceneSequencer* pSceneSeq = g_pGame->getStageManager()->getSceneSequencer();
-   pEditor->getModels(&models);
+   pEditor->getModels(&moves);
 
    {
-      IMoveModel* pEditModel;
-      ModelEditee srcEditee;
-      if (! pEditor->editing(&srcEditee, &pEditModel)) {
-         srcEditee.model = NULL;
-         pEditModel = NULL;
+      IMove* pEditMove;
+      MoveEditee srcEditee;
+      if (! pEditor->editing(&srcEditee, &pEditMove)) {
+         srcEditee.pMove = NULL;
+         pEditMove = NULL;
       }
 
-      for (size_t i=0; i<models.size(); ++i) {
-         CEGUI::Rect pos = getCellRect(models[i]);
+      for (size_t i=0; i<moves.size(); ++i) {
+         CEGUI::Rect pos = getCellRect(moves[i]);
          CEGUI::Rect tpos(0.0f, 0.0f, 1.0f, 1.0f);
          CEGUI::colour color(0.7f, 0.7f, 0.7f);
-         if (models[i] == srcEditee.model) {
+         if (moves[i] == srcEditee.pMove) {
             color = CEGUI::colour(1.0f, 1.0f, 1.0f);
          }
          _mygeo->appendBoard(pos, tpos, color, _tex_timecell);
       }
 
-      if (pEditModel != NULL) {
-         CEGUI::Rect pos = getCellRect(pEditModel);
+      if (pEditMove != NULL) {
+         CEGUI::Rect pos = getCellRect(pEditMove);
          CEGUI::Rect tpos(0.0f, 0.0f, 1.0f, 1.0f);
          CEGUI::colour color(1.0f, 0.0f, 0.7f);
          _mygeo->appendBoard(pos, tpos, color, _tex_timecell);
@@ -438,18 +438,18 @@ bool TimeGrid::onMouseDown(const CEGUI::EventArgs& e_)
    if (pEditor == NULL) { return true; }
 
    if (e.button == CEGUI::LeftButton && e.clickCount == 1) {
-      const IMoveModel* pModel = getModelEdge(x, y, &_edit_left);
-      if (pModel != NULL) {
+      const IMove* pMove = getMoveEdge(x, y, &_edit_left);
+      if (pMove != NULL) {
          _edit_edge = true;
          CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseEsWeCursor");
       } else {
          _edit_edge = false;
          CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
-         pModel = getModel(x,y);
+         pMove = getMove(x,y);
       }
-      if (pModel) {
-         ModelEditee editee;
-         editee.model = pModel;
+      if (pMove) {
+         MoveEditee editee;
+         editee.pMove = pMove;
          editee.joint = -1;
          if (! pEditor->editeeSelect(editee)) { return true; }
          if (! pEditor->editBegin()) { return true; }
@@ -457,9 +457,9 @@ bool TimeGrid::onMouseDown(const CEGUI::EventArgs& e_)
       }
 
    } else if (e.button == CEGUI::RightButton && e.clickCount == 1) {
-      if (_menuModel) { hideMenu(); }
-      _menuModel = getModel(x, y);
-      if (_menuModel != NULL) {
+      if (_menuMove) { hideMenu(); }
+      _menuMove = getMove(x, y);
+      if (_menuMove != NULL) {
          showMenu(x,y);
       }
    }
@@ -478,45 +478,45 @@ bool TimeGrid::onMouseMove(const CEGUI::EventArgs& e_)
    IMoveEditor* pEditor = g_pGame->getStageManager()->getMoveEditor();
    if (pEditor == NULL) { return true; }
 
-   IMoveModel* pModel;
-   ModelEditee editee;
-   if (pEditor->editing(&editee, &pModel)) {
+   IMove* pMove;
+   MoveEditee editee;
+   if (pEditor->editing(&editee, &pMove)) {
       __int64 t0, t1, dt;
       t1 = getTimeAt(x);
       dt = t1 - _edit_t0;
-      editee.model->getTime(&t0, &t1);
+      editee.pMove->getTime(&t0, &t1);
       if (! _edit_edge) {
-         pModel->setTime(t0+dt, t1+dt);
+         pMove->setTime(t0+dt, t1+dt);
 
       } else {
-         std::vector< const IMoveModel* > models;
-         pEditor->getModels(&models);
+         std::vector< const IMove* > moves;
+         pEditor->getModels(&moves);
          size_t index;
-         for (index=0; index<models.size(); ++index) {
-            if (models[index] == editee.model) {
+         for (index=0; index<moves.size(); ++index) {
+            if (moves[index] == editee.pMove) {
                break;
             }
          }
          if (_edit_left) {
             t0 += dt;
             if (0 < index) {
-               __int64 edge = models[index-1]->getEndTime();
+               __int64 edge = moves[index-1]->getEndTime();
                if (t0 < edge) { t0 = edge; }
             }
          } else {
             t1 += dt;
-            if (index < models.size()-1) {
-               __int64 edge = models[index+1]->getBeginTime();
+            if (index < moves.size()-1) {
+               __int64 edge = moves[index+1]->getBeginTime();
                if (edge < t1) { t1 = edge; }
             }
          }
-         pModel->setTime(t0, t1);
+         pMove->setTime(t0, t1);
       }
 
    } else {
       bool left;
-      const IMoveModel* pModel = getModelEdge(x, y, &left);
-      if (pModel != NULL) {
+      const IMove* pMove = getMoveEdge(x, y, &left);
+      if (pMove != NULL) {
          CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseEsWeCursor");
       } else {
          CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
@@ -539,9 +539,9 @@ bool TimeGrid::onMouseUp(const CEGUI::EventArgs& e_)
    if (pEditor == NULL) { return true; }
 
    if (e.button == CEGUI::LeftButton && e.clickCount == 1) {
-      IMoveModel* pModel;
-      ModelEditee editee;
-      if (! pEditor->editing(&editee, &pModel)) { return true; }
+      IMove* pMove;
+      MoveEditee editee;
+      if (! pEditor->editing(&editee, &pMove)) { return true; }
       pEditor->editCommit();
    }
    return true;
@@ -549,19 +549,19 @@ bool TimeGrid::onMouseUp(const CEGUI::EventArgs& e_)
 
 bool TimeGrid::showMenu(float x, float y)
 {
-   if (_menuModel == NULL) { return true; }
+   if (_menuMove == NULL) { return true; }
 
    IMoveEditor* pEditor = g_pGame->getStageManager()->getMoveEditor();
    if (pEditor == NULL) { return true; }
 
-   std::vector< const IMoveModel* > models;
-   pEditor->getModels(&models);
+   std::vector< const IMove* > moves;
+   pEditor->getModels(&moves);
 
    size_t index;
-   for (index = 0; index<models.size(); ++index) {
-      if (models[index] == _menuModel) { break; }
+   for (index = 0; index<moves.size(); ++index) {
+      if (moves[index] == _menuMove) { break; }
    }
-   if (index == models.size()) { return true; }
+   if (index == moves.size()) { return true; }
 
    {
       CEGUI::WindowManager& wm = CEGUI::WindowManager::getSingleton();
@@ -570,16 +570,16 @@ bool TimeGrid::showMenu(float x, float y)
          wm.getWindow("TimeGrid/ContextMenu/ChainPrev")->setEnabled(false);
          wm.getWindow("TimeGrid/ContextMenu/BreakPrev")->setEnabled(false);
       } else {
-         bool b = pEditor->isChainPrev(_menuModel);
+         bool b = pEditor->isChainPrev(_menuMove);
          wm.getWindow("TimeGrid/ContextMenu/ChainPrev")->setEnabled(!b);
          wm.getWindow("TimeGrid/ContextMenu/BreakPrev")->setEnabled(b);
       }
 
-      if (index+1 == models.size()) {
+      if (index+1 == moves.size()) {
          wm.getWindow("TimeGrid/ContextMenu/ChainNext")->setEnabled(false);
          wm.getWindow("TimeGrid/ContextMenu/BreakNext")->setEnabled(false);
       } else {
-         bool b = pEditor->isChainNext(_menuModel);
+         bool b = pEditor->isChainNext(_menuMove);
          wm.getWindow("TimeGrid/ContextMenu/ChainNext")->setEnabled(!b);
          wm.getWindow("TimeGrid/ContextMenu/BreakNext")->setEnabled(b);
       }
@@ -600,45 +600,45 @@ bool TimeGrid::showMenu(float x, float y)
 bool TimeGrid::hideMenu()
 {
    _gridMenu->hide();
-   _menuModel = NULL;
+   _menuMove = NULL;
    return true;
 }
 
 bool TimeGrid::onMenuChainPrev(const CEGUI::EventArgs&)
 {
-   if (_menuModel == NULL) { return true; }
+   if (_menuMove == NULL) { return true; }
    IMoveEditor* pEditor = g_pGame->getStageManager()->getMoveEditor();
    if (pEditor == NULL) { return true; }
 
-   pEditor->chainPrev(_menuModel, true);
+   pEditor->chainPrev(_menuMove, true);
    return false;
 }
 bool TimeGrid::onMenuChainNext(const CEGUI::EventArgs&)
 {
-   if (_menuModel == NULL) { return true; }
+   if (_menuMove == NULL) { return true; }
    IMoveEditor* pEditor = g_pGame->getStageManager()->getMoveEditor();
    if (pEditor == NULL) { return true; }
 
-   pEditor->chainNext(_menuModel, true);
+   pEditor->chainNext(_menuMove, true);
    return false;
 }
 
 bool TimeGrid::onMenuBreakPrev(const CEGUI::EventArgs&)
 {
-   if (_menuModel == NULL) { return true; }
+   if (_menuMove == NULL) { return true; }
    IMoveEditor* pEditor = g_pGame->getStageManager()->getMoveEditor();
    if (pEditor == NULL) { return true; }
 
-   pEditor->chainPrev(_menuModel, false);
+   pEditor->chainPrev(_menuMove, false);
    return false;
 }
 bool TimeGrid::onMenuBreakNext(const CEGUI::EventArgs&)
 {
-   if (_menuModel == NULL) { return true; }
+   if (_menuMove == NULL) { return true; }
    IMoveEditor* pEditor = g_pGame->getStageManager()->getMoveEditor();
    if (pEditor == NULL) { return true; }
 
-   pEditor->chainNext(_menuModel, false);
+   pEditor->chainNext(_menuMove, false);
    return false;
 }
 

@@ -1,5 +1,4 @@
 #include "MoveSequence.h"
-#include "../motion/WiimoteMotionSimple.h"
 
 MoveSequence::MoveSequence()
 {
@@ -20,13 +19,13 @@ size_t MoveSequence::size() const
    return n;
 }
 
-MoveSequence::iterator MoveSequence::search(const IMoveModel* m)
+MoveSequence::iterator MoveSequence::search(const IMove* m)
 {
    const MoveSequence* c = this;
    const_iterator i = c->search(m);
    return iterator( const_cast< Entry* >(i.e) );
 }
-MoveSequence::const_iterator MoveSequence::search(const IMoveModel* m) const
+MoveSequence::const_iterator MoveSequence::search(const IMove* m) const
 {
    const_iterator i = begin();
    for (; i != end(); ++i) {
@@ -131,89 +130,92 @@ std::pair<MoveSequence::const_iterator, MoveSequence::const_iterator > MoveSeque
    return ret;
 }
 
-bool MoveSequence::isChainPrev(iterator& i) const
+bool MoveSequence::isChainPrev(const iterator& i) const
 {
    const_iterator ci(i.e);
    return isChainPrev(ci);
 }
-bool MoveSequence::isChainNext(iterator& i) const
+bool MoveSequence::isChainNext(const iterator& i) const
 {
    const_iterator ci(i.e);
    return isChainNext(ci);
 }
-bool MoveSequence::isChainPrev(const_iterator& i) const
+bool MoveSequence::isChainPrev(const const_iterator& i) const
 {
    const Entry* e = i.e;
    if (i == begin() || e == NULL) { return false; }
    return (e->prev->group);
 }
-bool MoveSequence::isChainNext(const_iterator& i) const
+bool MoveSequence::isChainNext(const const_iterator& i) const
 {
    const Entry* e = i.e;
    if (i == end() || e == NULL) { return false; }
 
-   ++i;
-   if (i == end()) { return false; }
+   const_iterator j = i;
+   ++j;
+   if (j == end()) { return false; }
 
    return (e->group);
 }
 
-bool MoveSequence::chainPrev(iterator& i, bool chain)
+bool MoveSequence::chainPrev(const iterator& i, bool chain)
 {
-   Entry* e = i.e;
+   Entry* e = const_cast< Entry* >(i.e);
    if (i == begin() || e == NULL) { return false; }
 
    e->prev->group = chain;
    return true;
 }
-bool MoveSequence::chainNext(iterator& i, bool chain)
+bool MoveSequence::chainNext(const iterator& i, bool chain)
 {
-   Entry* e = i.e;
+   Entry* e = const_cast< Entry* >(i.e);
    if (i == end() || e == NULL) { return false; }
 
-   ++i;
-   if (i == end()) { return false; }
+   iterator j = i;
+   ++j;
+   if (j == end()) { return false; }
 
    e->group = chain;
    return true;
 }
 
-// Entry を削除する。削除された IMoveModel を返す。
-IMoveModel* MoveSequence::remove(iterator& i)
+// Entry を削除する。削除された IMove を返す。
+IMove* MoveSequence::remove(iterator& i)
 {
-   Entry* e = i.e;
+   Entry* e = const_cast< Entry* >(i.e);
    if (i == end() || e == NULL) { return false; }
 
    i.e->prev->next = i.e->next;
    i.e->next->prev = i.e->prev;
 
-   IMoveModel* r = i.e->model;
+   IMove* r = i.e->pMove;
    delete i.e;
+   i.e = NULL;
    return r;
 }
 
-// old を取り除き、rep を追加する。削除された IMoveModel を返す。
-IMoveModel* MoveSequence::replace(iterator& i, IMoveModel* rep)
+// old を取り除き、rep を追加する。削除された IMove を返す。
+IMove* MoveSequence::replace(iterator& i, IMove* rep)
 {
    if (i == end() || i.e == NULL) { return false; }
 
    __int64 t0,t1,s0,s1;
    rep->getTime(&t0, &t1);
-   rep->setUuid(i.e->model->getUuid());
+   rep->setUuid(i.e->pMove->getUuid());
 
    if (isChainPrev(i) || isChainNext(i)) {
       // 連結されている場合、前後のモデルをまたいでの移動は不可。
       if (i != begin()) {
-         i.e->prev->model->getTime(&s0, &s1);
+         i.e->prev->pMove->getTime(&s0, &s1);
          if (t0 < s1) { return NULL; }
       }
-      if (i.e->next->model != NULL) {
-         i.e->next->model->getTime(&s0, &s1);
+      if (i.e->next->pMove != NULL) {
+         i.e->next->pMove->getTime(&s0, &s1);
          if (s0 < t1) { return NULL; }
       }
       // 置き換え Model のリスト順序は変わらないので、Entry を再利用する
-      IMoveModel* old = i.e->model;
-      i.e->model = rep;
+      IMove* old = i.e->pMove;
+      i.e->pMove = rep;
       return old;
 
    } else {
@@ -223,17 +225,17 @@ IMoveModel* MoveSequence::replace(iterator& i, IMoveModel* rep)
       bool consist = true;
       {
          if (i != begin()) {
-            i.e->prev->model->getTime(&s0, &s1);
+            i.e->prev->pMove->getTime(&s0, &s1);
             if (t0 < s1) { consist = false; }
          }
-         if (consist && i.e->next->model != NULL) {
-            i.e->next->model->getTime(&s0, &s1);
+         if (consist && i.e->next->pMove != NULL) {
+            i.e->next->pMove->getTime(&s0, &s1);
             if (s0 < t1) { consist = false; }
          }
       }
       if (consist) { // 置き換え. Model のリスト順序は変わらない
-         IMoveModel* old = i.e->model;
-         i.e->model = rep;
+         IMove* old = i.e->pMove;
+         i.e->pMove = rep;
          return old;
 
       } else { // 位置が変わる。既存のエントリを外して新規に追加する。
@@ -242,8 +244,9 @@ IMoveModel* MoveSequence::replace(iterator& i, IMoveModel* rep)
          i.e->next->prev = i.e->prev;
 
          if (add(rep) != end()) {
-            IMoveModel* ret = i.e->model;
+            IMove* ret = i.e->pMove;
             delete i.e;
+            i.e = NULL;
             return ret;
          } else {
             i.e->prev->next = i.e;
@@ -254,8 +257,8 @@ IMoveModel* MoveSequence::replace(iterator& i, IMoveModel* rep)
    }
 }
 
-// IMoveModel 情報を消去する。登録してあった IMoveModel を返す。
-size_t MoveSequence::clear(std::vector< IMoveModel* >* ret)
+// IMove 情報を消去する。登録してあった IMove を返す。
+size_t MoveSequence::clear(std::vector< IMove* >* ret)
 {
    size_t n = 0;
    for (iterator i=begin(); i!=end(); ++i) { ++n; }
@@ -278,8 +281,8 @@ size_t MoveSequence::clear(std::vector< IMoveModel* >* ret)
    return n;
 }
 
-// 新たな IMoveModel を追加する。重なる場合は失敗し、偽を返す。
-MoveSequence::iterator MoveSequence::add(IMoveModel* m)
+// 新たな IMove を追加する。重なる場合は失敗し、偽を返す。
+MoveSequence::iterator MoveSequence::add(IMove* m)
 {
    __int64 t0,t1;
    m->getTime(&t0, &t1);
@@ -288,7 +291,7 @@ MoveSequence::iterator MoveSequence::add(IMoveModel* m)
    Entry* e;
    for (e = _head.next; e != &_tail; e = e->next) {
       __int64 s0,s1;
-      e->model->getTime(&s0, &s1);
+      e->pMove->getTime(&s0, &s1);
       if (t0 < s0) { break; }
    }
 
@@ -296,27 +299,28 @@ MoveSequence::iterator MoveSequence::add(IMoveModel* m)
    Entry* next = e;
 
    // check the previous Move and the next Move is not chained
-   if (prev->model != NULL) {
+   if (prev->pMove != NULL) {
       if (prev->group) { return end(); }
    }
    // check the new Move is not over the previous Move
-   if (prev->model != NULL) {
-      if (prev->model->timeOverlay(t0, t1)) { return end(); }
+   if (prev->pMove != NULL) {
+      if (prev->pMove->timeOverlay(t0, t1)) { return end(); }
    }
    // check the new Move is not over the next Move
-   if (next->model != NULL) {
-      if (next->model->timeOverlay(t0, t1)) { return end(); }
+   if (next->pMove != NULL) {
+      if (next->pMove->timeOverlay(t0, t1)) { return end(); }
    }
-
+   /* 追加する側でセットアップすべき
    {
       MoveModel* impl = static_cast< MoveModel* >(m);
       if (impl->getMotion(Motion::WIIMOTE) == NULL) {
          impl->setMotion(new WiimoteMotionSimple());
       }
    }
+   */
 
    e = new Entry();
-   e->model = m;
+   e->pMove = m;
    e->group = prev->group;
 
    e->prev = prev;

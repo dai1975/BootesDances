@@ -24,7 +24,7 @@ public:
    void onResetDevice();
 
 private:
-   void onRender0(IDirect3DDevice9* pDev, const Scene* scene, const ::pb::Stage* pStage, double currentTime, int elapsedTime);
+   void onRender0(IDirect3DDevice9* pDev, const Scene* scene, double currentTime, int elapsedTime);
 //   void clearBuffer();
 //   HRESULT createBuffer(IDirect3DTexture9*);
    void drawFps(IDirect3DDevice9*, const Scene*, int currentTime, int elapsedTime);

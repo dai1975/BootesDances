@@ -7,7 +7,7 @@ WiimoteHandlerImpl::WiimoteHandlerImpl()
    _pTeachMove = NULL;
    _play = false;
 
-   g_pFnd->getEventManager()->subscribe< EvLoadStageResult >(this);
+//   g_pFnd->getEventManager()->subscribe< EvLoadStageResult >(this);
    g_pFnd->getEventManager()->subscribe< EvMoviePlay >(this);
    g_pFnd->getEventManager()->subscribe< EvMoviePause >(this);
    g_pFnd->getEventManager()->subscribe< EvMovieSeek >(this);
@@ -17,7 +17,7 @@ WiimoteHandlerImpl::~WiimoteHandlerImpl()
 {
 }
 
-bool WiimoteHandlerImpl::init(MoveSequence* moves)
+bool WiimoteHandlerImpl::initStage(MoveSequence* moves)
 {
    _pMoves = moves;
    _pTestMove = NULL;
@@ -25,34 +25,39 @@ bool WiimoteHandlerImpl::init(MoveSequence* moves)
    _play = false;
    return true;
 }
-
+/*
 void WiimoteHandlerImpl::clear()
 {
    _pTestMove = NULL;
    _pTeachMove = NULL;
 }
-
+*/
 void WiimoteHandlerImpl::onSubscribe(::bootes::lib::framework::EventManager*) { }
 void WiimoteHandlerImpl::onUnsubscribe(::bootes::lib::framework::EventManager*) { }
 void WiimoteHandlerImpl::onEvent(const ::bootes::lib::framework::Event* ev)
 {
-   if (tryDispatch(ev, &WiimoteHandlerImpl::onLoad)) { return; }
+   if (false) { ; }
+   //if (tryDispatch(ev, &WiimoteHandlerImpl::onLoad)) { return; }
    else if (tryDispatch(ev, &WiimoteHandlerImpl::onPlay)) { return; }
    else if (tryDispatch(ev, &WiimoteHandlerImpl::onPause)) { return; }
    else if (tryDispatch(ev, &WiimoteHandlerImpl::onSeek)) { return; }
 }
-
+/*
 void WiimoteHandlerImpl::onLoad(const EvLoadStageResult* ev)
 {
    clear();
    _pTestMove = NULL;
 }
+*/
 
 void WiimoteHandlerImpl::onPlay(const EvMoviePlay* ev)
 {
    ::bootes::lib::framework::WiimoteEvent dummy;
    for (MoveSequence::iterator i = _pMoves->begin(); i != _pMoves->end(); ++i) {
-      static_cast< MoveModel* >(*i)->getMotion(Motion::WIIMOTE)->testClear();
+      IMotion* p = (*i)->getMotion();
+      if (p) {
+         p->testClear();
+      }
    }
    testClear();
    _play = true;
@@ -70,26 +75,34 @@ void WiimoteHandlerImpl::onSeek(const EvMovieSeek* ev)
    testClear();
 }
 
-void WiimoteHandlerImpl::teachClear(const IMoveModel* pMove)
+void WiimoteHandlerImpl::teachClear(const IMove* pMove)
 {
    MoveSequence::iterator i = _pMoves->search(pMove);
    if (i == _pMoves->end()) { return; }
 
-   MoveModel* p = static_cast< MoveModel* >(*i);
-   p->getMotion(Motion::WIIMOTE)->teachClear();
+   IMotion* p = (*i)->getMotion();
+   if (p) {
+      p->teachClear();
+   }
 }
-void WiimoteHandlerImpl::teachBegin(const IMoveModel* pMove)
+void WiimoteHandlerImpl::teachBegin(const IMove* pMove)
 {
    MoveSequence::iterator i = _pMoves->search(pMove);
    if (i == _pMoves->end()) { return; }
-   _pTeachMove = static_cast< MoveModel* >(*i);
-   _pTeachMove->getMotion(Motion::WIIMOTE)->teachBegin();
+   IMotion* p = (*i)->getMotion();
+   if (p) {
+      p->teachBegin();
+   }
+   _pTeachMove = *i;
 }
 void WiimoteHandlerImpl::teachCommit(bool succeed)
 {
    if (_pTeachMove == NULL) { return; }
 
-   _pTeachMove->getMotion(Motion::WIIMOTE)->teachCommit(succeed);
+   IMotion* p = _pTeachMove->getMotion();
+   if (p) {
+      p->teachCommit(succeed);
+   }
    _pTeachMove = NULL;
 }
 void WiimoteHandlerImpl::teachRollback()
@@ -97,7 +110,10 @@ void WiimoteHandlerImpl::teachRollback()
    if (_pTeachMove == NULL) { return; }
 
    ::bootes::lib::framework::WiimoteEvent ev;
-   _pTeachMove->getMotion(Motion::WIIMOTE)->teachRollback();
+   IMotion* p = _pTeachMove->getMotion();
+   if (p) {
+      p->teachRollback();
+   }
    _pTeachMove = NULL;
 }
 
@@ -107,17 +123,17 @@ void WiimoteHandlerImpl::handleWiimote(const Scene* scene, const ::bootes::lib::
 
    __int64 t = scene->clock().clock;
 
-   if (_pTeachMove) {
+   if (_pTeachMove && _pTeachMove->getMotion()) {
       __int64 rt = t - _pTeachMove->getBeginTime();
-      _pTeachMove->getMotion(Motion::WIIMOTE)->teach(ev, rt);
+      _pTeachMove->getMotion()->teach(ev, rt);
    }
    handleWiimoteTest(t, ev);
 }
 
 void WiimoteHandlerImpl::testClear()
 {
-   if (_pTestMove) {
-      _pTestMove->getMotion(Motion::WIIMOTE)->testEnd(false);
+   if (_pTestMove && _pTestMove->getMotion()) {
+      _pTestMove->getMotion()->testEnd(false);
    }
    _pTestMove = NULL;
    _test_mode = M_READY;
@@ -125,39 +141,43 @@ void WiimoteHandlerImpl::testClear()
 
 void WiimoteHandlerImpl::handleWiimoteTest(__int64 t, const ::bootes::lib::framework::WiimoteEvent* ev)
 {
-   MoveModel* pm = NULL;
+   IMove* pMove = NULL;
    {
       MoveSequence::iterator i = _pMoves->searchGE(t, false);
       if (i != _pMoves->end()) {
-         pm = static_cast< MoveModel* >(*i);
+         pMove = *i;
       }
    }
 
-   if (_pTestMove != pm) {
+   if (_pTestMove != pMove) {
       if (_pTestMove != NULL) {
          switch (_test_mode) {
          case M_TEST:
-            _pTestMove->getMotion(Motion::WIIMOTE)->testEnd(true);
+            if (_pTestMove->getMotion()) {
+               _pTestMove->getMotion()->testEnd(true);
+            }
          }
       }
       _pTestMove = NULL;
    }
-   if (pm == NULL) { return; }
+   if (pMove == NULL) { return; }
 
-   Motion* pMotion = pm->getMotion(Motion::WIIMOTE);
+   IMotion* pMotion = pMove->getMotion();
    __int64 t0,t1,rt;
-   pm->getTime(&t0, &t1);
+   pMove->getTime(&t0, &t1);
    rt = t - t0;
 
-   if (_pTestMove != pm) {
+   if (_pTestMove != pMove) {
       if (rt < 0) {
          _test_mode = M_READY;
       } else {
-         pMotion->testBegin();
-         pMotion->test(ev, rt);
+         if (pMotion) {
+            pMotion->testBegin();
+            pMotion->test(ev, rt);
+         }
          _test_mode = M_TEST;
       }
-      _pTestMove = pm;
+      _pTestMove = pMove;
       
    } else {
       if (rt < 0) {
@@ -165,16 +185,22 @@ void WiimoteHandlerImpl::handleWiimoteTest(__int64 t, const ::bootes::lib::frame
       } else {
          switch (_test_mode) {
          case M_READY:
-            pMotion->testBegin();
+            if (pMotion) {
+               pMotion->testBegin();
+            }
             _test_mode = M_TEST;
             break;
          case M_TEST:
-            pMotion->test(ev, rt);
+            if (pMotion) {
+               pMotion->test(ev, rt);
+            }
             break;
          case M_BREAK:
             break;
          default:
-            pMotion->testEnd(false);
+            if (pMotion) {
+               pMotion->testEnd(false);
+            }
             _test_mode = M_BREAK;
             break;
          }

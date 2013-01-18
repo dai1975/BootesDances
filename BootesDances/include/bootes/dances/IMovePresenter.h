@@ -1,5 +1,5 @@
-#ifndef BOOTESDANCES_STAGE_IMOVEPRESENTER_H
-#define BOOTESDANCES_STAGE_IMOVEPRESENTER_H
+#ifndef BOOTESDANCES_IMOVEPRESENTER_H
+#define BOOTESDANCES_IMOVEPRESENTER_H
 
 #include "MoveEditee.h"
 #include <vector>
@@ -7,10 +7,10 @@
 class IMovePresenter
 {
 public:
-   virtual size_t getRenderedModels(std::vector<const IMoveModel*>*) const = 0;
-   virtual bool   presentLocated(float rx, float ry, ModelEditee* o) const = 0;
-   virtual bool   presentNearest(float rx, float ry, ModelEditee* o) const = 0;
-   virtual bool   presentNearestEdge(float rx, float ry, ModelEditee* o) const = 0;
+   virtual size_t getRenderedModels(std::vector<const IMove*>*) const = 0;
+   virtual bool   presentLocated(float rx, float ry, MoveEditee* o) const = 0;
+   virtual bool   presentNearest(float rx, float ry, MoveEditee* o) const = 0;
+   virtual bool   presentNearestEdge(float rx, float ry, MoveEditee* o) const = 0;
 };
 
 #endif

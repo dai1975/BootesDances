@@ -6,7 +6,7 @@
 #include <string>
 #include <list>
 #include <bootes/dances/VideoInfo.h>
-#include <bootes/dances/IMoveModel.h>
+#include <bootes/dances/IMove.h>
 #include <bootes/cegui/Direct3D9GeometryBuffer.h>
 
 #pragma warning(disable : 4995)
@@ -51,10 +51,10 @@ private:
    void drawGrid(const CEGUI::Rect& rect);
    void drawAxis(const CEGUI::Rect& rect);
    void drawText(const char* str, const CEGUI::Rect& rect);
-   const IMoveModel* getModel(float x, float y);
-   const IMoveModel* getModelEdge(float x, float y, bool* left);
+   const IMove* getMove(float x, float y);
+   const IMove* getMoveEdge(float x, float y, bool* left);
    __int64 getTimeAt(float x);
-   CEGUI::Rect getCellRect(const IMoveModel* model);
+   CEGUI::Rect getCellRect(const IMove* move);
 
    enum {
       PIXEL_GRID_X = 200,
@@ -64,7 +64,7 @@ private:
    unsigned int _resolution, _max_resolution, _min_resolution;
 
    CEGUI::PopupMenu* _gridMenu;
-   const IMoveModel* _menuModel;
+   const IMove* _menuMove;
 
    CEGUI::Texture *_tex_grid, *_tex_timecell;
    ::bootes::cegui::Direct3D9GeometryBuffer* _mygeo;

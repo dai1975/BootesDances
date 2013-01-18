@@ -1,16 +1,16 @@
-#ifndef BOOTESDANCES_MOVE_MOVEEDITEE_H
-#define BOOTESDANCES_MOVE_MOVEEDITEE_H
+#ifndef BOOTESDANCES_MOVEEDITEE_H
+#define BOOTESDANCES_MOVEEDITEE_H
 
-#include "IMoveModel.h"
+#include "IMove.h"
 
-struct ModelEditee
+struct MoveEditee
 {
-   const IMoveModel* model;
+   const IMove* pMove;
    int joint;
-   inline ModelEditee(): model(NULL), joint(-1) { }
-   inline ModelEditee(const ModelEditee& r) { operator=(r); }
-   inline ModelEditee& operator=(const ModelEditee& r) {
-      model = r.model;
+   inline MoveEditee(): pMove(NULL), joint(-1) { }
+   inline MoveEditee(const MoveEditee& r) { operator=(r); }
+   inline MoveEditee& operator=(const MoveEditee& r) {
+      pMove = r.pMove;
       joint = r.joint;
       return *this;
    }

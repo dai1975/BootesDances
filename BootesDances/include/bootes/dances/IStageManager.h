@@ -10,8 +10,8 @@
 class IStageManager
 {
 public:
-   virtual bool hasStage() const = 0;
-   virtual const pb::Stage* getStage() const = 0;
+   virtual bool isEnabled() const = 0;
+   virtual IMove* createMove(IGuide*) const = 0;
    virtual ISceneSequencer* getSceneSequencer() = 0;
    virtual IMovePresenter*  getMovePresenter()  = 0;
    virtual IMoveEditor*     getMoveEditor()     = 0;

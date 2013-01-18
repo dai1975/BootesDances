@@ -1,8 +1,9 @@
 #include "EditWindow.h"
 #include <bootes/cegui/DynamicFont.h>
-#include "../../move/MoveModelLine.h"
-#include "../../move/MoveModelEllipse.h"
-#include "../../move/MoveModelSpline.h"
+#include "../../move/Move.h"
+#include "../../move/guide/GuideRibbonLine.h"
+#include "../../move/guide/GUideRibbonEllipse.h"
+#include "../../move/guide/GuideRibbonSpline.h"
 #include <iostream>
 #include <algorithm>
 
@@ -19,7 +20,7 @@ EditWindow::EditWindow(const CEGUI::String& type, const CEGUI::String& name)
    _copied_move = NULL;
    _pen_main = EditPen::PEN_ACTION;
    _pen_sub  = EditPen::ACTION_DEFAULT;
-   _pTeachModel = NULL;
+   _pTeachMove = NULL;
    _teach_stage = TEACH_NONE;
    _play = false;
    g_pFnd->getEventManager()->subscribe< EvLoadStageResult >(this);
@@ -126,7 +127,7 @@ void EditWindow::onLoad(const EvLoadStageResult* ev)
       _pFrameBar->setStepSize(0);
       setFrameText(_pFrameText, _pTimeText, 0, 0, 1);
    }
-   _pTeachModel = NULL;
+   _pTeachMove = NULL;
    _teach_stage = TEACH_NONE;
 }
 void EditWindow::onPlay(const EvMoviePlay* ev)
@@ -229,7 +230,7 @@ void EditWindow::onWiimote(const ::bootes::lib::framework::WiimoteEvent* ev)
    if (_teach_stage == TEACH_NONE) {
       if (CEGUI::System::getSingleton().getModalTarget() != NULL) { return; }
 
-      ModelEditee me;
+      MoveEditee me;
       IMoveEditor* pEditor = g_pGame->getStageManager()->getMoveEditor();
       IWiimoteHandler* pWHandler = g_pGame->getStageManager()->getWiimoteHandler();
       if (pEditor == NULL || pWHandler == NULL) { return; }
@@ -256,20 +257,20 @@ bool EditWindow::onTeachDialog(const CEGUI::EventArgs&)
    } else {
       next_stage = TEACH_NONE;
       do {
-         ModelEditee me;
+         MoveEditee me;
          IMoveEditor* pEditor = g_pGame->getStageManager()->getMoveEditor();
          IWiimoteHandler* pWHandler = g_pGame->getStageManager()->getWiimoteHandler();
          if (pEditor == NULL || pWHandler == NULL) { break; }
          if (! pEditor->editeeSelected(&me)) { break; }
 
-         if (_pTeachModel) {
+         if (_pTeachMove) {
             pWHandler->teachRollback();
-            _pTeachModel = NULL;
+            _pTeachMove = NULL;
          }
-         pWHandler->teachBegin(me.model);
-         _pTeachModel = me.model;
+         pWHandler->teachBegin(me.pMove);
+         _pTeachMove = me.pMove;
 
-         __int64 t0 = me.model->getBeginTime();
+         __int64 t0 = me.pMove->getBeginTime();
          if (30000000 < t0) {
             t0 -= 30000000;
          } else {
@@ -300,7 +301,7 @@ void EditWindow::onUpdate(double currentTime, int elapsedTime)
       ISceneSequencer* pSceneSeq = g_pGame->getStageManager()->getSceneSequencer();
       __int64 t = pSceneSeq->getScene(false).clock().clock;
 
-      if (_pTeachModel->getEndTime() + 10000000 < t) {
+      if (_pTeachMove->getEndTime() + 10000000 < t) {
          _pTeachResultDialog->dialogBegin();
          _teach_stage = TEACH_RESULTDIALOG;
 
@@ -341,24 +342,24 @@ bool EditWindow::onTeachContDialog(const CEGUI::EventArgs&)
          IWiimoteHandler* pWHandler = g_pGame->getStageManager()->getWiimoteHandler();
          if (pEditor == NULL || pWHandler == NULL) { break; }
 
-         std::vector< const IMoveModel* > models;
-         pEditor->getModels(&models);
+         std::vector< const IMove* > moves;
+         pEditor->getModels(&moves);
          size_t mi;
-         for (mi=0; mi<models.size(); ++mi) {
-            if (models[mi] == _pTeachModel) { break; }
+         for (mi=0; mi<moves.size(); ++mi) {
+            if (moves[mi] == _pTeachMove) { break; }
          }
          if (i == 1) { //next
             ++mi;
-            ModelEditee me;
-            me.model = models[mi];
+            MoveEditee me;
+            me.pMove = moves[mi];
             pEditor->editeeSelect(me);
          }
-         if (models.size() <= mi) { break; }
+         if (moves.size() <= mi) { break; }
 
-         _pTeachModel = models[mi];
-         pWHandler->teachBegin(_pTeachModel);
+         _pTeachMove = moves[mi];
+         pWHandler->teachBegin(_pTeachMove);
 
-         __int64 t0 = _pTeachModel->getBeginTime();
+         __int64 t0 = _pTeachMove->getBeginTime();
          if (30000000 < t0) {
             t0 -= 30000000;
          } else {
@@ -806,16 +807,18 @@ bool EditWindow::onDefaultMouseMove(const CEGUI::EventArgs& e_)
       return true;
    }
 
-   IMoveModel* pModel;
-   ModelEditee editee;
+   IMove* pMove;
+   MoveEditee editee;
    IMoveEditor* pEditor = g_pGame->getStageManager()->getMoveEditor();
    if (pEditor == NULL) { return true; }
-   if (! pEditor->editing(&editee, &pModel)) { return true; }
+   if (! pEditor->editing(&editee, &pMove)) { return true; }
+   IGuide* pGuide = pMove->getGuide();
+   if (pGuide == NULL) { return true; }
 
    if (editee.joint < 0) {
-      pModel->translate(rx - _rx0, ry - _ry0);
+      pGuide->translate(rx - _rx0, ry - _ry0);
    } else {
-      pModel->replace(editee.joint, rx, ry);
+      pGuide->replace(editee.joint, D3DXVECTOR3(rx, ry, 0));
    }
    _rx0 = rx;
    _ry0 = ry;
@@ -836,9 +839,9 @@ bool EditWindow::onDefaultMouseDown(const CEGUI::EventArgs& e_)
    if (pEditor == NULL || pPres == NULL) { return true; }
 
    if (e.button == CEGUI::LeftButton && e.clickCount == 1) {
-      IMoveModel* pModel;
-      ModelEditee editee;
-      if (pEditor->editing(&editee, &pModel)) { return true; }
+      IMove* pMove;
+      MoveEditee editee;
+      if (pEditor->editing(&editee, &pMove)) { return true; }
       if (! pPres->presentLocated(rx, ry, &editee)) { return true; }
       if (! pEditor->editeeSelect(editee)) { return true; }
       if (! pEditor->editBegin()) { return true; }
@@ -859,10 +862,12 @@ bool EditWindow::onDefaultMouseUp(const CEGUI::EventArgs& e_)
    IMoveEditor* pEditor  = g_pGame->getStageManager()->getMoveEditor();
    if (pEditor == NULL) { return true; }
    if (e.button == CEGUI::LeftButton && e.clickCount == 1) {
-      IMoveModel* pModel;
-      ModelEditee editee;
-      if (! pEditor->editing(&editee, &pModel)) { return true; }
-      pModel->normalizeEditPoints();
+      IMove* pMove;
+      MoveEditee editee;
+      if (! pEditor->editing(&editee, &pMove)) { return true; }
+      if (pMove->getGuide()) {
+         pMove->getGuide()->normalizeEditPoints();
+      }
       pEditor->editCommit();
    }
    return true;
@@ -876,43 +881,46 @@ bool EditWindow::onNewMoveMouseDown(const CEGUI::EventArgs& e_)
       return true;
    }
 
-   IMoveModel* pModel = NULL;
+   IGuide* pGuide = NULL;
    switch (_pen_sub) {
    case EditPen::MOVE_LINE:
       {
-         MoveModelLine* p = new MoveModelLine();
+         GuideRibbonLine* p = new GuideRibbonLine();
          if (1.0f < rx+0.1f) {
             p->init(rx-0.1f, ry, rx, ry);
          } else {
             p->init(rx, ry, rx+0.1f, ry);
          }
-         pModel = p;
+         pGuide = p;
       }
       break;
    case EditPen::MOVE_ELLIPSE:
       {
-         MoveModelEllipse* p = new MoveModelEllipse();
+         GuideRibbonEllipse* p = new GuideRibbonEllipse();
          p->init(rx, ry, 0.3f, 0.3f, -FLOAT_PI*0.4f, -FLOAT_PI*0.6f, true);
-         pModel = p;
+         pGuide = p;
       }
       break;
    case EditPen::MOVE_SPLINE:
       {
-         MoveModelSpline* p = new MoveModelSpline();
-         pModel = p;
+         GuideRibbonSpline* p = new GuideRibbonSpline();
+         pGuide = p;
       }
       break;
    default:
       break;
    }
+   if (pGuide == NULL) { return false; }
+
+   IMove* pMove = g_pGame->getStageManager()->createMove(pGuide);
 
    ISceneSequencer* pSceneSeq = g_pGame->getStageManager()->getSceneSequencer();
    IMoveEditor*     pEditor   = g_pGame->getStageManager()->getMoveEditor();
-   if (pModel != NULL && pSceneSeq != NULL && pEditor != NULL) {
+   if (pMove != NULL && pSceneSeq != NULL && pEditor != NULL) {
       __int64 t0 = pSceneSeq->getScene(false).clock().clock;
       __int64 t1 = t0 + 10*1000*1000;
-      if (! pEditor->addModel(pModel, t0, t1)) {
-         delete pModel;
+      if (! pEditor->addModel(pMove, t0, t1)) {
+         delete pMove;
          return false;
       }
    }
@@ -942,7 +950,7 @@ bool EditWindow::onDefaultMouseRightDown(const CEGUI::EventArgs& e_)
    CEGUI::PopupMenu* pMenu = NULL;
    do {
       CEGUI::WindowManager& wm = CEGUI::WindowManager::getSingleton();
-      ModelEditee editee;
+      MoveEditee editee;
       if ( !pPres->presentLocated(rx, ry, &editee) ) {
          wm.getWindow("Screen/ContextMenu/Copy")->setEnabled(false);
          wm.getWindow("Screen/ContextMenu/Cut")->setEnabled(false);
@@ -974,14 +982,15 @@ bool EditWindow::onDefaultMouseRightDown(const CEGUI::EventArgs& e_)
          wm.getWindow("Screen/ContextMenu/Delete")->setEnabled(true);
          wm.getWindow("Screen/ContextMenu/TeachReset")->setEnabled(true);
 
+         const IGuide* pGuide = editee.pMove->getGuide();
          bool b;
-         b = editee.model->canInsert(editee.joint);
+         b = (pGuide)? pGuide->canInsert(editee.joint): false;
          wm.getWindow("Screen/ContextMenu/InsertBefore")->setEnabled(b);
 
-         b = editee.model->canInsert(editee.joint+1);
+         b = (pGuide)? pGuide->canInsert(editee.joint+1): false;
          wm.getWindow("Screen/ContextMenu/InsertAfter")->setEnabled(b);
 
-         b = editee.model->canErase(editee.joint);
+         b = (pGuide)? pGuide->canErase(editee.joint): false;
          wm.getWindow("Screen/ContextMenu/DeletePoint")->setEnabled(b);
          pMenu = _pScreenMenu;
 
@@ -1024,12 +1033,12 @@ bool EditWindow::onMenuCopyCutDelete(const CEGUI::EventArgs& e_, bool copy, bool
    IMoveEditor* pEditor  = g_pGame->getStageManager()->getMoveEditor();
    if (pEditor == NULL) { return true; }
 
-   ModelEditee editee;
+   MoveEditee editee;
    if (! pEditor->editeeSelected(&editee)) { return true; }
 
    if (copy) {
       if (_copied_move) { delete _copied_move; }
-      _copied_move = editee.model->clone();
+      _copied_move = editee.pMove->clone();
    }
    if (del) {
       pEditor->editeeDeleteSelected();
@@ -1047,7 +1056,7 @@ bool EditWindow::onMenuPaste(const CEGUI::EventArgs& ev)
    __int64 t0 = pSceneSeq->getScene(false).clock().clock;
    __int64 t1 = t0 + (_copied_move->getEndTime() - _copied_move->getBeginTime());
 
-   IMoveModel* p = _copied_move->clone();
+   IMove* p = _copied_move->clone();
    if (! pEditor->addModel(p, t0, t1)) {
       delete p;
    }
@@ -1064,14 +1073,17 @@ bool EditWindow::onMenuInsert(const CEGUI::EventArgs& e_, bool before)
    if (pEditor == NULL) { return true; }
    if (! pEditor->editBegin()) { return true; }
 
-   IMoveModel *pModel;
-   ModelEditee editee;
-   if (! pEditor->editing(&editee, &pModel)) { return true; }
-   if (editee.joint < 0 || pModel->getEditPoints().size() <= editee.joint) { return true; }
+   IMove *pMove;
+   IGuide* pGuide;
+   MoveEditee editee;
+   if (! pEditor->editing(&editee, &pMove)) { return true; }
+   pGuide = pMove->getGuide();
+   if (pGuide == NULL) { return true; }
+   if (editee.joint < 0 || pGuide->getEditPoints().size() <= editee.joint) { return true; }
 
    D3DXVECTOR3 pos(_rx0, _ry0, 0.0f);
    size_t idx = (before)? editee.joint: editee.joint + 1;
-   if (! pModel->insert(idx, pos)) {
+   if (! pGuide->insert(idx, pos)) {
       pEditor->editRollback();
    } else {
       pEditor->editCommit();
@@ -1085,12 +1097,15 @@ bool EditWindow::onMenuDeletePoint(const CEGUI::EventArgs& e_)
    if (pEditor == NULL) { return true; }
    if (! pEditor->editBegin()) { return true; }
 
-   IMoveModel *pModel;
-   ModelEditee editee;
-   if (! pEditor->editing(&editee, &pModel)) { return true; }
+   IMove *pMove;
+   IGuide* pGuide;
+   MoveEditee editee;
+   if (! pEditor->editing(&editee, &pMove)) { return true; }
+   pGuide = pMove->getGuide();
+   if (pGuide == NULL) { return true; }
 
    size_t idx = editee.joint;
-   if (! pModel->erase(idx)) {
+   if (! pGuide->erase(idx)) {
       pEditor->editRollback();
    } else {
       pEditor->editCommit();
@@ -1104,10 +1119,10 @@ bool EditWindow::onMenuTeachReset(const CEGUI::EventArgs& ev)
    IWiimoteHandler *pWHandler = g_pGame->getStageManager()->getWiimoteHandler();
    if (pEditor == NULL || pWHandler == NULL) { return true; }
 
-   ModelEditee e;
+   MoveEditee e;
    if (! pEditor->editeeSelected(&e)) { return true; }
 
-   pWHandler->teachClear(e.model);
+   pWHandler->teachClear(e.pMove);
    return true;
 }
 

@@ -24,8 +24,8 @@ public:
    virtual void onResetDevice();
 
 public:
-   inline virtual bool hasStage() const { return _pProxy->hasStage(); }
-   inline virtual const ::pb::Stage* getStage() const { return _pProxy->getStage(); }
+   inline virtual bool isEnabled() const { return _pProxy->isEnabled(); }
+   inline virtual IMove* createMove(IGuide* p) const { return _pProxy->createMove(p); }
    inline virtual ISceneSequencer* getSceneSequencer() { return _pGameView; }
    inline virtual IMovePresenter*  getMovePresenter()  { return _pProxy->getMovePresenter(); }
    inline virtual IMoveEditor*     getMoveEditor()     { return _pProxy->getMoveEditor(); }

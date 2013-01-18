@@ -8,8 +8,8 @@
 class StageRealizer
 {
 public:
-   static bool Idealize(::pb::Stage2*, const Stage*);
-   static bool Realize(Stage**, const pb::Stage2*);
+   static bool Idealize(::pb::Stage*, const Stage*);
+   static bool Realize(Stage**, const pb::Stage*);
 };
 
 #endif

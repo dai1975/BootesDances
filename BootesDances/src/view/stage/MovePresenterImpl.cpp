@@ -17,7 +17,7 @@ MovePresenterImpl::~MovePresenterImpl()
 {
 }
 
-bool MovePresenterImpl::init(MoveSequence* moves, IMoveEditor* editor)
+bool MovePresenterImpl::initStage(MoveSequence* moves, IMoveEditor* editor)
 {
    _moves = moves;
    if (! _rend_play.init()) { return false; }
@@ -26,10 +26,6 @@ bool MovePresenterImpl::init(MoveSequence* moves, IMoveEditor* editor)
    }
    _playing = false;
    return true;
-}
-
-void MovePresenterImpl::clear()
-{
 }
 
 void MovePresenterImpl::onEvent(const ::bootes::lib::framework::Event* ev)
@@ -66,7 +62,7 @@ void MovePresenterImpl::onRender(const Scene* scene, double currentTime, int ela
    }
 }
 
-size_t MovePresenterImpl::getRenderedModels(std::vector<const IMoveModel*>* ret) const
+size_t MovePresenterImpl::getRenderedModels(std::vector<const IMove*>* ret) const
 {
    if (_editable && !_playing) {
       return _rend_edit.getRenderedModels(ret);
@@ -75,7 +71,7 @@ size_t MovePresenterImpl::getRenderedModels(std::vector<const IMoveModel*>* ret)
    }
 }
 
-bool MovePresenterImpl::presentLocated(float rx, float ry, ModelEditee* o) const
+bool MovePresenterImpl::presentLocated(float rx, float ry, MoveEditee* o) const
 {
    if (_editable && !_playing) {
       return _rend_edit.presentLocated(rx, ry, o);
@@ -84,7 +80,7 @@ bool MovePresenterImpl::presentLocated(float rx, float ry, ModelEditee* o) const
    }
 }
 
-bool MovePresenterImpl::presentNearest(float rx, float ry, ModelEditee* o) const
+bool MovePresenterImpl::presentNearest(float rx, float ry, MoveEditee* o) const
 {
    if (_editable && !_playing) {
       return _rend_edit.presentNearest(rx, ry, o);
@@ -93,7 +89,7 @@ bool MovePresenterImpl::presentNearest(float rx, float ry, ModelEditee* o) const
    }
 }
 
-bool MovePresenterImpl::presentNearestEdge(float rx, float ry, ModelEditee* o) const
+bool MovePresenterImpl::presentNearestEdge(float rx, float ry, MoveEditee* o) const
 {
    if (!_editable || _playing) { return false; }
    if (_editable && !_playing) {

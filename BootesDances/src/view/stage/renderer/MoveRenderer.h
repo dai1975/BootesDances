@@ -4,6 +4,7 @@
 #include "../../../include.h"
 #include "MoveRendererResource.h"
 #include "../../../move/MoveSequence.h"
+#include <bootes/dances/IMove.h>
 #include <bootes/dances/Scene.h>
 #include <list>
 

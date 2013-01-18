@@ -64,6 +64,28 @@ bool GuideRibbonEllipse::idealize(::pb::Guide* pOut) const
    return true;
 }
 
+bool GuideRibbonEllipse::realize(const ::pb::Guide* pIn)
+{
+   if (pIn->type().compare(GuideRibbonEllipse::TYPE) != 0) { return false; }
+
+   ::pb::GuideRibbonEllipse idea;
+   google::protobuf::io::ArrayInputStream in(pIn->code().data(), pIn->code().size());
+   if (! google::protobuf::TextFormat::Parse(&in, &idea)) {
+      return false;
+   }
+
+   float x  = idea.center().x();
+   float y  = idea.center().y();
+   float rx = idea.radius().x();
+   float ry = idea.radius().y();
+   float a0 = idea.angle0();
+   float a1 = idea.angle1();
+   bool dir = idea.direction();
+   this->init(x,y,rx,ry,a0,a1,dir);
+
+   return true;
+}
+
 float GuideRibbonEllipse::getCenterX() const
 {
    return _x;

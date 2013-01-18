@@ -15,7 +15,7 @@ public:
 
    static const std::string TYPE;
    virtual bool idealize(::pb::Guide*) const;
-   //virtual inline TYPE getType() const { return T_LINE; }
+   virtual bool realize(const ::pb::Guide*);
 
    void init(float x0, float y0, float x1, float y1);
    void init(const t_points& points);

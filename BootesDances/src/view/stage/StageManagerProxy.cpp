@@ -1,4 +1,8 @@
 #include "StageManagerProxy.h"
+#include "StageRealizer.h"
+#include "../../move/MoveRealizer.h"
+#include "../../move/Move.h"
+#include "../../move/motion/MotionWiimoteSimple.h"
 #include <bootes/lib/util/TChar.h>
 #include <sstream>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
@@ -8,15 +12,10 @@
 #include <sys/types.h>
 #include <share.h>
 #include <fcntl.h>
-#include "../../move/MoveModelLine.h"
-#include "../../move/MoveModelSpline.h"
-#include "../../move/MoveModelEllipse.h"
-#include "../../move/guide/GuideRibbonLine.pb.h"
-#include "../../move/guide/GuideRibbonSpline.pb.h"
-#include "../../move/guide/GuideRibbonEllipse.pb.h"
 
 StageManagerProxy::StageManagerProxy()
 {
+   _enabled = false;
    _pStage = NULL;
 
    _thread_handle = INVALID_HANDLE_VALUE;
@@ -32,21 +31,6 @@ StageManagerProxy::StageManagerProxy()
    g_pFnd->getEventManager()->subscribe< EvSeekMovie >(this);
 }
 
-bool StageManagerProxy::init(const TCHAR* dir, bool editable, D3DPOOL pool)
-{
-   _dir = dir;
-
-   _pMoviePlayer    = new MoviePlayer(pool);
-   _pMovePresenter  = new MovePresenterImpl(editable);
-   _pMoveEditor     = new MoveEditorImpl();
-   _pWiimoteHandler = new WiimoteHandlerImpl();
-
-   if (_pMovePresenter)  { if (! _pMovePresenter->init(&_moves, _pMoveEditor)) { return false; } }
-   if (_pMoveEditor)     { if (! _pMoveEditor->init(&_moves)) { return false; } }
-   if (_pWiimoteHandler) { if (! _pWiimoteHandler->init(&_moves)) { return false; } }
-   return true;
-}
-
 StageManagerProxy::~StageManagerProxy()
 {
    stop();
@@ -57,19 +41,42 @@ StageManagerProxy::~StageManagerProxy()
    delete _pMoviePlayer;
 }
 
-void StageManagerProxy::clear()
+bool StageManagerProxy::init(const TCHAR* dir, bool editable, D3DPOOL pool)
 {
-   if (_pStage) {
-      ::pb::Stage* p = _pStage;
+   _dir = dir;
+   _pStage = NULL;
+   _enabled = false;
+
+   _pMoviePlayer    = new MoviePlayer(pool);
+   _pMovePresenter  = new MovePresenterImpl(editable);
+   _pMoveEditor     = new MoveEditorImpl();
+   _pWiimoteHandler = new WiimoteHandlerImpl();
+
+   return true;
+}
+
+bool StageManagerProxy::initStage()
+{
+   _enabled = false;
+   if (_pStage != NULL) {
+      delete _pStage;
       _pStage = NULL;
-      delete p;
    }
 
-   _moves.clear();
    _pMoviePlayer->clear();
-   if (_pMovePresenter) { _pMovePresenter->clear(); }
-   if (_pMoveEditor) { _pMoveEditor->clear(); }
-   if (_pWiimoteHandler) { _pWiimoteHandler->clear(); }
+   if (_pMovePresenter)  { if (! _pMovePresenter->initStage(&_pStage->seq, _pMoveEditor)) { return false; } }
+   if (_pMoveEditor)     { if (! _pMoveEditor->initStage(&_pStage->seq)) { return false; } }
+   if (_pWiimoteHandler) { if (! _pWiimoteHandler->initStage(&_pStage->seq)) { return false; } }
+   return true;
+}
+
+IMove* StageManagerProxy::createMove(IGuide* pGuide) const
+{
+   if (! _enabled) { return NULL; }
+   Move* pMove = new Move();
+   pMove->setGuide(pGuide);
+   pMove->setMotion(new MotionWiimoteSimple());
+   return pMove;
 }
 
 DWORD WINAPI StageManagerProxy::ThreadProc(LPVOID param)
@@ -293,73 +300,12 @@ void StageManagerProxy::doSave(const TCHAR* path)
       return;
    }
 
-   ::pb::Stage2 *pStage = new ::pb::Stage2();
-   pStage->set_version(1);
-   pStage->set_name(_pStage->name());
-   pStage->set_moviepath(_pStage->moviepath());
-   for (MoveSequence::iterator i = _moves.begin(); i != _moves.end(); ++i) {
-      IMoveModel* rea0 = *i;
-      pb::Move2* iMove  = pStage->add_moves();
-      pb::Guide* iGuide = iMove->mutable_guide();
-      switch (rea0->getType()) {
-      case IMoveModel::T_LINE: {
-         MoveModelLine* rea = static_cast< MoveModelLine* >(rea0);
-         ::pb::GuideRibbonLine obj;
-         const IMoveModel::t_points& points = rea->getEditPoints();
-         for (size_t i=0; i<points.size(); ++i) {
-            pb::Point* p = obj.add_points();
-            p->set_x( points[i].x );
-            p->set_y( points[i].y );
-         }
-         google::protobuf::io::StringOutputStream os(iGuide->mutable_code());
-         google::protobuf::TextFormat::Print(obj, &os);
-         iGuide->set_type("GuideRibbonLine");
-      } break;
-
-      case IMoveModel::T_SPLINE: {
-         MoveModelSpline* rea = static_cast< MoveModelSpline* >(rea0);
-         ::pb::GuideRibbonSpline obj;
-         const IMoveModel::t_points& points = rea->getEditPoints();
-         for (size_t i=0; i<points.size(); ++i) {
-            pb::Point* p = obj.add_points();
-            p->set_x( points[i].x );
-            p->set_y( points[i].y );
-         }
-         google::protobuf::io::StringOutputStream os(iGuide->mutable_code());
-         google::protobuf::TextFormat::Print(obj, &os);
-         iGuide->set_type("GuideRibbonSpline");
-      } break;
-
-      case IMoveModel::T_ELLIPSE: {
-         MoveModelEllipse* rea = static_cast< MoveModelEllipse* >(rea0);
-         ::pb::GuideRibbonEllipse obj;
-         obj.mutable_center()->set_x( rea->getCenterX() );
-         obj.mutable_center()->set_y( rea->getCenterY() );
-         obj.mutable_radius()->set_x( rea->getRadiusX() );
-         obj.mutable_radius()->set_y( rea->getRadiusY() );
-         obj.set_angle0( rea->getBeginAngle() );
-         obj.set_angle1( rea->getEndAngle() );
-         obj.set_direction( rea->getDirection() );
-         google::protobuf::io::StringOutputStream os(iGuide->mutable_code());
-         google::protobuf::TextFormat::Print(obj, &os);
-         iGuide->set_type("GuideRibbonEllipse");
-      } break;
-      }
-      iMove->set_uuid(rea0->getUuid());
-      iMove->set_time0(rea0->getBeginTime());
-      iMove->set_time1(rea0->getEndTime());
-      iMove->set_chainnext(_moves.isChainNext(i));
+   ::pb::Stage idea;
+   if (! StageRealizer::Idealize(&idea, _pStage)) {
+      g_pFnd->queue(&res);
+      return;
    }
-/*
-   _pStage->clear_moves();
-   _pStage->set_version(1);
-   for (MoveSequence::iterator i = _moves.begin(); i != _moves.end(); ++i) {
-      pb::Move* pr = IMoveModel::Idealize(*i);
-      pr->set_chainnext( _moves.isChainNext(i) );
-      _pStage->add_moves()->operator=(*pr);
-      delete pr;
-   }
-*/
+
    {
       std::basic_string< TCHAR > tc_path, tc_tmp, tc_old;
       tc_path.append(_dir).append(_T("\\")).append(path);
@@ -373,7 +319,7 @@ void StageManagerProxy::doSave(const TCHAR* path)
          if (err != 0) { goto fail; }
       
          google::protobuf::io::FileOutputStream out(fd);
-         bool b = google::protobuf::TextFormat::Print(*pStage, &out);
+         bool b = google::protobuf::TextFormat::Print(idea, &out);
          out.Flush();
          out.Close();
          //_close(fd);
@@ -401,42 +347,35 @@ void StageManagerProxy::doSave(const TCHAR* path)
 void StageManagerProxy::doLoad(const boost::shared_ptr< ::pb::Stage > stage)
 {
    EvLoadStageResult r;
-   std::basic_string< TCHAR > moviepath;
-
+   Stage* pStage = NULL;
    if (stage.operator->() == NULL) { goto fail; }
 
+   _enabled = false;
+
+   if (! StageRealizer::Realize(&pStage, stage.operator->())) { goto fail; }
+
    {
-      TCHAR* tmp = ::bootes::lib::util::TChar::C2T(stage->moviepath().c_str());
-      if (tmp == NULL) { goto fail; }
-      moviepath = tmp;
-      delete[] tmp;
+      if (! _pMoviePlayer->load(pStage->tmoviepath.c_str())) { goto fail; }
+      r._videoInfo = _pMoviePlayer->getVideoInfo();
    }
 
-   r._result = false;
-   clear(); //_pStage := NULL
-   do {
-      if (! _pMoviePlayer->load(moviepath.c_str())) { break; }
-      r._videoInfo = _pMoviePlayer->getVideoInfo();
+   if (_pMovePresenter)  { if (!_pMovePresenter->initStage(&pStage->seq, _pMoveEditor)) { goto fail; } }
+   if (_pMoveEditor)     { if (!_pMoveEditor->initStage(&pStage->seq)) { goto fail; } }
+   if (_pWiimoteHandler) { if (!_pWiimoteHandler->initStage(&pStage->seq)) { goto fail; } }
 
-      // add move models
-      bool chain0 = false;
-      for (int i=0; i < stage->moves_size(); ++i) {
-         const ::pb::Move& idea = stage->moves(i);
-         IMoveModel* rea = IMoveModel::Realize(&idea);
-         if (rea) {
-            MoveSequence::iterator ite = _moves.add(rea); //pass ownership
-            if (chain0) { _moves.chainPrev(ite, true); }
-            chain0 = idea.chainnext();
-         }
-      }
-      r._result = true;
-   } while(0);
-   _pStage = new ::pb::Stage(stage.operator*());
-
+   _pStage = pStage;
+   _enabled = true;
+   r._result = true;
    g_pFnd->queue(&r);
    return;
 
  fail:
+   _enabled = false;
+   if (pStage) { delete pStage; }
+   _pStage = NULL;
+   if (_pMovePresenter)  { _pMovePresenter->initStage(NULL, _pMoveEditor); }
+   if (_pMoveEditor)     { _pMoveEditor->initStage(NULL); }
+   if (_pWiimoteHandler) { _pWiimoteHandler->initStage(NULL); }
    r._result = false;
    g_pFnd->queue(&r);
 }

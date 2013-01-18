@@ -1,8 +1,10 @@
 #include "MotionWiimoteSimple.h"
 #include "MotionWiimoteSimple.pb.h"
 #include <algorithm>
+#include <google/protobuf/text_format.h>
+#include <google/protobuf/io/zero_copy_stream_impl_lite.h>
 
-static std::string TYPE = "MotionWiimoteSimple";
+const std::string MotionWiimoteSimple::TYPE = "MotionWiimoteSimple";
 
 using ::bootes::lib::framework::InputEvent;
 using ::bootes::lib::framework::WiimoteEvent;
@@ -37,15 +39,14 @@ IMotion* MotionWiimoteSimple::clone() const
    return r;
 }
 
-/*
-bool MotionWiimoteSimple::marshal(::pb::Motion2* out) const
+bool MotionWiimoteSimple::idealize(::pb::Motion* pOut) const
 {
+   pb::MotionWiimoteSimple idea;
    {
-      pb::MotionWiimoteSimple* idea = out->MutableExtension(pb::motion_wiimote_simple);
-      idea->set_stept(_stept);
+      idea.set_stept(_stept);
       for (t_sequence::const_iterator i = _test_seq_min.begin(); i != _test_seq_min.end(); ++i) {
          const Entry& r = *i;
-         ::pb::MotionWiimoteSimple::Entry* record = idea->add_minseq();
+         ::pb::MotionWiimoteSimple::Entry* record = idea.add_minseq();
          record->set_t(r.t);
          record->mutable_accel()->set_x(    r.ev._accel.x );
          record->mutable_accel()->set_y(    r.ev._accel.y );
@@ -59,7 +60,7 @@ bool MotionWiimoteSimple::marshal(::pb::Motion2* out) const
       }
       for (t_sequence::const_iterator i = _test_seq_max.begin(); i != _test_seq_max.end(); ++i) {
          const Entry& r = *i;
-         ::pb::MotionWiimoteSimple::Entry* record = idea->add_maxseq();
+         ::pb::MotionWiimoteSimple::Entry* record = idea.add_maxseq();
          record->set_t(r.t);
          record->mutable_accel()->set_x(    r.ev._accel.x );
          record->mutable_accel()->set_y(    r.ev._accel.y );
@@ -72,18 +73,31 @@ bool MotionWiimoteSimple::marshal(::pb::Motion2* out) const
          record->mutable_orien()->set_roll(  r.ev._orien.roll );
       }
    }
+
+   {
+      google::protobuf::io::StringOutputStream os(pOut->mutable_code());
+      if (! google::protobuf::TextFormat::Print(idea, &os)) {
+         return false;
+      }
+      pOut->set_type(MotionWiimoteSimple::TYPE);
+   }
    return true;
 }
 
-bool MotionWiimoteSimple::unmarshal(const ::pb::Motion* in)
+bool MotionWiimoteSimple::realize(const ::pb::Motion* pIn)
 {
-   teachClear();
-   const ::pb::Motion::WiimoteSimple* idea = &in->wiimote_simple();
-   //const pb::MotionWiimoteSimple& idea = in->GetExtension(pb::wiimote_motion_simple);
+   if (pIn->type().compare(MotionWiimoteSimple::TYPE) != 0) { return false; }
 
-   _stept = idea->stept();
-   for (size_t i=0; i<idea->minseq_size(); ++i) {
-      const ::pb::Motion::WiimoteSimple::Entry& r0 = idea->minseq(i);
+   ::pb::MotionWiimoteSimple idea;
+   google::protobuf::io::ArrayInputStream in(pIn->code().data(), pIn->code().size());
+   if (! google::protobuf::TextFormat::Parse(&in, &idea)) {
+      return false;
+   }
+
+   teachClear();
+   _stept = idea.stept();
+   for (size_t i=0; i<idea.minseq_size(); ++i) {
+      const ::pb::MotionWiimoteSimple::Entry& r0 = idea.minseq(i);
       _test_seq_min.push_back( Entry() );
       Entry& r = _test_seq_min.back();
       r.t = r0.t();
@@ -97,8 +111,8 @@ bool MotionWiimoteSimple::unmarshal(const ::pb::Motion* in)
       r.ev._orien.roll  = r0.orien().roll();
       r.ev._orien.pitch = r0.orien().pitch();
    }
-   for (size_t i=0; i<idea->maxseq_size(); ++i) {
-      const ::pb::Motion::WiimoteSimple::Entry& r0 = idea->maxseq(i);
+   for (size_t i=0; i<idea.maxseq_size(); ++i) {
+      const ::pb::MotionWiimoteSimple::Entry& r0 = idea.maxseq(i);
       _test_seq_max.push_back( Entry() );
       Entry& r = _test_seq_max.back();
       r.t = r0.t();
@@ -114,7 +128,6 @@ bool MotionWiimoteSimple::unmarshal(const ::pb::Motion* in)
    }
    return true;
 }
-*/
 
 void MotionWiimoteSimple::teachClear()
 {

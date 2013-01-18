@@ -250,7 +250,6 @@ void EditorView::doDialogNew(const TCHAR* tc_dir, const TCHAR* tc_file)
    {
       stage->set_version(1);
       stage->set_name(name);
-      stage->set_hflip(true);
       stage->mutable_moviepath()->append(c_dir).append("\\").append(c_file);
    }
    EvLoadStage ev;
