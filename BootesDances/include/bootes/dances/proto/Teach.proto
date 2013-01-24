@@ -1,0 +1,27 @@
+import "bootes/dances/proto/Stage.proto";
+package pb;
+
+message TeachRecord {
+  required int32 time  = 1;
+  required Motion.Accel accel = 10;
+  required Motion.Gyro  gyro  = 11;
+}
+
+message TeachSequence {
+  required string      uuid    = 1;
+  required bool        succeed = 2;
+  repeated TeachRecord records = 3;
+}
+
+message TeachClear {
+  required string      uuid    = 1;
+}
+
+message TeachCommand {
+  optional TeachSequence sequence = 1;
+  optional TeachClear    clear    = 2;
+}
+
+message TeachLog {
+  repeated TeachCommand commands = 1;
+}
