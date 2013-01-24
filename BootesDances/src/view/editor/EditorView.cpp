@@ -262,6 +262,11 @@ void EditorView::doDialogNew(const TCHAR* tc_dir, const TCHAR* tc_file)
 
 void EditorView::doDialogLoad(const TCHAR* dir, const TCHAR* file)
 {
+   EvLoadStage ev;
+   ev._path.append(dir).append(_T("\\")).append(file);
+   g_pFnd->getEventManager()->queue(&ev);
+
+/*
    std::basic_string< TCHAR > path;
    path.append(dir).append(_T("\\")).append(file);
 
@@ -288,6 +293,7 @@ void EditorView::doDialogLoad(const TCHAR* dir, const TCHAR* file)
    EvLoadStage ev;
    ev._stage.reset(stage);
    g_pFnd->getEventManager()->queue(&ev);
+*/
 }
 
 

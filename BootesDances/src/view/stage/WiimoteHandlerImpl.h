@@ -7,15 +7,16 @@
 #include <bootes/dances/EvMovie.h>
 #include <bootes/dances/EvStage.h>
 #include "../../move/MoveSequence.h"
+#include "../../move/motion/TeachLog.h"
 
 class WiimoteHandlerImpl: public IWiimoteHandler
                         , public ::bootes::lib::framework::EventListener
 {
 public:
-   WiimoteHandlerImpl();
+   WiimoteHandlerImpl(bool editable, const TCHAR* dir);
    virtual ~WiimoteHandlerImpl();
 
-   bool initStage(MoveSequence*);
+   bool initStage(MoveSequence*, const TCHAR* name);
    //void clear();
 
    virtual void teachClear(const IMove*);
@@ -47,6 +48,9 @@ private:
    //MODE _ready_mode;
    IMove* _pTeachMove;
    bool _play;
+   bool _editable;
+   TeachLogger _teachLogger;
+   TeachSequence _teachSequence;
 };
 
 #endif

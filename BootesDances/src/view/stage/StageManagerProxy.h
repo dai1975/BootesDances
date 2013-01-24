@@ -49,6 +49,7 @@ class StageManagerProxy: public ::bootes::lib::framework::EventListener
    bool onEvent0(const ::bootes::lib::framework::Event* ev); //!< receive interesting events and queues it.
    void doSearch(const TCHAR* dir); //!< search stage files and emit SearchStageResult events.
    void doSave(const TCHAR* path); //!< save stage to file and emit a LoadStageResult event.
+   void doLoad(const TCHAR* path); //!< load stage
    void doLoad(const boost::shared_ptr< pb::Stage >); //!< load stage
 
    void doPlay(const EvPlayMovie*);
@@ -56,7 +57,7 @@ class StageManagerProxy: public ::bootes::lib::framework::EventListener
    void doSeek(const EvSeekMovie*);
 
  private:
-   bool initStage();
+   //bool initStage();
 
    HANDLE _thread_handle;
    DWORD  _thread_id;
@@ -66,7 +67,9 @@ class StageManagerProxy: public ::bootes::lib::framework::EventListener
    ::bootes::lib::framework::Event *_command;
 
    std::basic_string< TCHAR > _dir;
+   std::basic_string< TCHAR > _filename;
    //pb::Stage2* _pStage;
+   bool _editable;
    bool _enabled;
 
    //MoveSequence        _moves;

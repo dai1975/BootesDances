@@ -230,7 +230,7 @@ void protobuf_AddDesc_bootes_2fdances_2fproto_2fStage_2eproto() {
     "w\030\001 \002(\002\022\r\n\005pitch\030\002 \002(\002\022\014\n\004roll\030\003 \002(\002\"{\n\004"
     "Move\022\014\n\004uuid\030\001 \002(\t\022\r\n\005time0\030\002 \002(\003\022\r\n\005tim"
     "e1\030\003 \002(\003\022\021\n\tchainnext\030\004 \002(\010\022\030\n\005guide\030\n \002"
-    "(\0132\t.pb.Guide\022\032\n\006motion\030\013 \001(\0132\n.pb.Motio"
+    "(\0132\t.pb.Guide\022\032\n\006motion\030\013 \002(\0132\n.pb.Motio"
     "n\"R\n\005Stage\022\017\n\007version\030\001 \002(\005\022\014\n\004name\030\002 \002("
     "\t\022\021\n\tmoviepath\030\003 \002(\t\022\027\n\005moves\030\n \003(\0132\010.pb"
     ".Move", 445);
@@ -1792,7 +1792,7 @@ bool Move::MergePartialFromCodedStream(
         break;
       }
       
-      // optional .pb.Motion motion = 11;
+      // required .pb.Motion motion = 11;
       case 11: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -1854,7 +1854,7 @@ void Move::SerializeWithCachedSizes(
       10, this->guide(), output);
   }
   
-  // optional .pb.Motion motion = 11;
+  // required .pb.Motion motion = 11;
   if (has_motion()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       11, this->motion(), output);
@@ -1900,7 +1900,7 @@ void Move::SerializeWithCachedSizes(
         10, this->guide(), target);
   }
   
-  // optional .pb.Motion motion = 11;
+  // required .pb.Motion motion = 11;
   if (has_motion()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -1951,7 +1951,7 @@ int Move::ByteSize() const {
           this->guide());
     }
     
-    // optional .pb.Motion motion = 11;
+    // required .pb.Motion motion = 11;
     if (has_motion()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -2020,7 +2020,7 @@ void Move::CopyFrom(const Move& from) {
 }
 
 bool Move::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000001f) != 0x0000001f) return false;
+  if ((_has_bits_[0] & 0x0000003f) != 0x0000003f) return false;
   
   if (has_guide()) {
     if (!this->guide().IsInitialized()) return false;

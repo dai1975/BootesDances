@@ -8,25 +8,26 @@
 
 class MotionWiimoteSimple: public Motion
 {
+protected:
+   MotionWiimoteSimple(const MotionWiimoteSimple&);
 public:
    MotionWiimoteSimple();
    virtual ~MotionWiimoteSimple();
-   virtual IMotion* clone() const;
+   virtual IMotion* clone() const { return new MotionWiimoteSimple(*this); }
 
    static const std::string TYPE;
    virtual bool idealize(::pb::Motion* pOut) const;
    virtual bool realize(const ::pb::Motion* pIn);
 
    virtual void teachClear(); //!< モーション定義をクリアする。
-
    virtual void teachBegin();
-   virtual void teach(const ::bootes::lib::framework::InputEvent* ev, int t); //!< 新たな定義値を記録する
+   virtual void teach(int t, const ::bootes::lib::framework::InputEvent* ev); //!< 新たな定義値を記録する
    virtual void teachCommit(bool succeed);
    virtual void teachRollback();
 
    virtual void testClear();
    virtual void testBegin();
-   virtual void test(const ::bootes::lib::framework::InputEvent* ev, int t); //!< テストする
+   virtual void test(int t, const ::bootes::lib::framework::InputEvent* ev); //!< テストする
    virtual void testEnd(bool completed);
 
 private:
@@ -39,9 +40,6 @@ private:
       inline const Entry& operator=(const Entry& r) { t = r.t; ev = r.ev; return *this; }
    };
    typedef std::list< Entry > t_sequence;
-   typedef std::list< t_sequence > t_data;
-   t_data _succeed_data;
-   t_data _failed_data;
    t_sequence _tmp_sequence;
    int _stept;
 

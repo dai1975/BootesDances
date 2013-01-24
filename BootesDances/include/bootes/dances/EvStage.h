@@ -60,12 +60,14 @@ public:
    static const char* GetEventName() { return "LoadStage"; }
 
    boost::shared_ptr< pb::Stage > _stage;
+   std::basic_string< TCHAR > _path;
 
    EvLoadStage() { }
    ~EvLoadStage() { }
    EvLoadStage(const EvLoadStage& r) { operator=(r); }
    EvLoadStage& operator=(const EvLoadStage& r) {
       _stage = r._stage;
+      _path  = r._path;
       return *this;
    }
 };

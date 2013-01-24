@@ -33,7 +33,7 @@ message Move {
   required bool   chainnext = 4;
 
   required Guide  guide  = 10;
-  optional Motion motion = 11;
+  required Motion motion = 11;
 }
 
 message Stage {
@@ -43,3 +43,4 @@ message Stage {
 
   repeated Move moves  = 10;
 }
+

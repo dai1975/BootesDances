@@ -1,11 +1,16 @@
 #include "WiimoteHandlerImpl.h"
 
-WiimoteHandlerImpl::WiimoteHandlerImpl()
+WiimoteHandlerImpl::WiimoteHandlerImpl(bool editable, const TCHAR* dir)
 {
    _pMoves = NULL;
    _pTestMove = NULL;
    _pTeachMove = NULL;
    _play = false;
+   _editable = editable;
+
+   if (_editable) {
+      _teachLogger.start(dir);
+   }
 
 //   g_pFnd->getEventManager()->subscribe< EvLoadStageResult >(this);
    g_pFnd->getEventManager()->subscribe< EvMoviePlay >(this);
@@ -15,14 +20,22 @@ WiimoteHandlerImpl::WiimoteHandlerImpl()
 
 WiimoteHandlerImpl::~WiimoteHandlerImpl()
 {
+   if (_editable && _teachLogger.isRun()) {
+      _teachLogger.join();
+   }
 }
 
-bool WiimoteHandlerImpl::initStage(MoveSequence* moves)
+bool WiimoteHandlerImpl::initStage(MoveSequence* moves, const TCHAR* name)
 {
    _pMoves = moves;
    _pTestMove = NULL;
    _pTeachMove = NULL;
    _play = false;
+
+   if (_editable) {
+      _teachLogger.open(name);
+   }
+
    return true;
 }
 /*
@@ -75,15 +88,17 @@ void WiimoteHandlerImpl::onSeek(const EvMovieSeek* ev)
    testClear();
 }
 
-void WiimoteHandlerImpl::teachClear(const IMove* pMove)
+void WiimoteHandlerImpl::teachClear(const IMove* pMove_)
 {
-   MoveSequence::iterator i = _pMoves->search(pMove);
+   MoveSequence::iterator i = _pMoves->search(pMove_);
    if (i == _pMoves->end()) { return; }
 
-   IMotion* p = (*i)->getMotion();
-   if (p) {
-      p->teachClear();
+   IMove* pMove = *i;
+   IMotion* pMotion = pMove->getMotion();
+   if (pMotion) {
+      pMotion->teachClear();
    }
+   _teachLogger.add_clear(pMove->getUuid());
 }
 void WiimoteHandlerImpl::teachBegin(const IMove* pMove)
 {
@@ -92,6 +107,7 @@ void WiimoteHandlerImpl::teachBegin(const IMove* pMove)
    IMotion* p = (*i)->getMotion();
    if (p) {
       p->teachBegin();
+      _teachSequence.clear();
    }
    _pTeachMove = *i;
 }
@@ -103,6 +119,8 @@ void WiimoteHandlerImpl::teachCommit(bool succeed)
    if (p) {
       p->teachCommit(succeed);
    }
+   _teachSequence.commit(succeed);
+   _teachLogger.add_sequence(_pTeachMove->getUuid(), _teachSequence);
    _pTeachMove = NULL;
 }
 void WiimoteHandlerImpl::teachRollback()
@@ -124,8 +142,13 @@ void WiimoteHandlerImpl::handleWiimote(const Scene* scene, const ::bootes::lib::
    __int64 t = scene->clock().clock;
 
    if (_pTeachMove && _pTeachMove->getMotion()) {
-      __int64 rt = t - _pTeachMove->getBeginTime();
-      _pTeachMove->getMotion()->teach(ev, rt);
+      __int64 t0,t1;
+      _pTeachMove->getTime(&t0, &t1);
+      if (t0 <= t && t < t1) {
+         __int64 rt = t - t0;
+         _pTeachMove->getMotion()->teach(rt, ev);
+         _teachSequence.add(rt,*ev);
+      }
    }
    handleWiimoteTest(t, ev);
 }
@@ -173,7 +196,7 @@ void WiimoteHandlerImpl::handleWiimoteTest(__int64 t, const ::bootes::lib::frame
       } else {
          if (pMotion) {
             pMotion->testBegin();
-            pMotion->test(ev, rt);
+            pMotion->test(rt, ev);
          }
          _test_mode = M_TEST;
       }
@@ -192,7 +215,7 @@ void WiimoteHandlerImpl::handleWiimoteTest(__int64 t, const ::bootes::lib::frame
             break;
          case M_TEST:
             if (pMotion) {
-               pMotion->test(ev, rt);
+               pMotion->test(rt, ev);
             }
             break;
          case M_BREAK:

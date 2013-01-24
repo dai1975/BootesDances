@@ -4,12 +4,17 @@
 #include <bootes/dances/IMove.h>
 #include "Stage.h"
 #include <bootes/dances/proto/Stage.pb.h>
+#include <bootes/dances/proto/Teach.pb.h>
 
 class StageRealizer
 {
 public:
    static bool Idealize(::pb::Stage*, const Stage*);
    static bool Realize(Stage**, const pb::Stage*);
+
+   static bool Save(const TCHAR* path, const Stage*);
+   static bool Load(Stage**, const TCHAR* path);
+   static bool Load(::pb::Stage**, const TCHAR* path);
 };
 
 #endif

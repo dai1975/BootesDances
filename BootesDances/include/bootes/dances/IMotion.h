@@ -18,13 +18,13 @@ public:
    virtual void teachClear() = 0; //!< モーション定義をクリアする。
 
    virtual void teachBegin() = 0;
-   virtual void teach(const ::bootes::lib::framework::InputEvent* ev, int t) = 0; //!< 新たな定義値を記録する
+   virtual void teach(int t, const ::bootes::lib::framework::InputEvent* ev) = 0; //!< 新たな定義値を記録する
    virtual void teachCommit(bool succeed) = 0;
    virtual void teachRollback() = 0;
 
    virtual void testClear() = 0;
    virtual void testBegin() = 0;
-   virtual void test(const ::bootes::lib::framework::InputEvent* ev, int t) = 0; //!< テストする
+   virtual void test(int t, const ::bootes::lib::framework::InputEvent* ev) = 0; //!< テストする
    virtual void testEnd(bool completed) = 0;
 
    enum TEACH_STATE { TEACH_DEFAULT, TEACH_TEACHING };

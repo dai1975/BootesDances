@@ -10,7 +10,8 @@ struct Stage
    int version;
    std::string  name;
    std::string  moviepath;
-   std::basic_string< TCHAR > tmoviepath;
+   std::basic_string< TCHAR > tc_name;
+   std::basic_string< TCHAR > tc_moviepath;
    MoveSequence seq;
 };
 

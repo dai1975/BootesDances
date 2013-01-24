@@ -16,27 +16,18 @@ MotionWiimoteSimple::MotionWiimoteSimple()
    _teach_state = TEACH_DEFAULT;
 }
 
-MotionWiimoteSimple::~MotionWiimoteSimple()
+MotionWiimoteSimple::MotionWiimoteSimple(const MotionWiimoteSimple& r)
+   : Motion(r)
 {
+   _stept = r._stept;
+   _test_state = TEST_DEFAULT;
+   _teach_state = TEACH_DEFAULT;
+   std::copy(r._test_seq_min.begin(), r._test_seq_min.end(), _test_seq_min.begin());
+   std::copy(r._test_seq_max.begin(), r._test_seq_max.end(), _test_seq_max.begin());
 }
 
-IMotion* MotionWiimoteSimple::clone() const
+MotionWiimoteSimple::~MotionWiimoteSimple()
 {
-   MotionWiimoteSimple* r = new MotionWiimoteSimple();
-   r->_stept    = _stept;
-   for (t_data::const_iterator i = _succeed_data.begin(); i != _succeed_data.end(); ++i) {
-      r->_succeed_data.push_back( t_sequence() );
-      for (t_sequence::const_iterator j = i->begin(); j != i->end(); ++j) {
-         r->_succeed_data.back().push_back( *j );
-      }
-   }
-   for (t_data::const_iterator i = _failed_data.begin(); i != _failed_data.end(); ++i) {
-      r->_failed_data.push_back( t_sequence() );
-      for (t_sequence::const_iterator j = i->begin(); j != i->end(); ++j) {
-         r->_failed_data.back().push_back( *j );
-      }
-   }
-   return r;
 }
 
 bool MotionWiimoteSimple::idealize(::pb::Motion* pOut) const
@@ -131,8 +122,7 @@ bool MotionWiimoteSimple::realize(const ::pb::Motion* pIn)
 
 void MotionWiimoteSimple::teachClear()
 {
-   _succeed_data.clear();
-   _failed_data.clear();
+   Motion::teachClear();
    _test_seq_min.clear();
    _test_seq_max.clear();
 }
@@ -167,12 +157,15 @@ WiimoteEvent CalcPoint(int t0, const WiimoteEvent& ev0, int t1, const WiimoteEve
 
 void MotionWiimoteSimple::teachBegin()
 {
+   Motion::teachBegin();
    _tmp_sequence.clear();
    _teach_state = TEACH_TEACHING;
 }
 
-void MotionWiimoteSimple::teach(const InputEvent* ev, int t)
+void MotionWiimoteSimple::teach(int t, const InputEvent* ev)
 {
+   Motion::teach(t, ev);
+
    __int64 dur = getDuration();
    if (ev->_type != InputEvent::T_WIIMOTE) { return; }
    if (t < -_stept || dur + _stept < t) { return; }
@@ -183,20 +176,17 @@ void MotionWiimoteSimple::teach(const InputEvent* ev, int t)
 
 void MotionWiimoteSimple::teachRollback()
 {
+   Motion::teachRollback();
    _tmp_sequence.clear();
    _teach_state = TEACH_DEFAULT;
 }
 
 void MotionWiimoteSimple::teachCommit(bool succeed)
 {
+   Motion::teachCommit(succeed);
    _teach_state = TEACH_DEFAULT;
 
    if (_tmp_sequence.empty()) { return; }
-   if (succeed) {
-      _succeed_data.push_back(_tmp_sequence);
-   } else {
-      _failed_data.push_back(_tmp_sequence);
-   }
 
    if (! succeed) { return; }
 
@@ -283,7 +273,7 @@ void MotionWiimoteSimple::testEnd(bool completed)
    }
 }
 
-void MotionWiimoteSimple::test(const InputEvent* given_ev0, int t)
+void MotionWiimoteSimple::test(int t, const InputEvent* given_ev0)
 {
    if (given_ev0->_type != InputEvent::T_WIIMOTE) { return; }
    if (_test_state != TEST_TESTING) { return; }

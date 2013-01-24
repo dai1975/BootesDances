@@ -1,10 +1,16 @@
 #include "Motion.h"
+#include <algorithm>
 
 Motion::Motion()
  : _pMove(NULL)
  , _teach_state(TEACH_DEFAULT)
  , _test_state(TEST_DEFAULT)
 { }
+
+Motion::Motion(const Motion& r)
+{
+   std::copy(r._teaches.begin(), r._teaches.end(), _teaches.begin());
+}
 
 Motion::~Motion()
 { }
@@ -28,6 +34,36 @@ IMotion::TEACH_STATE Motion::getTeachState() const
 IMotion::TEST_STATE  Motion::getTestState() const
 {
    return _test_state;
+}
+
+void Motion::teachClear()
+{
+   _teaches.clear();
+}
+
+void Motion::teachBegin()
+{
+   _teaches.push_back( TeachSequence() );
+}
+
+void Motion::teach(int t, const ::bootes::lib::framework::InputEvent* ev)
+{
+   TeachSequence& teach = _teaches.back();
+   if (ev->_type == ::bootes::lib::framework::InputEvent::T_WIIMOTE) {
+      const ::bootes::lib::framework::WiimoteEvent* wev = static_cast< const ::bootes::lib::framework::WiimoteEvent* >(ev);
+      teach.records.push_back( TeachSequence::Record(t, *wev) );
+   }
+}
+
+void Motion::teachRollback()
+{
+   _teaches.pop_back();
+}
+
+void Motion::teachCommit(bool succeed)
+{
+   TeachSequence& teach = _teaches.back();
+   teach.succeed = succeed;
 }
 
 /**

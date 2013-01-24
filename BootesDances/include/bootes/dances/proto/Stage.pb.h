@@ -635,7 +635,7 @@ class Move : public ::google::protobuf::Message {
   inline ::pb::Guide* mutable_guide();
   inline ::pb::Guide* release_guide();
   
-  // optional .pb.Motion motion = 11;
+  // required .pb.Motion motion = 11;
   inline bool has_motion() const;
   inline void clear_motion();
   static const int kMotionFieldNumber = 11;
@@ -1388,7 +1388,7 @@ inline ::pb::Guide* Move::release_guide() {
   return temp;
 }
 
-// optional .pb.Motion motion = 11;
+// required .pb.Motion motion = 11;
 inline bool Move::has_motion() const {
   return (_has_bits_[0] & 0x00000020u) != 0;
 }

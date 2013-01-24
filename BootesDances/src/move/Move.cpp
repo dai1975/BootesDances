@@ -19,17 +19,17 @@ Move::Move(const Move& r)
    _t0 = r._t0;
    _t1 = r._t1;
 
-   if (_pGuide == NULL) {
+   if (r._pGuide == NULL) {
       _pGuide = NULL;
    } else {
-      _pGuide = _pGuide->clone();
+      _pGuide = r._pGuide->clone();
       static_cast< Guide* >(_pGuide)->setMove(this);
    }
 
-   if (_pMotion == NULL) {
+   if (r._pMotion == NULL) {
       _pMotion = NULL;
    } else {
-      _pMotion = _pMotion->clone();
+      _pMotion = r._pMotion->clone();
       static_cast< Motion* >(_pMotion)->setMove(this);
    }
 }

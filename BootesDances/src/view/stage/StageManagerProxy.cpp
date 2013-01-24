@@ -45,16 +45,18 @@ bool StageManagerProxy::init(const TCHAR* dir, bool editable, D3DPOOL pool)
 {
    _dir = dir;
    _pStage = NULL;
+   _editable = editable;
    _enabled = false;
 
    _pMoviePlayer    = new MoviePlayer(pool);
    _pMovePresenter  = new MovePresenterImpl(editable);
    _pMoveEditor     = new MoveEditorImpl();
-   _pWiimoteHandler = new WiimoteHandlerImpl();
+   _pWiimoteHandler = new WiimoteHandlerImpl(editable, dir);
 
    return true;
 }
 
+/*
 bool StageManagerProxy::initStage()
 {
    _enabled = false;
@@ -66,9 +68,10 @@ bool StageManagerProxy::initStage()
    _pMoviePlayer->clear();
    if (_pMovePresenter)  { if (! _pMovePresenter->initStage(&_pStage->seq, _pMoveEditor)) { return false; } }
    if (_pMoveEditor)     { if (! _pMoveEditor->initStage(&_pStage->seq)) { return false; } }
-   if (_pWiimoteHandler) { if (! _pWiimoteHandler->initStage(&_pStage->seq)) { return false; } }
+   if (_pWiimoteHandler) { if (! _pWiimoteHandler->initStage(&_pStage->seq, )) { return false; } }
    return true;
 }
+*/
 
 IMove* StageManagerProxy::createMove(IGuide* pGuide) const
 {
@@ -138,7 +141,11 @@ DWORD StageManagerProxy::run()
             doSave(e->_filepath.c_str());
          } else if (cid == EvLoadStage::GetEventId()) {
             EvLoadStage* e = static_cast< EvLoadStage* >(cmd);
-            doLoad(e->_stage);
+            if (e->_stage != NULL) {
+               doLoad(e->_stage);
+            } else {
+               doLoad(e->_path.c_str());
+            }
          }
          delete cmd;
          _command = NULL;
@@ -196,10 +203,8 @@ bool StageManagerProxy::onEvent0(const ::bootes::lib::framework::Event* ev)
 
    if (ev->getEventId() == EvSaveStage::GetEventId()) {
       const EvSaveStage* e = static_cast< const EvSaveStage* >(ev);
-      ;
    } else if (ev->getEventId() == EvLoadStage::GetEventId()) {
       const EvLoadStage* e = static_cast< const EvLoadStage* >(ev);
-      if (e->_stage.operator->() == NULL) { return false; }
    }
    _command = ev->clone();
    return true;
@@ -299,7 +304,11 @@ void StageManagerProxy::doSave(const TCHAR* path)
       g_pFnd->queue(&res);
       return;
    }
+   res._result = StageRealizer::Save(path, _pStage);
+   g_pFnd->queue(&res);
+   return;
 
+/*
    ::pb::Stage idea;
    if (! StageRealizer::Idealize(&idea, _pStage)) {
       g_pFnd->queue(&res);
@@ -342,6 +351,17 @@ void StageManagerProxy::doSave(const TCHAR* path)
  fail:
    res._result = false;
    g_pFnd->queue(&res);
+*/
+}
+
+void StageManagerProxy::doLoad(const TCHAR* path)
+{
+   ::pb::Stage* p;
+   if (! StageRealizer::Load(&p, path)) {
+      p = NULL;
+   }
+   boost::shared_ptr< ::pb::Stage > sp(p);
+   doLoad(sp);
 }
 
 void StageManagerProxy::doLoad(const boost::shared_ptr< ::pb::Stage > stage)
@@ -355,13 +375,13 @@ void StageManagerProxy::doLoad(const boost::shared_ptr< ::pb::Stage > stage)
    if (! StageRealizer::Realize(&pStage, stage.operator->())) { goto fail; }
 
    {
-      if (! _pMoviePlayer->load(pStage->tmoviepath.c_str())) { goto fail; }
+      if (! _pMoviePlayer->load(pStage->tc_moviepath.c_str())) { goto fail; }
       r._videoInfo = _pMoviePlayer->getVideoInfo();
    }
 
    if (_pMovePresenter)  { if (!_pMovePresenter->initStage(&pStage->seq, _pMoveEditor)) { goto fail; } }
    if (_pMoveEditor)     { if (!_pMoveEditor->initStage(&pStage->seq)) { goto fail; } }
-   if (_pWiimoteHandler) { if (!_pWiimoteHandler->initStage(&pStage->seq)) { goto fail; } }
+   if (_pWiimoteHandler) { if (!_pWiimoteHandler->initStage(&pStage->seq, pStage->tc_name.c_str())) { goto fail; } }
 
    _pStage = pStage;
    _enabled = true;
@@ -375,7 +395,7 @@ void StageManagerProxy::doLoad(const boost::shared_ptr< ::pb::Stage > stage)
    _pStage = NULL;
    if (_pMovePresenter)  { _pMovePresenter->initStage(NULL, _pMoveEditor); }
    if (_pMoveEditor)     { _pMoveEditor->initStage(NULL); }
-   if (_pWiimoteHandler) { _pWiimoteHandler->initStage(NULL); }
+   if (_pWiimoteHandler) { _pWiimoteHandler->initStage(NULL, NULL); }
    r._result = false;
    g_pFnd->queue(&r);
 }
