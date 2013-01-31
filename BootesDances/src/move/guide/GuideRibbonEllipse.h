@@ -15,6 +15,7 @@ public:
    static const std::string TYPE;
    virtual bool idealize(::pb::Guide*) const;
    virtual bool realize(const ::pb::Guide*);
+   virtual bool idealize(::pb::GuideRibbon* pOut) const;
 
    float getCenterX() const;
    float getCenterY() const;

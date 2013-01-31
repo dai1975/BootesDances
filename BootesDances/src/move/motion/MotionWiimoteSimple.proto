@@ -16,3 +16,24 @@ message MotionWiimoteSimple {
   repeated Entry maxseq = 3;
 }
 
+message MotionWiimoteSimple2 {
+  required string uuid  = 1;
+  required int64  time0 = 2; //100ns
+  required int64  time1 = 3; //100ns
+
+  message Entry {
+    required int32 t     = 1;
+    required pb.Motion.Accel accel = 2;
+    required pb.Motion.Gyro  gyro  = 3;
+    required pb.Motion.Gyro  orien = 4;
+  }
+
+  required int32 stept  = 10;
+  repeated Entry minseq = 11;
+  repeated Entry maxseq = 12;
+}
+
+message MotionWiimoteSimpleList {
+  repeated MotionWiimoteSimple2 motions = 10;
+}
+

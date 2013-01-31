@@ -12,6 +12,7 @@ class IGuide
 public:
    inline IGuide() { }
    inline virtual ~IGuide() { };
+   virtual int getSubId() const = 0;
    virtual IGuide* clone() const = 0;
 
    virtual void setMove(IMove*) = 0;

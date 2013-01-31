@@ -46,105 +46,17 @@ bool MoveRealizer::Idealize(::pb::Move* pOut, const IMove* pIn)
    return true;
 }
 
-#if 0
-namespace {
-
-   template <typename IT, typename RT>
-   void RealizeByPoints(RT* rea, const IT* idea)
-   {
-      IGuide::t_points points;
-      points.resize(idea->points_size());
-
-      for (size_t i=0; i<points.size(); ++i) {
-         D3DXVECTOR3& v = points[i];
-         v.x = idea->points(i).x();
-         v.y = idea->points(i).y();
-         v.z = 0;
-      }
-      rea->init(points);
-   }
-/*
-   template <typename IT, typename RT>
-   void IdealizeByPoints(IT* idea, const RT* rea)
-   {      
-      const IMoveModel::t_points& points = rea->getEditPoints();
-      for (size_t i=0; i<points.size(); ++i) {
-         pb::Point* p = idea->add_points();
-         p->set_x( points[i].x );
-         p->set_y( points[i].y );
-      }
-   }
-*/
-}
-
-namespace {
-GuideRibbonLine* RealizeLine(const pb::Move::Line* idea)
+bool MoveRealizer::Save(const TCHAR* dir, const TCHAR* name, const MoveSequence* seq)
 {
-   if (idea->points_size() < 2) { return NULL; }
-
-   GuideRibbonLine* rea = new GuideRibbonLine();
-   RealizeByPoints(rea, idea);
-   return rea;
+   if (! GuideRealizer::Save(dir, name, seq)) { return false; }
+   if (! MotionRealizer::Save(dir, name, seq)) { return false; }
+   return true;
 }
-/*
-pb::Move* IdealizeLine(const GuideRibbonLine* rea)
+
+bool MoveRealizer::Load(MoveSequence* seq, const TCHAR* dir, const TCHAR* name)
 {
-   pb::Move* idea = new pb::Move();
-   IdealizeByPoints(idea->mutable_line(), rea);
-   return idea;
+   return false;
 }
-*/
-GuideRibbonSpline* RealizeSpline(const pb::Move::Spline* idea)
-{
-   if (idea->points_size() < 3) { return NULL; }
-   if (idea->points_size() % 2 != 1) { return NULL; }
-
-   GuideRibbonSpline* rea = new GuideRibbonSpline();
-   RealizeByPoints(rea, idea);
-   return rea;
-}
-/*
-pb::Move* IdealizeSpline(const GuideRibbonSpline* rea)
-{
-   pb::Move* idea = new pb::Move();
-   IdealizeByPoints(idea->mutable_spline(), rea);
-   return idea;
-}
-*/
-GuideRibbonEllipse* RealizeEllipse(const pb::Move::Ellipse* idea)
-{
-   GuideRibbonEllipse *rea = new GuideRibbonEllipse();
-
-   float x  = idea->center().x();
-   float y  = idea->center().y();
-   float rx = idea->radius().x();
-   float ry = idea->radius().y();
-   float a0 = idea->angle0();
-   float a1 = idea->angle1();
-   bool dir = idea->direction();
-   rea->init(x,y,rx,ry,a0,a1,dir);
-
-   return rea;
-}
-/*
-pb::Move* IdealizeEllipse(const GuideRibbonEllipse* rea)
-{
-   pb::Move* idea = new pb::Move();
-   pb::Move::Ellipse* p = idea->mutable_ellipse();
-
-   p->mutable_center()->set_x( rea->getCenterX() );
-   p->mutable_center()->set_y( rea->getCenterY() );
-   p->mutable_radius()->set_x( rea->getRadiusX() );
-   p->mutable_radius()->set_y( rea->getRadiusY() );
-   p->set_angle0( rea->getBeginAngle() );
-   p->set_angle1( rea->getEndAngle() );
-   p->set_direction( rea->getDirection() );
-
-   return idea;
-}
-*/
-}
-#endif
 
 /**
  * Local Variables:

@@ -70,7 +70,7 @@ private:
    CeguiTextureImage _image;
    int _elapse;
    int _mode;
-   std::basic_string< TCHAR > _stage_path;
+   std::string _stage_name;
 };
 
 } } }

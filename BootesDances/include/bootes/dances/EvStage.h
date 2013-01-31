@@ -78,6 +78,7 @@ public:
    static const char* GetEventName() { return "LoadStageResult"; }
 
    bool _result;
+   std::string _name;
    VideoInfo _videoInfo;
 
    EvLoadStageResult() { }
@@ -86,6 +87,7 @@ public:
    EvLoadStageResult& operator=(const EvLoadStageResult& r) {
       _result = r._result;
       _videoInfo = r._videoInfo;
+      _name = r._name;
       return *this;
    }
 };
@@ -95,13 +97,13 @@ class EvSaveStage: public ::bootes::lib::framework::EventTmpl< EvSaveStage >
 public:
    static const char* GetEventName() { return "SaveStage"; }
 
-   std::basic_string< TCHAR > _filepath;
+   std::string _name;
 
    EvSaveStage() { }
    ~EvSaveStage() { }
    EvSaveStage(const EvSaveStage& r) { operator=(r); }
    EvSaveStage& operator=(const EvSaveStage& r) {
-      _filepath = r._filepath;
+      _name = r._name;
       return *this;
    }
 };
@@ -112,13 +114,14 @@ public:
    static const char* GetEventName() { return "SaveStageResult"; }
 
    bool _result;
-   std::basic_string< TCHAR > _filepath;
+   std::string _name;
 
    EvSaveStageResult() { }
    ~EvSaveStageResult() { }
    EvSaveStageResult(const EvSaveStageResult& r) { operator=(r); }
    EvSaveStageResult& operator=(const EvSaveStageResult& r) {
       _result = r._result;
+      _name = r._name;
       return *this;
    }
 };

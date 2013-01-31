@@ -48,7 +48,7 @@ class StageManagerProxy: public ::bootes::lib::framework::EventListener
  protected:
    bool onEvent0(const ::bootes::lib::framework::Event* ev); //!< receive interesting events and queues it.
    void doSearch(const TCHAR* dir); //!< search stage files and emit SearchStageResult events.
-   void doSave(const TCHAR* path); //!< save stage to file and emit a LoadStageResult event.
+   void doSave(const char* name); //!< save stage to file and emit a LoadStageResult event.
    void doLoad(const TCHAR* path); //!< load stage
    void doLoad(const boost::shared_ptr< pb::Stage >); //!< load stage
 

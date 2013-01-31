@@ -5,6 +5,7 @@
 #include <list>
 #include <vector>
 #include <string>
+#include "MotionWiimoteSimple.pb.h"
 
 class MotionWiimoteSimple: public Motion
 {
@@ -14,10 +15,11 @@ public:
    MotionWiimoteSimple();
    virtual ~MotionWiimoteSimple();
    virtual IMotion* clone() const { return new MotionWiimoteSimple(*this); }
+   static std::string TYPE;
 
-   static const std::string TYPE;
    virtual bool idealize(::pb::Motion* pOut) const;
    virtual bool realize(const ::pb::Motion* pIn);
+   virtual bool idealize(::pb::MotionWiimoteSimple2* pOut) const;
 
    virtual void teachClear(); //!< モーション定義をクリアする。
    virtual void teachBegin();
@@ -48,7 +50,6 @@ private:
    t_sequence::iterator _test_min_nexti,_test_max_nexti;
    int _nFails;
 };
-
 
 #endif
 

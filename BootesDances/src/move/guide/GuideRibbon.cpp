@@ -4,11 +4,15 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <sstream>
 
-GuideRibbon::GuideRibbon()
+const std::string GuideRibbon::TYPE = "GuideRibbon";
+
+GuideRibbon::GuideRibbon(int subid)
+   : Guide(subid)
 {
 }
 
 GuideRibbon::GuideRibbon(const GuideRibbon& r)
+   : Guide(r)
 {
    _edit_points.resize( r._edit_points.size() );
    std::copy(r._edit_points.begin(), r._edit_points.end(),

@@ -6,6 +6,7 @@
 const std::string GuideRibbonEllipse::TYPE = "GuideRibbonEllipse";
 
 GuideRibbonEllipse::GuideRibbonEllipse()
+   : GuideRibbon(GuideRibbon::SUBID_ELLIPSE)
 {
    _edit_points.resize(NUM_JOINTS);
    init(0.5f, 0.5f, 0.3f, 0.3f, -FLOAT_PI * 0.4f, -FLOAT_PI * 0.6f, true);
@@ -83,6 +84,21 @@ bool GuideRibbonEllipse::realize(const ::pb::Guide* pIn)
    bool dir = idea.direction();
    this->init(x,y,rx,ry,a0,a1,dir);
 
+   return true;
+}
+
+bool GuideRibbonEllipse::idealize(::pb::GuideRibbon* pOut) const
+{
+   ::pb::GuideRibbon::Ellipse* idea = pOut->mutable_ellipse();
+   {
+      idea->mutable_center()->set_x( getCenterX() );
+      idea->mutable_center()->set_y( getCenterY() );
+      idea->mutable_radius()->set_x( getRadiusX() );
+      idea->mutable_radius()->set_y( getRadiusY() );
+      idea->set_angle0( getBeginAngle() );
+      idea->set_angle1( getEndAngle() );
+      idea->set_direction( getDirection() );
+   }
    return true;
 }
 

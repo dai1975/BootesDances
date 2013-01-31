@@ -3,6 +3,7 @@
 
 #include "../../include.h"
 #include "Guide.h"
+#include "GuideRibbon.pb.h"
 #include <list>
 #include <vector>
 
@@ -10,11 +11,15 @@ class GuideRibbon: public Guide
 {
 protected:
    GuideRibbon(const GuideRibbon&);
-   GuideRibbon();
+   explicit GuideRibbon(int subid);
 public:
    virtual ~GuideRibbon();
+   enum { SUBID_LINE, SUBID_ELLIPSE, SUBID_SPLINE,
+          NUM_SUBIDS, };
+   virtual bool idealize(::pb::GuideRibbon* pOut) const = 0;
 
 public:
+   static const std::string TYPE;
    //! 編集用の点を得る
    virtual inline const t_points& getEditPoints() const
    { return _edit_points; }

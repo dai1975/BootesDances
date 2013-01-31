@@ -138,7 +138,7 @@ DWORD StageManagerProxy::run()
             doSearch(_dir.c_str());
          } else if (cid == EvSaveStage::GetEventId()) {
             EvSaveStage* e = static_cast< EvSaveStage* >(cmd);
-            doSave(e->_filepath.c_str());
+            doSave(e->_name.c_str());
          } else if (cid == EvLoadStage::GetEventId()) {
             EvLoadStage* e = static_cast< EvLoadStage* >(cmd);
             if (e->_stage != NULL) {
@@ -294,18 +294,26 @@ void StageManagerProxy::doSearch(const TCHAR* dir)
    FindClose(hFind);
 }
 
-void StageManagerProxy::doSave(const TCHAR* path)
+void StageManagerProxy::doSave(const char* name)
 {
    EvSaveStageResult res;
-   res._filepath = path;
    res._result = false;
+   res._name   = name;
 
    if (_pStage == NULL) {
       g_pFnd->queue(&res);
       return;
    }
-   res._result = StageRealizer::Save(path, _pStage);
+
+   TCHAR* tc_name = ::bootes::lib::util::TChar::C2T(name);
+
+   if (StageRealizer::Save(_dir.c_str(), tc_name, _pStage)) {
+      res._result = true;
+      _pStage->name = name;
+      _pStage->tc_name = tc_name;
+   }
    g_pFnd->queue(&res);
+   delete[] tc_name;
    return;
 
 /*
@@ -383,9 +391,10 @@ void StageManagerProxy::doLoad(const boost::shared_ptr< ::pb::Stage > stage)
    if (_pMoveEditor)     { if (!_pMoveEditor->initStage(&pStage->seq)) { goto fail; } }
    if (_pWiimoteHandler) { if (!_pWiimoteHandler->initStage(&pStage->seq, pStage->tc_name.c_str())) { goto fail; } }
 
-   _pStage = pStage;
-   _enabled = true;
+   _pStage   = pStage;
+   _enabled  = true;
    r._result = true;
+   r._name   = _pStage->name;
    g_pFnd->queue(&r);
    return;
 

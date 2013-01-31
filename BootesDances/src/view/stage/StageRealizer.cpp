@@ -16,12 +16,14 @@ bool StageRealizer::Idealize(::pb::Stage* pOut, const Stage* pIn)
    pOut->set_name(pIn->name);
    pOut->set_moviepath(pIn->moviepath);
 
+   /*
    const MoveSequence& seq = pIn->seq;
    for (MoveSequence::const_iterator i = seq.begin(); i != seq.end(); ++i) {
       ::pb::Move* p = pOut->add_moves();
       MoveRealizer::Idealize(p, *i);
       p->set_chainnext( seq.isChainNext(i) );
    }
+   */
    return true;
 }
 
@@ -48,6 +50,8 @@ bool StageRealizer::Realize(Stage** ppOut, const pb::Stage* pIn)
 
    // add move models
    pStage->seq.clear();
+   pStage->seq.setGuideName("GuideRibbon");
+   pStage->seq.setMotionName("MotionWiimoteSimple");
    bool chain0 = false;
    for (int i=0; i < pIn->moves_size(); ++i) {
       const ::pb::Move& idea = pIn->moves(i);
@@ -66,15 +70,33 @@ fail:
    return false;
 }
 
-bool StageRealizer::Save(const TCHAR* path_, const Stage* pIn)
+bool StageRealizer::Save(const TCHAR* dir, const TCHAR* name, const Stage* pIn)
 {
+   std::basic_string< TCHAR > stagedir;
+   stagedir.append(dir).append(_T("\\")).append(name);
+
+   {
+      DWORD attr = GetFileAttributes(stagedir.c_str());
+      if (attr == -1) {
+         if (! CreateDirectory(stagedir.c_str(), NULL)) {
+            return false;
+         }
+      } else if ((attr & FILE_ATTRIBUTE_DIRECTORY) == 0) {
+         return false;
+      }
+   }
+
+   if (! MoveRealizer::Save(stagedir.c_str(), name, &pIn->seq)) {
+      return false;
+   }
+
    ::pb::Stage idea;
    if (! StageRealizer::Idealize(&idea, pIn)) {
       return false;
    }
 
    std::basic_string< TCHAR > path, tmppath, oldpath;
-   path.append(path);
+   path.append(stagedir).append(_T("\\stage.txt"));
    tmppath.append(path).append(_T(".tmp"));
    oldpath.append(path).append(_T(".old"));
 

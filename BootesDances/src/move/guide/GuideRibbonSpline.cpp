@@ -9,6 +9,7 @@ const std::string GuideRibbonSpline::TYPE = "GuideRibbonSpline";
 #define SPLIT_NUM 21 //奇数が良い
 
 GuideRibbonSpline::GuideRibbonSpline()
+   : GuideRibbon(GuideRibbon::SUBID_SPLINE)
 {
    _edit_points.resize(3);
    _edit_points[0] = D3DXVECTOR3(0.2f, 0.8f, 0.0f);
@@ -96,6 +97,21 @@ bool GuideRibbonSpline::realize(const ::pb::Guide* pIn)
 
    return true;
 }
+
+bool GuideRibbonSpline::idealize(::pb::GuideRibbon* pOut) const
+{
+   ::pb::GuideRibbon::Spline* idea = pOut->mutable_spline();
+   {
+      const IGuide::t_points& points = getEditPoints();
+      for (size_t i=0; i<points.size(); ++i) {
+         pb::Point* p = idea->add_points();
+         p->set_x( points[i].x );
+         p->set_y( points[i].y );
+      }
+   }
+   return true;
+}
+
 
 bool GuideRibbonSpline::setOnlinePoint(size_t idx, float x, float y)
 {

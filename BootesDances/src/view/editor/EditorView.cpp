@@ -204,7 +204,7 @@ bool EditorView::onMenuFileLoad(const CEGUI::EventArgs& ev)
 bool EditorView::onMenuFileSave(const CEGUI::EventArgs& ceguiev)
 {
    EvSaveStage ev;
-   ev._filepath = _stage_path.c_str();
+   ev._name = _stage_name.c_str();
    g_pFnd->queue(&ev);
    return true;
 }
@@ -244,7 +244,7 @@ void EditorView::doDialogNew(const TCHAR* tc_dir, const TCHAR* tc_file)
    while (*pc != '\0' && *pc != '.') { ++pc; }
    size_t size = pc - c_file;
    std::string name(c_file, 0, size);
-   _stage_path.assign(tc_file, 0, size).append(_T(".boo"));
+   _stage_name = name;
 
    pb::Stage* stage = new pb::Stage();
    {
@@ -265,35 +265,6 @@ void EditorView::doDialogLoad(const TCHAR* dir, const TCHAR* file)
    EvLoadStage ev;
    ev._path.append(dir).append(_T("\\")).append(file);
    g_pFnd->getEventManager()->queue(&ev);
-
-/*
-   std::basic_string< TCHAR > path;
-   path.append(dir).append(_T("\\")).append(file);
-
-   int fd;
-   errno_t err = _tsopen_s(&fd, path.c_str(),
-                           _O_RDONLY|_O_BINARY, _SH_DENYWR, _S_IREAD|_S_IWRITE);
-   if (err != 0) {
-      return;
-   }
-
-   ::pb::Stage* stage;
-   {
-      stage = new ::pb::Stage();
-      google::protobuf::io::FileInputStream in(fd);
-      bool parsed = google::protobuf::TextFormat::Parse(&in, stage);
-      _close(fd);
-      if (!parsed) {
-         delete stage;
-         return;
-      }
-   }
-   _stage_path = file;
-
-   EvLoadStage ev;
-   ev._stage.reset(stage);
-   g_pFnd->getEventManager()->queue(&ev);
-*/
 }
 
 
@@ -399,8 +370,10 @@ void EditorView::onLoad(const EvLoadStageResult* ev)
    CEGUI::WindowManager& wm = CEGUI::WindowManager::getSingleton();
    if (ev->_result) {
       wm.getWindow("Root/Menubar/File/Save")->setEnabled(true);
+      _stage_name = ev->_name;
    } else {
       wm.getWindow("Root/Menubar/File/Save")->setEnabled(false);
+      _stage_name = "";
    }
 }
 

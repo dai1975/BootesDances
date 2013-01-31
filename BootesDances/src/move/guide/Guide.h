@@ -10,14 +10,16 @@ class Guide: public IGuide
 {
 protected:
    Guide(const Guide&);
-   Guide();
+   explicit Guide(int subid);
 
 public:
    virtual ~Guide();
    virtual void setMove(IMove*);
+   virtual int getSubId() const;
 
 protected:
    IMove* _pMove;
+   int _subid;
 };
 
 #endif

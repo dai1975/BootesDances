@@ -1,0 +1,30 @@
+import "bootes/dances/proto/Stage.proto";
+
+package pb;
+
+message GuideRibbon {
+  required string uuid  = 1;
+  required int64  time0 = 2; //100ns
+  required int64  time1 = 3; //100ns
+  required bool   chainnext = 4;
+
+  message Line {
+    repeated Point points = 1;
+  } optional Line line = 10;
+
+  message Ellipse {
+    required Point center = 1;
+    required Point radius = 2;
+    required float angle0 = 3;
+    required float angle1 = 4;
+    required bool  direction = 5;
+  } optional Ellipse ellipse = 11;
+
+  message Spline {
+    repeated Point points = 1;
+  } optional Spline spline = 12;
+}
+
+message GuideRibbonList {
+  repeated GuideRibbon guides = 1;
+}

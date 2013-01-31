@@ -43,4 +43,3 @@ message Stage {
 
   repeated Move moves  = 10;
 }
-

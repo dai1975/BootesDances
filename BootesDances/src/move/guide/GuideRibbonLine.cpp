@@ -6,13 +6,14 @@
 const std::string GuideRibbonLine::TYPE = "GuideRibbonLine";
 
 GuideRibbonLine::GuideRibbonLine()
+   : GuideRibbon(GuideRibbon::SUBID_LINE)
 {
    _edit_points.resize(2);
    init(0.1f, 0.1f, 0.9f, 0.9f);
 }
 
 GuideRibbonLine::GuideRibbonLine(const GuideRibbonLine& r)
-: GuideRibbon(r)
+  : GuideRibbon(r)
 {
 }
 
@@ -66,6 +67,21 @@ bool GuideRibbonLine::realize(const ::pb::Guide* pIn)
 
    return true;
 }
+
+bool GuideRibbonLine::idealize(::pb::GuideRibbon* pOut) const
+{
+   ::pb::GuideRibbon::Line* idea = pOut->mutable_line();
+   {
+      const IGuide::t_points& points = getEditPoints();
+      for (size_t i=0; i<points.size(); ++i) {
+         pb::Point* p = idea->add_points();
+         p->set_x( points[i].x );
+         p->set_y( points[i].y );
+      }
+   }
+   return true;
+}
+
 
 void GuideRibbonLine::init(float x0, float y0, float x1, float y1)
 {

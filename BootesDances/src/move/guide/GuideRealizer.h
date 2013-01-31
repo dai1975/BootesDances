@@ -4,12 +4,16 @@
 #include "../../include.h"
 #include <bootes/dances/IGuide.h>
 #include "Guide.h"
+#include "../MoveSequence.h"
 
 class GuideRealizer
 {
 public:
    static bool Idealize(::pb::Guide*, const IGuide*);
    static bool Realize(IGuide**, const ::pb::Guide*);
+
+   static bool Save(const TCHAR* dir, const TCHAR* name, const MoveSequence* seq);
+   static bool Load(MoveSequence* seq, const TCHAR* dir, const TCHAR* name);
 };
 
 #endif

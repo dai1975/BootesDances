@@ -51,6 +51,11 @@ public:
    MoveSequence();
    virtual ~MoveSequence();
 
+   inline void setGuideName(const char* name) { _guide_name = name; }
+   inline void setMotionName(const char* name) { _motion_name = name; }
+   inline const char* getGuideName() const { return _guide_name.c_str(); }
+   inline const char* getMotionName() const { return _motion_name.c_str(); }
+
    size_t size() const;
    inline iterator begin();
    inline iterator end();
@@ -109,6 +114,7 @@ private:
       }
    };
    Entry _head, _tail;
+   std::string _guide_name, _motion_name;
 };
 
 inline MoveSequence::iterator::iterator(Entry* e_): e(e_)

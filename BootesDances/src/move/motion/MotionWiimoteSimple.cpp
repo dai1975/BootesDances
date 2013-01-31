@@ -4,7 +4,7 @@
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/io/zero_copy_stream_impl_lite.h>
 
-const std::string MotionWiimoteSimple::TYPE = "MotionWiimoteSimple";
+std::string MotionWiimoteSimple::TYPE = "MotionWiimoteSimple";
 
 using ::bootes::lib::framework::InputEvent;
 using ::bootes::lib::framework::WiimoteEvent;
@@ -119,6 +119,42 @@ bool MotionWiimoteSimple::realize(const ::pb::Motion* pIn)
    }
    return true;
 }
+
+bool MotionWiimoteSimple::idealize(::pb::MotionWiimoteSimple2* idea) const
+{
+   idea->set_stept(_stept);
+   for (t_sequence::const_iterator i = _test_seq_min.begin(); i != _test_seq_min.end(); ++i) {
+      const Entry& r = *i;
+      ::pb::MotionWiimoteSimple2::Entry* record = idea->add_minseq();
+      record->set_t(r.t);
+      record->mutable_accel()->set_x(    r.ev._accel.x );
+      record->mutable_accel()->set_y(    r.ev._accel.y );
+      record->mutable_accel()->set_z(    r.ev._accel.z );
+      record->mutable_gyro()->set_yaw(   r.ev._gyro.yaw );
+      record->mutable_gyro()->set_pitch( r.ev._gyro.pitch );
+      record->mutable_gyro()->set_roll(  r.ev._gyro.roll );
+      record->mutable_orien()->set_yaw(   r.ev._orien.yaw );
+      record->mutable_orien()->set_pitch( r.ev._orien.pitch );
+      record->mutable_orien()->set_roll(  r.ev._orien.roll );
+   }
+   for (t_sequence::const_iterator i = _test_seq_max.begin(); i != _test_seq_max.end(); ++i) {
+      const Entry& r = *i;
+      ::pb::MotionWiimoteSimple2::Entry* record = idea->add_maxseq();
+      record->set_t(r.t);
+      record->mutable_accel()->set_x(    r.ev._accel.x );
+      record->mutable_accel()->set_y(    r.ev._accel.y );
+      record->mutable_accel()->set_z(    r.ev._accel.z );
+      record->mutable_gyro()->set_yaw(   r.ev._gyro.yaw );
+      record->mutable_gyro()->set_pitch( r.ev._gyro.pitch );
+      record->mutable_gyro()->set_roll(  r.ev._gyro.roll );
+      record->mutable_orien()->set_yaw(   r.ev._orien.yaw );
+      record->mutable_orien()->set_pitch( r.ev._orien.pitch );
+      record->mutable_orien()->set_roll(  r.ev._orien.roll );
+   }
+
+   return true;
+}
+
 
 void MotionWiimoteSimple::teachClear()
 {
