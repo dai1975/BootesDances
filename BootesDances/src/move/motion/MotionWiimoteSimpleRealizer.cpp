@@ -12,14 +12,11 @@ struct Static {
 
 }
 
-const char* MotionWiimoteSimpleRealizer::getMotionName() const
-{
-   return "MotionWiimoteSimple";
-}
-const char* MotionWiimoteSimpleRealizer::getGuideName() const
-{
-   return "GuideRibbon";
-}
+const char* MotionWiimoteSimpleRealizer::getMotionName() const   { return "MotionWiimoteSimple"; }
+const TCHAR* MotionWiimoteSimpleRealizer::getMotionNameT() const { return _T("MotionWiimoteSimple"); }
+const char* MotionWiimoteSimpleRealizer::getGuideName() const    { return "GuideRibbon"; }
+const TCHAR* MotionWiimoteSimpleRealizer::getGuideNameT() const  { return _T("GuideRibbon"); }
+
 int MotionWiimoteSimpleRealizer::countSubIds() const
 {
    return 1;
@@ -34,10 +31,10 @@ IMotion* MotionWiimoteSimpleRealizer::createMotion(int subid) const
    return NULL;
 }
 
-bool MotionWiimoteSimpleRealizer::save(::google::protobuf::io::ZeroCopyOutputStream& out, const MoveSequence* seq) const
+bool MotionWiimoteSimpleRealizer::save(::google::protobuf::io::ZeroCopyOutputStream& out, const MoveSequence& seq) const
 {
    ::pb::MotionWiimoteSimpleList lst;
-   for (MoveSequence::const_iterator i = seq->begin(); i != seq->end(); ++i) {
+   for (MoveSequence::const_iterator i = seq.begin(); i != seq.end(); ++i) {
       ::pb::MotionWiimoteSimple2* idea = lst.add_motions();
       const IMove* pMove = *i;
       const MotionWiimoteSimple* pMotion = static_cast< const MotionWiimoteSimple* >(pMove->getMotion());

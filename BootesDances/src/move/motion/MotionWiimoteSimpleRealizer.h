@@ -7,10 +7,12 @@ class MotionWiimoteSimpleRealizer: public MotionFactory
 {
 public:
    virtual const char* getGuideName() const;
-   virtual int countSubIds() const;
    virtual const char* getMotionName() const;
+   virtual const TCHAR* getGuideNameT() const;
+   virtual const TCHAR* getMotionNameT() const;
+   virtual int countSubIds() const;
    virtual IMotion* createMotion(int subid) const;
-   virtual bool save(::google::protobuf::io::ZeroCopyOutputStream& out, const MoveSequence*) const;
+   virtual bool save(::google::protobuf::io::ZeroCopyOutputStream& out, const MoveSequence&) const;
 };
 
 #endif

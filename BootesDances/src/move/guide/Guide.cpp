@@ -15,7 +15,6 @@ Guide::Guide(const Guide& r)
 
 void Guide::setMove(IMove* p)
 {
-   assert(_pMove == NULL);
    _pMove = p;
 }
 

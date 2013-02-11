@@ -51,9 +51,9 @@ public:
 
 private:
    friend class EventManager;
-   static intptr_t s_eventId;
+   static intptr_t s_eventId; // = reinterpret_cast< intptr_t >(&s_eventId);
 };
-template <typename T> intptr_t EventTmpl< T >::s_eventId = 0;
+template <typename T> intptr_t EventTmpl< T >::s_eventId = reinterpret_cast< intptr_t >(&EventTmpl< T >::s_eventId);
 
 
 class EventListener

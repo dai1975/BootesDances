@@ -3,10 +3,10 @@
 
 #include <bootes/lib/booteslib.h>
 #include <string>
-#include "proto/stage.pb.h"
 #include <boost/shared_ptr.hpp>
 #include "EvMovie.h"
 #include "VideoInfo.h"
+#include "Stage.h"
 
 // 検索を実行する
 class EvSearchStage: public ::bootes::lib::framework::EventTmpl< EvSearchStage >
@@ -28,27 +28,16 @@ public:
    static const char* GetEventName() { return "SearchStageResult"; }
 
    bool _result;
+   int _index;
+   boost::shared_ptr< Stage > _pStage; //NULLなら終端
 
    EvSearchStageResult() { }
    EvSearchStageResult(const EvSearchStageResult& r) { operator=(r); }
    EvSearchStageResult& operator=(const EvSearchStageResult& r) {
       _result = r._result;
-      return *this;
-   }
-};
-
-// 検索の内容を返す
-class EvStageSearched: public ::bootes::lib::framework::EventTmpl< EvStageSearched >
-{
-public:
-   static const char* GetEventName() { return "StageSearched"; }
-
-   boost::shared_ptr< pb::Stage > _stage;
-
-   EvStageSearched() { }
-   EvStageSearched(const EvStageSearched& r) { operator=(r); }
-   EvStageSearched& operator=(const EvStageSearched& r) {
-      _stage = r._stage;
+      _index  = r._index;
+      _pStage = r._pStage;
+      
       return *this;
    }
 };
@@ -59,15 +48,13 @@ class EvLoadStage: public ::bootes::lib::framework::EventTmpl< EvLoadStage >
 public:
    static const char* GetEventName() { return "LoadStage"; }
 
-   boost::shared_ptr< pb::Stage > _stage;
-   std::basic_string< TCHAR > _path;
+   std::basic_string< TCHAR > _basename;
 
    EvLoadStage() { }
    ~EvLoadStage() { }
    EvLoadStage(const EvLoadStage& r) { operator=(r); }
    EvLoadStage& operator=(const EvLoadStage& r) {
-      _stage = r._stage;
-      _path  = r._path;
+      _basename  = r._basename;
       return *this;
    }
 };
@@ -78,7 +65,7 @@ public:
    static const char* GetEventName() { return "LoadStageResult"; }
 
    bool _result;
-   std::string _name;
+   std::basic_string< TCHAR > _basename;
    VideoInfo _videoInfo;
 
    EvLoadStageResult() { }
@@ -87,7 +74,45 @@ public:
    EvLoadStageResult& operator=(const EvLoadStageResult& r) {
       _result = r._result;
       _videoInfo = r._videoInfo;
-      _name = r._name;
+      _basename = r._basename;
+      return *this;
+   }
+};
+
+class EvNewStage: public ::bootes::lib::framework::EventTmpl< EvNewStage >
+{
+public:
+   static const char* GetEventName() { return "NewStage"; }
+
+   std::basic_string< TCHAR > _moviepath;
+
+   EvNewStage() { }
+   ~EvNewStage() { }
+   EvNewStage(const EvNewStage& r) { operator=(r); }
+   EvNewStage& operator=(const EvNewStage& r) {
+      _moviepath = r._moviepath;
+      return *this;
+   }
+};
+
+class EvNewStageResult: public ::bootes::lib::framework::EventTmpl< EvNewStageResult >
+{
+public:
+   static const char* GetEventName() { return "NewStageResult"; }
+
+   bool _result;
+   std::basic_string< TCHAR > _basename;
+   std::basic_string< TCHAR > _moviepath;
+   VideoInfo _videoInfo;
+
+   EvNewStageResult() { }
+   ~EvNewStageResult() { }
+   EvNewStageResult(const EvNewStageResult& r) { operator=(r); }
+   EvNewStageResult& operator=(const EvNewStageResult& r) {
+      _result    = r._result;
+      _videoInfo = r._videoInfo;
+      _basename  = r._basename;
+      _moviepath = r._moviepath;
       return *this;
    }
 };
@@ -97,13 +122,15 @@ class EvSaveStage: public ::bootes::lib::framework::EventTmpl< EvSaveStage >
 public:
    static const char* GetEventName() { return "SaveStage"; }
 
-   std::string _name;
+   std::basic_string< TCHAR > _basename;
+   bool _new;
 
    EvSaveStage() { }
    ~EvSaveStage() { }
    EvSaveStage(const EvSaveStage& r) { operator=(r); }
    EvSaveStage& operator=(const EvSaveStage& r) {
-      _name = r._name;
+      _basename = r._basename;
+      _new      = r._new;
       return *this;
    }
 };
@@ -114,14 +141,14 @@ public:
    static const char* GetEventName() { return "SaveStageResult"; }
 
    bool _result;
-   std::string _name;
+   std::basic_string<TCHAR> _basename;
 
    EvSaveStageResult() { }
    ~EvSaveStageResult() { }
    EvSaveStageResult(const EvSaveStageResult& r) { operator=(r); }
    EvSaveStageResult& operator=(const EvSaveStageResult& r) {
-      _result = r._result;
-      _name = r._name;
+      _result   = r._result;
+      _basename = r._basename;
       return *this;
    }
 };
@@ -130,9 +157,10 @@ inline void Register_EvStage(::bootes::lib::framework::EventManager* m)
 {
    assert(m->registerEvent< EvSearchStage >());
    assert(m->registerEvent< EvSearchStageResult >());
-   assert(m->registerEvent< EvStageSearched >());
    assert(m->registerEvent< EvLoadStage >());
    assert(m->registerEvent< EvLoadStageResult >());
+   assert(m->registerEvent< EvNewStage >());
+   assert(m->registerEvent< EvNewStageResult >());
    assert(m->registerEvent< EvSaveStage >());
    assert(m->registerEvent< EvSaveStageResult >());
 }

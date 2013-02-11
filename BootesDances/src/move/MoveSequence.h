@@ -10,6 +10,8 @@ MoveSequence は、時系列に沿った一連の Move の順序集合を提供�
 個々の Move は [開始時刻,終了時刻) を持つ。
 MoveSequence は、Move が時間的に重ならないようにしている。 
 */
+class GuideFactory;
+class MotionFactory;
 class MoveSequence
 {
    struct Entry;
@@ -51,10 +53,10 @@ public:
    MoveSequence();
    virtual ~MoveSequence();
 
-   inline void setGuideName(const char* name) { _guide_name = name; }
-   inline void setMotionName(const char* name) { _motion_name = name; }
-   inline const char* getGuideName() const { return _guide_name.c_str(); }
-   inline const char* getMotionName() const { return _motion_name.c_str(); }
+   inline void setGuideFactory(const GuideFactory* f) { _guide_factory = f; }
+   inline void setMotionFactory(const MotionFactory* f) { _motion_factory = f; }
+   inline const GuideFactory*  getGuideFactory() const { return _guide_factory; }
+   inline const MotionFactory* getMotionFactory() const { return _motion_factory; }
 
    size_t size() const;
    inline iterator begin();
@@ -114,7 +116,8 @@ private:
       }
    };
    Entry _head, _tail;
-   std::string _guide_name, _motion_name;
+   const GuideFactory* _guide_factory;
+   const MotionFactory* _motion_factory;
 };
 
 inline MoveSequence::iterator::iterator(Entry* e_): e(e_)

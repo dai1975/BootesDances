@@ -4,56 +4,69 @@
 #include "motion/MotionRealizer.h"
 
 
-bool MoveRealizer::Realize(IMove** ppOut, const pb::Move* pIn)
+bool MoveRealizer::Realize(IMove** ppOut, const pb::Move& in)
 {
    IGuide* pGuide = NULL;
    IMotion* pMotion = NULL;
-   if (! GuideRealizer::Realize(&pGuide, &pIn->guide())) { return false; }
-   if (pIn->has_motion()) {
-      if (! MotionRealizer::Realize(&pMotion, &pIn->motion())) { return false; }
-   } else {
-      if (! MotionRealizer::Realize(&pMotion, NULL)) { return false; }
+   if (! GuideRealizer::Realize(&pGuide, in.guide())) { return false; }
+   if (in.has_motion()) {
+      if (! MotionRealizer::Realize(&pMotion, in.motion())) { return false; }
    }
 
    Move* move = new Move();
    move->setGuide(pGuide);
    move->setMotion(pMotion);
 
-   move->setTime(pIn->time0(), pIn->time1());
-   move->setUuid(pIn->uuid().c_str());
+   move->setTime(in.time0(), in.time1());
+   move->setUuid(in.uuid().c_str());
 
    *ppOut = move;
    return true;
 }
 
-bool MoveRealizer::Idealize(::pb::Move* pOut, const IMove* pIn)
+bool MoveRealizer::Idealize(::pb::Move* pOut, const IMove& in)
 {
-   if (pIn->getGuide()) {
-      if (! GuideRealizer::Idealize(pOut->mutable_guide(), pIn->getGuide())) {
+   if (in.getGuide()) {
+      if (! GuideRealizer::Idealize(pOut->mutable_guide(), *in.getGuide())) {
          return false;
       }
    }
-   if (pIn->getMotion()) {
-      if (! MotionRealizer::Idealize(pOut->mutable_motion(), pIn->getMotion())) {
+   if (in.getMotion()) {
+      if (! MotionRealizer::Idealize(pOut->mutable_motion(), *in.getMotion())) {
          return false;
       }
    }
 
-   pOut->set_uuid(pIn->getUuid());
-   pOut->set_time0(pIn->getBeginTime());
-   pOut->set_time1(pIn->getEndTime());
+   pOut->set_uuid(in.getUuid());
+   pOut->set_time0(in.getBeginTime());
+   pOut->set_time1(in.getEndTime());
 
    return true;
 }
 
-bool MoveRealizer::Save(const TCHAR* dir, const TCHAR* name, const MoveSequence* seq)
+bool MoveRealizer::IsExist(MotionGuidePair* pOut, const TCHAR* dir, const TCHAR* name, const MotionGuideList& mgl)
+{
+   for (MotionGuideList::const_iterator i = mgl.begin(); i != mgl.end(); ++i) {
+      if (! MotionRealizer::IsExist(dir, name, i->motion.c_str())) { continue; }
+      if (! GuideRealizer::IsExist(dir, name, i->guide.c_str())) { continue; }
+
+      if (pOut != NULL) {
+         pOut->motion = i->motion;
+         pOut->guide = i->guide;
+      }
+      return true;
+   }
+   return false;
+}
+
+bool MoveRealizer::Save(const TCHAR* dir, const TCHAR* name, const MoveSequence& seq)
 {
    if (! GuideRealizer::Save(dir, name, seq)) { return false; }
    if (! MotionRealizer::Save(dir, name, seq)) { return false; }
    return true;
 }
 
-bool MoveRealizer::Load(MoveSequence* seq, const TCHAR* dir, const TCHAR* name)
+bool MoveRealizer::Load(MoveSequence* seq, const TCHAR* dir, const TCHAR* name, const MotionGuidePair& mg)
 {
    return false;
 }

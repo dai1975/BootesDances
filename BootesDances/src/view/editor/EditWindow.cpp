@@ -24,6 +24,7 @@ EditWindow::EditWindow(const CEGUI::String& type, const CEGUI::String& name)
    _teach_stage = TEACH_NONE;
    _play = false;
    g_pFnd->getEventManager()->subscribe< EvLoadStageResult >(this);
+   g_pFnd->getEventManager()->subscribe< EvNewStageResult >(this);
    g_pFnd->getEventManager()->subscribe< EvMoviePlay >(this);
    g_pFnd->getEventManager()->subscribe< EvMoviePause >(this);
    g_pFnd->getEventManager()->subscribe< EvEditorPen >(this);
@@ -52,7 +53,15 @@ EditWindow::~EditWindow()
 
 void EditWindow::onEvent(const ::bootes::lib::framework::Event* ev)
 {
-   if (tryDispatch(ev, &EditWindow::onLoad)) { return; }
+   if (ev->getEventId() == EvLoadStageResult::GetEventId()) {
+      const EvLoadStageResult* e = static_cast< const EvLoadStageResult* >(ev);
+      onLoad(e->_result, e->_videoInfo);
+      return;
+   } else if (ev->getEventId() == EvNewStageResult::GetEventId()) {
+      const EvNewStageResult* e = static_cast< const EvNewStageResult* >(ev);
+      onLoad(e->_result, e->_videoInfo);
+      return;
+   }
    else if (tryDispatch(ev, &EditWindow::onPlay)) { return; }
    else if (tryDispatch(ev, &EditWindow::onPause)) { return; }
    else if (tryDispatch(ev, &EditWindow::onPen)) { return; }
@@ -103,16 +112,16 @@ void EditWindow::onPen(const EvEditorPen* ev)
    _pen_sub  = ev->_sub;
 }
 
-void EditWindow::onLoad(const EvLoadStageResult* ev)
+void EditWindow::onLoad(bool result, const VideoInfo& vi)
 {
-   _videoInfo = ev->_videoInfo;
+   _videoInfo = vi;
    if (_pCtrl == NULL) { return; }
 
    _play = false;
    _pCtrlBtn[CTRL_PLAY]->setText(">");
-   _pCtrlBtn[CTRL_PLAY]->setEnabled(ev->_result);
+   _pCtrlBtn[CTRL_PLAY]->setEnabled(result);
 
-   if (ev->_result) {
+   if (result) {
       //_pSlider->setMaxValue((float)_evLoad._size_100ns);
       //_pSlider->setClickStep((float)_evLoad._tpf_100ns);
       __int64 max = _videoInfo.size_100ns;

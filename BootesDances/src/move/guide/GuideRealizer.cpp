@@ -4,6 +4,7 @@
 #include "GuideRibbonSpline.h"
 #include "GuideRibbonEllipse.h"
 #include <bootes/lib/util/TChar.h>
+#include <sstream>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <io.h>
 #include <sys/stat.h>
@@ -11,15 +12,15 @@
 #include <share.h>
 #include <fcntl.h>
 
-bool GuideRealizer::Idealize(::pb::Guide* pOut, const IGuide* pIn)
+bool GuideRealizer::Idealize(::pb::Guide* pOut, const IGuide& in)
 {
-   return pIn->idealize(pOut);
+   return in.idealize(pOut);
 }
 
-bool GuideRealizer::Realize(IGuide** ppOut, const ::pb::Guide* pIn)
+bool GuideRealizer::Realize(IGuide** ppOut, const ::pb::Guide& in)
 {
    IGuide* p = NULL;
-   const std::string& type = pIn->type();
+   const std::string& type = in.type();
 
    if (false) {
       ;
@@ -33,7 +34,7 @@ bool GuideRealizer::Realize(IGuide** ppOut, const ::pb::Guide* pIn)
       return false;
    }
 
-   if (! p->realize(pIn)) {
+   if (! p->realize(in)) {
       delete p;
       return false; 
    }
@@ -42,17 +43,44 @@ bool GuideRealizer::Realize(IGuide** ppOut, const ::pb::Guide* pIn)
    return true;
 }
 
-bool GuideRealizer::Save(const TCHAR* dir, const TCHAR* name, const MoveSequence* seq)
+
+namespace {
+
+std::basic_string< TCHAR > GetFilePath(const TCHAR* dir, const TCHAR* name, const TCHAR* guide)
+{
+   std::basic_ostringstream< TCHAR > o;
+   o << dir << _T("\\") << name << _T("\\guide-") << guide << _T(".txt");
+   return o.str();
+}
+
+}
+
+bool GuideRealizer::IsExist(const TCHAR* dir, const TCHAR* name, const TCHAR* guide)
+{
+   std::basic_string< TCHAR > path = GetFilePath(dir, name, guide);
+   DWORD attr = GetFileAttributes(path.c_str());
+   if (attr == INVALID_FILE_ATTRIBUTES || ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0)) {
+      return false;
+   }
+   return true;
+}
+
+bool GuideRealizer::Load(MoveSequence* seq, const TCHAR* dir, const TCHAR* name, const TCHAR* guide)
+{
+   return false;
+}
+
+bool GuideRealizer::Save(const TCHAR* dir, const TCHAR* name, const MoveSequence& seq)
 {
    const GuideFactory* reg = NULL;
    std::basic_string< TCHAR > path, tmppath, oldpath;
    {
-      const char* guide_name = seq->getGuideName();
-      reg = GuideFactory::GetFactory(guide_name);
+      reg = seq.getGuideFactory();
       if (reg == NULL) { return false; }
+      const char* guide_name = reg->getGuideName();
 
       TCHAR* guide_tname = ::bootes::lib::util::TChar::C2T(guide_name);
-      path.append(dir).append(_T("\\guide-")).append(guide_tname).append(_T(".txt"));
+      path = GetFilePath(dir, name, guide_tname);
       delete[] guide_tname;
    }
    tmppath.append(path).append(_T(".tmp"));
@@ -84,12 +112,6 @@ bool GuideRealizer::Save(const TCHAR* dir, const TCHAR* name, const MoveSequence
    if (! MoveFile(tmppath.c_str(), path.c_str())) { return false; }
    return true;
 }
-
-bool GuideRealizer::Load(MoveSequence* seq, const TCHAR* dir, const TCHAR* name)
-{
-   return false;
-}
-
 
 /**
  * Local Variables:

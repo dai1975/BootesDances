@@ -3,7 +3,8 @@
 
 #include "../../include.h"
 #include "../../move/MoveSequence.h"
-#include "Stage.h"
+#include <bootes/dances/Stage.h>
+#include "StageRealizer.h"
 #include "MoviePlayer.h"
 #include "MovePresenterImpl.h"
 #include "MoveEditorImpl.h"
@@ -29,7 +30,7 @@ class StageManagerProxy: public ::bootes::lib::framework::EventListener
 
    inline MoviePlayer*       getMoviePlayer()       { return _pMoviePlayer; }
    inline MovePresenterImpl* getMovePresenterImpl() { return _pMovePresenter; }
-   inline MoveSequence*      getMoveSequence()      { return (_pStage)? &_pStage->seq: NULL; }
+   inline MoveSequence*      getMoveSequence()      { return _pSeq; }
 
  public:
    static DWORD WINAPI ThreadProc(LPVOID);
@@ -47,16 +48,17 @@ class StageManagerProxy: public ::bootes::lib::framework::EventListener
 
  protected:
    bool onEvent0(const ::bootes::lib::framework::Event* ev); //!< receive interesting events and queues it.
-   void doSearch(const TCHAR* dir); //!< search stage files and emit SearchStageResult events.
-   void doSave(const char* name); //!< save stage to file and emit a LoadStageResult event.
-   void doLoad(const TCHAR* path); //!< load stage
-   void doLoad(const boost::shared_ptr< pb::Stage >); //!< load stage
+   void doSearch(); //!< search stage files and emit SearchStageResult events.
+   void doSave(const TCHAR* basename, bool neu); //!< save stage to file and emit a LoadStageResult event.
+   void doNew(const TCHAR* path); //!< load movie and create new stage
+   void doLoad(const TCHAR* basename); //!< load stage
 
    void doPlay(const EvPlayMovie*);
    void doPause(const EvPauseMovie*);
    void doSeek(const EvSeekMovie*);
 
  private:
+   bool doLoadMovie(const TCHAR* path, Stage*, MoveSequence*);
    //bool initStage();
 
    HANDLE _thread_handle;
@@ -72,7 +74,8 @@ class StageManagerProxy: public ::bootes::lib::framework::EventListener
    bool _editable;
    bool _enabled;
 
-   //MoveSequence        _moves;
+   StageRealizer::MotionGuideList _mgl;
+   MoveSequence       *_pSeq;
    Stage              *_pStage;
    MoviePlayer        *_pMoviePlayer;
    MovePresenterImpl  *_pMovePresenter;

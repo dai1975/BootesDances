@@ -25,7 +25,9 @@ EditorView::EditorView()
    _elapse = 0;
    _mode = 0;
 
+   g_pFnd->getEventManager()->subscribe< EvNewStageResult >(this);
    g_pFnd->getEventManager()->subscribe< EvLoadStageResult >(this);
+   g_pFnd->getEventManager()->subscribe< EvSaveStageResult >(this);
 }
 
 EditorView::~EditorView()
@@ -192,6 +194,7 @@ bool EditorView::onMenuFileNew(const CEGUI::EventArgs& ev)
 
 bool EditorView::onMenuFileLoad(const CEGUI::EventArgs& ev)
 {
+/*
    _pFileDialog->setText("Open Stage File");
    intptr_t mode = DIALOG_LOAD;
    _pFileDialog->setUserData(reinterpret_cast< void* >(mode));
@@ -199,12 +202,15 @@ bool EditorView::onMenuFileLoad(const CEGUI::EventArgs& ev)
    const TCHAR* exts[] = { _T(".boo"), 0, };
    _pFileDialog->dialog( g_pGame->getUserDir(), exts);
    return true;
+*/
+   return false;
 }
 
 bool EditorView::onMenuFileSave(const CEGUI::EventArgs& ceguiev)
 {
    EvSaveStage ev;
-   ev._name = _stage_name.c_str();
+   ev._basename = _stage_basename;
+   ev._new      = _stage_neu;
    g_pFnd->queue(&ev);
    return true;
 }
@@ -237,33 +243,21 @@ bool EditorView::onDialogCancel(const CEGUI::EventArgs& ev)
 
 void EditorView::doDialogNew(const TCHAR* tc_dir, const TCHAR* tc_file)
 {
-   char* c_dir  = ::bootes::lib::util::TChar::T2C(tc_dir);
-   char* c_file = ::bootes::lib::util::TChar::T2C(tc_file);
-
-   const char* pc = c_file;
-   while (*pc != '\0' && *pc != '.') { ++pc; }
-   size_t size = pc - c_file;
-   std::string name(c_file, 0, size);
-   _stage_name = name;
-
-   pb::Stage* stage = new pb::Stage();
-   {
-      stage->set_version(1);
-      stage->set_name(name);
-      stage->mutable_moviepath()->append(c_dir).append("\\").append(c_file);
-   }
-   EvLoadStage ev;
-   ev._stage.reset(stage);
+   EvNewStage ev;
+   ev._moviepath.append(tc_dir).append(_T("\\")).append(tc_file);
    g_pFnd->getEventManager()->queue(&ev);
-
-   delete[] c_dir;
-   delete[] c_file;
 }
 
 void EditorView::doDialogLoad(const TCHAR* dir, const TCHAR* file)
 {
+   const TCHAR *pc;
+   for (pc = dir; pc != _T('\0'); ++pc) {
+      if (*pc == _T('\\')) { break; }
+   }
+   if (*pc == _T('\0')) { pc = dir; }
+
    EvLoadStage ev;
-   ev._path.append(dir).append(_T("\\")).append(file);
+   ev._basename = pc;
    g_pFnd->getEventManager()->queue(&ev);
 }
 
@@ -362,18 +356,35 @@ void EditorView::onSubscribe(::bootes::lib::framework::EventManager*) { }
 void EditorView::onUnsubscribe(::bootes::lib::framework::EventManager*) { }
 void EditorView::onEvent(const ::bootes::lib::framework::Event* ev)
 {
-   if (tryDispatch(ev, &EditorView::onLoad)) { return; }
+   if (ev->getEventId() == EvLoadStageResult::GetEventId()) {
+      const EvLoadStageResult* e = static_cast< const EvLoadStageResult* >(ev);
+      onLoad(e->_result, e->_basename.c_str(), false);
+      return;
+   } else if (ev->getEventId() == EvNewStageResult::GetEventId()) {
+      const EvNewStageResult* e = static_cast< const EvNewStageResult* >(ev);
+      onLoad(e->_result, e->_basename.c_str(), true);
+      return;
+   } else if (ev->getEventId() == EvSaveStageResult::GetEventId()) {
+      const EvSaveStageResult* e = static_cast< const EvSaveStageResult* >(ev);
+      if (e->_result) {
+         _stage_basename = e->_basename;
+         _stage_neu = false;
+      }
+      return;
+   }
 }
 
-void EditorView::onLoad(const EvLoadStageResult* ev)
+void EditorView::onLoad(bool result, const TCHAR* basename, bool neu)
 {
    CEGUI::WindowManager& wm = CEGUI::WindowManager::getSingleton();
-   if (ev->_result) {
+   if (result) {
       wm.getWindow("Root/Menubar/File/Save")->setEnabled(true);
-      _stage_name = ev->_name;
+      _stage_basename = basename;
+      _stage_neu      = neu;
    } else {
       wm.getWindow("Root/Menubar/File/Save")->setEnabled(false);
-      _stage_name = "";
+      _stage_basename = _T("");
+      _stage_neu      = true;
    }
 }
 

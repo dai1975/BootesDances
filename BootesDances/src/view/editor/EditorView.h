@@ -39,7 +39,7 @@ public:
    bool onMenuFileSave(const CEGUI::EventArgs&);
    bool onDialogSubmit(const CEGUI::EventArgs&);
    bool onDialogCancel(const CEGUI::EventArgs&);
-   void onLoad(const EvLoadStageResult* ev);
+   void onLoad(bool result, const TCHAR* basename, bool neu);
 
 protected:
    void onMouseEnter();
@@ -70,7 +70,8 @@ private:
    CeguiTextureImage _image;
    int _elapse;
    int _mode;
-   std::string _stage_name;
+   std::basic_string<TCHAR> _stage_basename;
+   bool _stage_neu;
 };
 
 } } }

@@ -1,8 +1,9 @@
 #include "StageManagerProxy.h"
 #include "StageRealizer.h"
-#include "../../move/MoveRealizer.h"
 #include "../../move/Move.h"
-#include "../../move/motion/MotionWiimoteSimple.h"
+#include "../../move/MoveRealizer.h"
+#include "../../move/motion/MotionFactory.h"
+#include "../../move/guide/GuideFactory.h"
 #include <bootes/lib/util/TChar.h>
 #include <sstream>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
@@ -17,6 +18,7 @@ StageManagerProxy::StageManagerProxy()
 {
    _enabled = false;
    _pStage = NULL;
+   _pSeq = NULL;
 
    _thread_handle = INVALID_HANDLE_VALUE;
    _mutex = NULL;
@@ -26,6 +28,7 @@ StageManagerProxy::StageManagerProxy()
    g_pFnd->getEventManager()->subscribe< EvSearchStage >(this);
    g_pFnd->getEventManager()->subscribe< EvSaveStage >(this);
    g_pFnd->getEventManager()->subscribe< EvLoadStage >(this);
+   g_pFnd->getEventManager()->subscribe< EvNewStage >(this);
    g_pFnd->getEventManager()->subscribe< EvPlayMovie >(this);
    g_pFnd->getEventManager()->subscribe< EvPauseMovie >(this);
    g_pFnd->getEventManager()->subscribe< EvSeekMovie >(this);
@@ -38,6 +41,7 @@ StageManagerProxy::~StageManagerProxy()
    if (_pMoveEditor)     { delete _pMoveEditor; }
    if (_pMovePresenter)  { delete _pMovePresenter; }
    if (_pStage) { delete _pStage; }
+   if (_pSeq) { delete _pSeq; }
    delete _pMoviePlayer;
 }
 
@@ -45,6 +49,7 @@ bool StageManagerProxy::init(const TCHAR* dir, bool editable, D3DPOOL pool)
 {
    _dir = dir;
    _pStage = NULL;
+   _pSeq = NULL;
    _editable = editable;
    _enabled = false;
 
@@ -53,32 +58,24 @@ bool StageManagerProxy::init(const TCHAR* dir, bool editable, D3DPOOL pool)
    _pMoveEditor     = new MoveEditorImpl();
    _pWiimoteHandler = new WiimoteHandlerImpl(editable, dir);
 
-   return true;
-}
-
-/*
-bool StageManagerProxy::initStage()
-{
-   _enabled = false;
-   if (_pStage != NULL) {
-      delete _pStage;
-      _pStage = NULL;
+   {
+      const MotionFactory::Registry& reg = MotionFactory::GetRegistry();
+      for (MotionFactory::Registry::const_iterator i = reg.begin(); i != reg.end(); ++i) {
+         const MotionFactory* f = i->second;
+         _mgl.push_back( StageRealizer::MotionGuidePair(f->getMotionNameT(), f->getGuideNameT()) );
+      }
    }
 
-   _pMoviePlayer->clear();
-   if (_pMovePresenter)  { if (! _pMovePresenter->initStage(&_pStage->seq, _pMoveEditor)) { return false; } }
-   if (_pMoveEditor)     { if (! _pMoveEditor->initStage(&_pStage->seq)) { return false; } }
-   if (_pWiimoteHandler) { if (! _pWiimoteHandler->initStage(&_pStage->seq, )) { return false; } }
    return true;
 }
-*/
 
 IMove* StageManagerProxy::createMove(IGuide* pGuide) const
 {
    if (! _enabled) { return NULL; }
+   if (_pStage == NULL || _pSeq == NULL) { return NULL; }
    Move* pMove = new Move();
    pMove->setGuide(pGuide);
-   pMove->setMotion(new MotionWiimoteSimple());
+   pMove->setMotion(_pSeq->getMotionFactory()->createMotion(0));
    return pMove;
 }
 
@@ -135,17 +132,16 @@ DWORD StageManagerProxy::run()
 
          intptr_t cid = cmd->getEventId();
          if (cid == EvSearchStage::GetEventId()) {
-            doSearch(_dir.c_str());
+            doSearch();
          } else if (cid == EvSaveStage::GetEventId()) {
             EvSaveStage* e = static_cast< EvSaveStage* >(cmd);
-            doSave(e->_name.c_str());
+            doSave(e->_basename.c_str(), e->_new);
          } else if (cid == EvLoadStage::GetEventId()) {
             EvLoadStage* e = static_cast< EvLoadStage* >(cmd);
-            if (e->_stage != NULL) {
-               doLoad(e->_stage);
-            } else {
-               doLoad(e->_path.c_str());
-            }
+            doLoad(e->_basename.c_str());
+         } else if (cid == EvNewStage::GetEventId()) {
+            EvNewStage* e = static_cast< EvNewStage* >(cmd);
+            doNew(e->_moviepath.c_str());
          }
          delete cmd;
          _command = NULL;
@@ -191,6 +187,10 @@ void StageManagerProxy::onEvent(const ::bootes::lib::framework::Event* ev)
       EvLoadStageResult r;
       r._result = false;
       g_pFnd->queue(&r);
+   } else if (eid == EvNewStage::GetEventId()) {
+      EvNewStageResult r;
+      r._result = false;
+      g_pFnd->queue(&r);
    }
    return;
 }
@@ -205,208 +205,159 @@ bool StageManagerProxy::onEvent0(const ::bootes::lib::framework::Event* ev)
       const EvSaveStage* e = static_cast< const EvSaveStage* >(ev);
    } else if (ev->getEventId() == EvLoadStage::GetEventId()) {
       const EvLoadStage* e = static_cast< const EvLoadStage* >(ev);
+   } else if (ev->getEventId() == EvNewStage::GetEventId()) {
+      const EvNewStage* e = static_cast< const EvNewStage* >(ev);
    }
    _command = ev->clone();
    return true;
 }
 
-namespace {
-   inline bool CheckSuffixStage(const TCHAR* str) {
-      size_t len = _tcslen(str);
-      return (4 <= len && _tcscmp(_T(".flx"), &str[len-4]) == 0);
-   }
-}
-
-namespace {
-static bool checkStage(::pb::Stage* stage)
+void StageManagerProxy::doSearch()
 {
-   for (size_t i=0; i<stage->moviepath().size(); ++i) {
-      switch (stage->moviepath().at(i)) {
-      case '/':
-         stage->mutable_moviepath()->at(i) = '\\'; break;
-      case ':':
-         return false;
-      }
-   }
-   return true;
-}
-}
-
-void StageManagerProxy::doSearch(const TCHAR* dir)
-{
-   typedef std::basic_string<TCHAR> tc_string;
-   typedef std::list< tc_string >   tc_string_list;
-
-   EvSearchStageResult r;
-   WIN32_FIND_DATA find;
-   HANDLE hFind;
-   {
-      tc_string query = dir;
-      query += _T("\\*");
-      hFind = FindFirstFile(query.c_str(), &find);
-      if (hFind == INVALID_HANDLE_VALUE) {
-         r._result = false;
+   struct Callback {
+      static void f(bool result, int index, Stage* pStage) {
+         EvSearchStageResult r;
+         r._result = result;
+         r._index  = index;
+         r._pStage.reset(pStage);
          g_pFnd->queue(&r);
-         return;
       }
-   }
-
-   for (BOOL found = TRUE; found; found=FindNextFile(hFind, &find)) {
-      if ((find.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) {
-         std::basic_ostringstream< TCHAR > os;
-         os << dir << _T('\\') << find.cFileName;
-         doSearch(os.str().c_str()); //recursive
-
-      } else if ((find.dwFileAttributes & FILE_ATTRIBUTE_NORMAL) != 0) {
-         ;
-      } else if (! CheckSuffixStage(find.cFileName)) {
-         ;
-      } else {
-         HANDLE hFile = INVALID_HANDLE_VALUE;
-         if (CheckSuffixStage(find.cFileName)) {
-            //hFile = CreateFile(find.cFileName, GENERIC_READ, FILE_SHARE_READ, 
-            //                   NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-            int fd;
-            errno_t err = _tsopen_s(&fd, find.cFileName,
-                                    _O_RDONLY|_O_BINARY, _SH_DENYWR, _S_IREAD|_S_IWRITE);
-            if (err == 0) {
-               ::pb::Stage* stage = new ::pb::Stage();
-               google::protobuf::io::FileInputStream in(fd);
-               bool parsed = google::protobuf::TextFormat::Parse(&in, stage);
-               in.Close();
-               //_close(fd);
-
-               if (parsed && checkStage(stage)) {
-                  EvStageSearched e;
-                  char* cdir = ::bootes::lib::util::TChar::T2C(dir);
-                  char* path = ::bootes::lib::util::TChar::T2C(find.cFileName);
-                  e._stage.reset(stage); //own
-                  delete[] cdir;
-                  delete[] path;
-                  g_pFnd->queue(&e);
-               } else {
-                  delete stage;
-               }
-            }
-         }
-      }
-   } //for found
-   FindClose(hFind);
+   };
+   StageRealizer::Search(&Callback::f, _dir.c_str(), _mgl);
 }
 
-void StageManagerProxy::doSave(const char* name)
+void StageManagerProxy::doSave(const TCHAR* basename, bool neu)
 {
    EvSaveStageResult res;
-   res._result = false;
-   res._name   = name;
+   res._result    = false;
+   res._basename  = basename;
 
-   if (_pStage == NULL) {
+   if (_pStage == NULL || _pSeq == NULL) {
       g_pFnd->queue(&res);
       return;
    }
 
-   TCHAR* tc_name = ::bootes::lib::util::TChar::C2T(name);
-
-   if (StageRealizer::Save(_dir.c_str(), tc_name, _pStage)) {
+   if (StageRealizer::Save(&res._basename, _dir.c_str(), basename, neu, *_pStage, *_pSeq)) {
       res._result = true;
-      _pStage->name = name;
-      _pStage->tc_name = tc_name;
+      _pStage->tc_basename = res._basename;
    }
    g_pFnd->queue(&res);
-   delete[] tc_name;
    return;
+}
 
-/*
-   ::pb::Stage idea;
-   if (! StageRealizer::Idealize(&idea, _pStage)) {
-      g_pFnd->queue(&res);
-      return;
-   }
+void StageManagerProxy::doNew(const TCHAR* moviepath)
+{
+   Stage* pStage      = NULL;
+   MoveSequence* pSeq = NULL;
+
+   EvNewStageResult r;
+   r._result = false;
+   r._moviepath = moviepath;
+   if (moviepath == _T('\0')) { goto fail; }
+   if (_mgl.empty()) { goto fail; }
+
+   pStage = new Stage();
+   pSeq = new MoveSequence();
+   if (! StageRealizer::SetFactory(pSeq, *_mgl.begin())) { goto fail; }
 
    {
-      std::basic_string< TCHAR > tc_path, tc_tmp, tc_old;
-      tc_path.append(_dir).append(_T("\\")).append(path);
-      tc_tmp.append(tc_path).append(_T(".tmp"));
-      tc_old.append(tc_path).append(_T(".old"));
+      const TCHAR *pc0 = moviepath;
+      const TCHAR *pc1 = NULL;
+      const TCHAR* pc;
+      for (pc=moviepath; *pc != _T('\0'); ++pc) {
+         if (*pc == _T('\\')) { pc0 = pc; }
+         else if (*pc == _T('.')) { pc1 = pc; }
+      }
+      ++pc0;
+      if (pc1 == NULL || pc1 < pc0) {
+         pc1 = pc;
+      }
 
+      pStage->version = 1;
+      pStage->tc_moviepath = moviepath;
+      pStage->tc_basename.assign(pc0, pc1-pc0);
       {
-         int fd;
-         errno_t err = _tsopen_s(&fd, tc_tmp.c_str(), 
-                                 _O_WRONLY|_O_BINARY|_O_CREAT|_O_TRUNC, _SH_DENYWR, _S_IREAD|_S_IWRITE);
-         if (err != 0) { goto fail; }
-      
-         google::protobuf::io::FileOutputStream out(fd);
-         bool b = google::protobuf::TextFormat::Print(idea, &out);
-         out.Flush();
-         out.Close();
-         //_close(fd);
+         char* tmp;
+         tmp = ::bootes::lib::util::TChar::T2C(pStage->tc_basename.c_str());
+         if (tmp != NULL) {
+            pStage->name = tmp;
+            delete[] tmp;
+         }
 
-         if (!b) { goto fail; }
+         tmp = ::bootes::lib::util::TChar::T2C(moviepath);
+         if (tmp != NULL) {
+            pStage->moviepath = tmp;
+            delete[] tmp;
+         }
       }
-
-      if (! DeleteFile(tc_old.c_str())) {
-         DWORD err = GetLastError();
-         if (err != ERROR_FILE_NOT_FOUND) { goto fail; }
-      }
-      MoveFile(tc_path.c_str(), tc_old.c_str());
-      if (! MoveFile(tc_tmp.c_str(), tc_path.c_str())) { goto fail; }
-
-      res._result = true;
-      g_pFnd->queue(&res);
    }
+
+   if (! doLoadMovie(moviepath, pStage, pSeq)) { goto fail; }
+
+   r._result    = true;
+   r._basename  = _pStage->tc_basename;
+   r._videoInfo = _pMoviePlayer->getVideoInfo();
+   g_pFnd->queue(&r);
+   return;
+
+fail:
+   if (pStage) { delete pStage; }
+   if (pSeq) { delete pSeq; }
+   r._result = false;
+   g_pFnd->queue(&r);
+   return;
+}
+
+void StageManagerProxy::doLoad(const TCHAR* name)
+{
+   EvLoadStageResult r;
+   r._result = false;
+
+   Stage* pStage = NULL;
+   MoveSequence* pSeq = NULL;
+
+   if (! StageRealizer::Load(&pStage, &pSeq, _dir.c_str(), name, _mgl)) { goto fail; }
+   if (! doLoadMovie(pStage->tc_moviepath.c_str(), pStage, pSeq)) { goto fail; }
+
+   r._result    = true;
+   r._basename  = _pStage->tc_basename;
+   r._videoInfo = _pMoviePlayer->getVideoInfo();
+   g_pFnd->queue(&r);
    return;
 
  fail:
-   res._result = false;
-   g_pFnd->queue(&res);
-*/
-}
-
-void StageManagerProxy::doLoad(const TCHAR* path)
-{
-   ::pb::Stage* p;
-   if (! StageRealizer::Load(&p, path)) {
-      p = NULL;
-   }
-   boost::shared_ptr< ::pb::Stage > sp(p);
-   doLoad(sp);
-}
-
-void StageManagerProxy::doLoad(const boost::shared_ptr< ::pb::Stage > stage)
-{
-   EvLoadStageResult r;
-   Stage* pStage = NULL;
-   if (stage.operator->() == NULL) { goto fail; }
-
-   _enabled = false;
-
-   if (! StageRealizer::Realize(&pStage, stage.operator->())) { goto fail; }
-
-   {
-      if (! _pMoviePlayer->load(pStage->tc_moviepath.c_str())) { goto fail; }
-      r._videoInfo = _pMoviePlayer->getVideoInfo();
-   }
-
-   if (_pMovePresenter)  { if (!_pMovePresenter->initStage(&pStage->seq, _pMoveEditor)) { goto fail; } }
-   if (_pMoveEditor)     { if (!_pMoveEditor->initStage(&pStage->seq)) { goto fail; } }
-   if (_pWiimoteHandler) { if (!_pWiimoteHandler->initStage(&pStage->seq, pStage->tc_name.c_str())) { goto fail; } }
-
-   _pStage   = pStage;
-   _enabled  = true;
-   r._result = true;
-   r._name   = _pStage->name;
+   r._result = false;
    g_pFnd->queue(&r);
    return;
+}
+
+bool StageManagerProxy::doLoadMovie(const TCHAR* path, Stage* pStage, MoveSequence* pSeq)
+{
+   _enabled = false;
+   if (! _pMoviePlayer->load(path)) { goto fail; }
+
+   if (_pMovePresenter)  { if (!_pMovePresenter->initStage(pSeq, _pMoveEditor)) { goto fail; } }
+   if (_pMoveEditor)     { if (!_pMoveEditor->initStage(pSeq)) { goto fail; } }
+   if (_pWiimoteHandler) { if (!_pWiimoteHandler->initStage(pSeq, pStage->tc_basename.c_str())) { goto fail; } }
+
+   if (_pStage) { delete _pStage; }
+   if (_pSeq) { delete _pSeq; }
+   _pStage   = pStage;
+   _pSeq     = pSeq;
+   _enabled  = true;
+
+   return true;
 
  fail:
    _enabled = false;
    if (pStage) { delete pStage; }
+   if (pSeq) { delete pSeq; }
    _pStage = NULL;
+   _pSeq = NULL;
    if (_pMovePresenter)  { _pMovePresenter->initStage(NULL, _pMoveEditor); }
    if (_pMoveEditor)     { _pMoveEditor->initStage(NULL); }
    if (_pWiimoteHandler) { _pWiimoteHandler->initStage(NULL, NULL); }
-   r._result = false;
-   g_pFnd->queue(&r);
+   return false;
 }
 
 void StageManagerProxy::doPlay(const EvPlayMovie* ev)

@@ -67,7 +67,7 @@ public:
    bool onTeachContDialog(const CEGUI::EventArgs&);
 
 private:
-   void onLoad(const EvLoadStageResult*);
+   void onLoad(bool result, const VideoInfo&);
    void onPlay(const EvMoviePlay*);
    void onPause(const EvMoviePause*);
 

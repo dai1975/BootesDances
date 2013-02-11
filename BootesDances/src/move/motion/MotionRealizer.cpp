@@ -8,20 +8,17 @@
 #include <sys/types.h>
 #include <share.h>
 #include <fcntl.h>
+#include <sstream>
 
-bool MotionRealizer::Idealize(::pb::Motion* pOut, const IMotion* pIn)
+bool MotionRealizer::Idealize(::pb::Motion* pOut, const IMotion& in)
 {
-   return pIn->idealize(pOut);
+   return in.idealize(pOut);
 }
 
-bool MotionRealizer::Realize(IMotion** ppOut, const ::pb::Motion* pIn)
+bool MotionRealizer::Realize(IMotion** ppOut, const ::pb::Motion& in)
 {
-   if (pIn == NULL) {
-      *ppOut = new MotionWiimoteSimple();
-      return true;
-   }
    IMotion* p = NULL;
-   const std::string& type = pIn->type();
+   const std::string& type = in.type();
 
    if (false) {
       ;
@@ -31,26 +28,53 @@ bool MotionRealizer::Realize(IMotion** ppOut, const ::pb::Motion* pIn)
       return false;
    }
 
-   if (! p->realize(pIn)) {
+   if (! p->realize(in)) {
       delete p;
-      return false; 
+      return false;
    }
    
    *ppOut = p;
    return true;
 }
 
-bool MotionRealizer::Save(const TCHAR* dir, const TCHAR* name, const MoveSequence* seq)
+
+namespace {
+
+std::basic_string< TCHAR > GetFilePath(const TCHAR* dir, const TCHAR* name, const TCHAR* motion)
+{
+   std::basic_ostringstream< TCHAR > o;
+   o << dir << _T("\\") << name << _T("\\motion-") << motion << _T(".txt");
+   return o.str();
+}
+
+}
+
+bool MotionRealizer::IsExist(const TCHAR* dir, const TCHAR* name, const TCHAR* motion)
+{
+   std::basic_string< TCHAR > path = GetFilePath(dir, name, motion);
+   DWORD attr = GetFileAttributes(path.c_str());
+   if (attr == INVALID_FILE_ATTRIBUTES || ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0)) {
+      return false;
+   }
+   return true;
+}
+
+bool MotionRealizer::Load(MoveSequence* seq, const TCHAR* dir, const TCHAR* name, const TCHAR* motion)
+{
+   return false;
+}
+
+bool MotionRealizer::Save(const TCHAR* dir, const TCHAR* name, const MoveSequence& seq)
 {
    const MotionFactory* reg = NULL;
    std::basic_string< TCHAR > path, tmppath, oldpath;
    {
-      const char* motion_name = seq->getMotionName();
-      reg = MotionFactory::GetFactory(motion_name);
+      reg = seq.getMotionFactory();
       if (reg == NULL) { return false; }
+      const char* motion_name = reg->getMotionName();
 
       TCHAR* motion_tname = ::bootes::lib::util::TChar::C2T(motion_name);
-      path.append(dir).append(_T("\\motion-")).append(motion_tname).append(_T(".txt"));
+      path = GetFilePath(dir, name, motion_tname);
       delete[] motion_tname;
    }
    tmppath.append(path).append(_T(".tmp"));
@@ -82,12 +106,6 @@ bool MotionRealizer::Save(const TCHAR* dir, const TCHAR* name, const MoveSequenc
    if (! MoveFile(tmppath.c_str(), path.c_str())) { return false; }
    return true;
 }
-
-bool MotionRealizer::Load(MoveSequence* seq, const TCHAR* dir, const TCHAR* name)
-{
-   return false;
-}
-
 
 /**
  * Local Variables:

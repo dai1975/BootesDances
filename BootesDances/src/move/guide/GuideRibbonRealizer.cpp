@@ -36,10 +36,10 @@ IGuide* GuideRibbonRealizer::createGuide(int subid) const
    return NULL;
 }
 
-bool GuideRibbonRealizer::save(::google::protobuf::io::ZeroCopyOutputStream& out, const MoveSequence* seq) const
+bool GuideRibbonRealizer::save(::google::protobuf::io::ZeroCopyOutputStream& out, const MoveSequence& seq) const
 {
    ::pb::GuideRibbonList lst;
-   for (MoveSequence::const_iterator i = seq->begin(); i != seq->end(); ++i) {
+   for (MoveSequence::const_iterator i = seq.begin(); i != seq.end(); ++i) {
       ::pb::GuideRibbon* idea = lst.add_guides();
       const IMove* pMove = *i;
       const GuideRibbon* pGuide = static_cast< const GuideRibbon* >(pMove->getGuide());
@@ -48,7 +48,7 @@ bool GuideRibbonRealizer::save(::google::protobuf::io::ZeroCopyOutputStream& out
       idea->set_uuid(pMove->getUuid());
       idea->set_time0(pMove->getBeginTime());
       idea->set_time1(pMove->getEndTime());
-      idea->set_chainnext( seq->isChainNext(i) );
+      idea->set_chainnext( seq.isChainNext(i) );
    }
    if (! google::protobuf::TextFormat::Print(lst, &out)) { return false; }
    return true;

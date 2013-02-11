@@ -18,7 +18,7 @@ public:
    static std::string TYPE;
 
    virtual bool idealize(::pb::Motion* pOut) const;
-   virtual bool realize(const ::pb::Motion* pIn);
+   virtual bool realize(const ::pb::Motion& in);
    virtual bool idealize(::pb::MotionWiimoteSimple2* pOut) const;
 
    virtual void teachClear(); //!< モーション定義をクリアする。

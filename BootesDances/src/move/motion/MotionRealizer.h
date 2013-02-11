@@ -9,11 +9,12 @@
 class MotionRealizer
 {
 public:
-   static bool Idealize(::pb::Motion*, const IMotion*);
-   static bool Realize(IMotion**, const ::pb::Motion*);
+   static bool Idealize(::pb::Motion*, const IMotion&);
+   static bool Realize(IMotion**, const ::pb::Motion&);
 
-   static bool Save(const TCHAR* dir, const TCHAR* name, const MoveSequence* seq);
-   static bool Load(MoveSequence* seq, const TCHAR* dir, const TCHAR* name);
+   static bool IsExist(const TCHAR* dir, const TCHAR* name, const TCHAR* motion);
+   static bool Load(MoveSequence* seq, const TCHAR* dir, const TCHAR* name, const TCHAR* motion);
+   static bool Save(const TCHAR* dir, const TCHAR* name, const MoveSequence& seq);
 };
 
 #endif

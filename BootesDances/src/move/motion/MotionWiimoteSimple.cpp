@@ -75,13 +75,13 @@ bool MotionWiimoteSimple::idealize(::pb::Motion* pOut) const
    return true;
 }
 
-bool MotionWiimoteSimple::realize(const ::pb::Motion* pIn)
+bool MotionWiimoteSimple::realize(const ::pb::Motion& in)
 {
-   if (pIn->type().compare(MotionWiimoteSimple::TYPE) != 0) { return false; }
+   if (in.type().compare(MotionWiimoteSimple::TYPE) != 0) { return false; }
 
    ::pb::MotionWiimoteSimple idea;
-   google::protobuf::io::ArrayInputStream in(pIn->code().data(), pIn->code().size());
-   if (! google::protobuf::TextFormat::Parse(&in, &idea)) {
+   google::protobuf::io::ArrayInputStream is(in.code().data(), in.code().size());
+   if (! google::protobuf::TextFormat::Parse(&is, &idea)) {
       return false;
    }
 

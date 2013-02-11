@@ -20,7 +20,7 @@ public:
    virtual const char* getGuideName() const = 0;
    virtual int countSubIds() const = 0;
    virtual IGuide* createGuide(int subid) const = 0;
-   virtual bool save(::google::protobuf::io::ZeroCopyOutputStream& out, const MoveSequence*) const = 0;
+   virtual bool save(::google::protobuf::io::ZeroCopyOutputStream& out, const MoveSequence&) const = 0;
 };
 
 #endif

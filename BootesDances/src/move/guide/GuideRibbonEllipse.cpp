@@ -65,13 +65,13 @@ bool GuideRibbonEllipse::idealize(::pb::Guide* pOut) const
    return true;
 }
 
-bool GuideRibbonEllipse::realize(const ::pb::Guide* pIn)
+bool GuideRibbonEllipse::realize(const ::pb::Guide& in)
 {
-   if (pIn->type().compare(GuideRibbonEllipse::TYPE) != 0) { return false; }
+   if (in.type().compare(GuideRibbonEllipse::TYPE) != 0) { return false; }
 
    ::pb::GuideRibbonEllipse idea;
-   google::protobuf::io::ArrayInputStream in(pIn->code().data(), pIn->code().size());
-   if (! google::protobuf::TextFormat::Parse(&in, &idea)) {
+   google::protobuf::io::ArrayInputStream is(in.code().data(), in.code().size());
+   if (! google::protobuf::TextFormat::Parse(&is, &idea)) {
       return false;
    }
 

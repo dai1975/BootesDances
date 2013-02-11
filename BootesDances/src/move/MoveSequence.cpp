@@ -3,7 +3,9 @@
 MoveSequence::MoveSequence()
 {
    _head.next = &_tail;
+   _head.prev = NULL;
    _tail.next = NULL;
+   _tail.prev = &_head;
 }
 
 MoveSequence::~MoveSequence()

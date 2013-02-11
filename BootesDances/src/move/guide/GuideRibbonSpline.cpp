@@ -73,13 +73,13 @@ bool GuideRibbonSpline::idealize(::pb::Guide* pOut) const
    return true;
 }
 
-bool GuideRibbonSpline::realize(const ::pb::Guide* pIn)
+bool GuideRibbonSpline::realize(const ::pb::Guide& in)
 {
-   if (pIn->type().compare(GuideRibbonSpline::TYPE) != 0) { return false; }
+   if (in.type().compare(GuideRibbonSpline::TYPE) != 0) { return false; }
 
    ::pb::GuideRibbonSpline idea;
-   google::protobuf::io::ArrayInputStream in(pIn->code().data(), pIn->code().size());
-   if (! google::protobuf::TextFormat::Parse(&in, &idea)) {
+   google::protobuf::io::ArrayInputStream is(in.code().data(), in.code().size());
+   if (! google::protobuf::TextFormat::Parse(&is, &idea)) {
       return false;
    }
 

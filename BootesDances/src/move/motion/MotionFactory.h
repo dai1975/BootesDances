@@ -17,10 +17,12 @@ public:
 public:
    virtual inline ~MotionFactory() { }
    virtual const char* getMotionName() const = 0;
-   virtual int countSubIds() const = 0;
    virtual const char* getGuideName() const = 0;
+   virtual const TCHAR* getMotionNameT() const = 0;
+   virtual const TCHAR* getGuideNameT() const = 0;
+   virtual int countSubIds() const = 0;
    virtual IMotion* createMotion(int subid) const = 0;
-   virtual bool save(::google::protobuf::io::ZeroCopyOutputStream& out, const MoveSequence*) const = 0;
+   virtual bool save(::google::protobuf::io::ZeroCopyOutputStream& out, const MoveSequence&) const = 0;
 };
 
 #endif
