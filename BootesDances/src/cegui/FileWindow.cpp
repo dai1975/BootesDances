@@ -1,12 +1,11 @@
-#include "FileDialogLayout.h"
 #include <bootes/cegui/FileDialog.h>
 #include <bootes/lib/util/TChar.h>
 
 namespace bootes { namespace cegui {
 
-CEGUI::String FileDialogLayout::WidgetTypeName = "FileDialogLayout";
+CEGUI::String FileWindow::WidgetTypeName = "BootesFileWindow";
 
-FileDialogLayout::FileDialogLayout(const CEGUI::String& type, const CEGUI::String& name)
+FileWindow::FileWindow(const CEGUI::String& type, const CEGUI::String& name)
   : CEGUI::LayoutContainer(type, name)
 {
    _pFileList = NULL;
@@ -14,9 +13,11 @@ FileDialogLayout::FileDialogLayout(const CEGUI::String& type, const CEGUI::Strin
    _pSelectBox = NULL;
    _pCancelButton = NULL;
    _pOkButton = NULL;
+   addEvent(WindowDialog::EventSubmit);
+   addEvent(WindowDialog::EventCancel);
 }
 
-FileDialogLayout::~FileDialogLayout()
+FileWindow::~FileWindow()
 {
 #define SAFE_DEL(p) if (p) { delete p; p = NULL; }
    SAFE_DEL(_pFileList);
@@ -40,7 +41,7 @@ namespace {
    };
 }
 
-void FileDialogLayout::initialiseComponents()
+void FileWindow::initialiseComponents()
 {
    if (_pFileList) { return; }
 
@@ -61,19 +62,19 @@ void FileDialogLayout::initialiseComponents()
    _pCancelButton->setText("Cancel");
 
    _pFileList->subscribeEvent(CEGUI::Listbox::EventSelectionChanged,
-                              CEGUI::SubscriberSlot(&FileDialogLayout::onSelect, this));
+                              CEGUI::SubscriberSlot(&FileWindow::onSelect, this));
    _pFileList->setMultiselectEnabled(false);
    _pFileList->setShowVertScrollbar(true);
 
    _pOkButton->subscribeEvent(CEGUI::PushButton::EventClicked,
-                              CEGUI::SubscriberSlot(&FileDialogLayout::onOk, this));
+                              CEGUI::SubscriberSlot(&FileWindow::onOk, this));
    _pCancelButton->subscribeEvent(CEGUI::PushButton::EventClicked,
-                                  CEGUI::SubscriberSlot(&FileDialogLayout::onCancel, this));
+                                  CEGUI::SubscriberSlot(&FileWindow::onCancel, this));
 
    setMinSize(CEGUI::UVector2(CEGUI::UDim(0,MIN_WIDTH), CEGUI::UDim(0,MIN_HEIGHT)));
 }
 
-void FileDialogLayout::layout()
+void FileWindow::layout()
 {
    CEGUI::Size size = getPixelSize();
 
@@ -128,7 +129,7 @@ void FileDialogLayout::layout()
    }
 }
 
-bool FileDialogLayout::onOk(const CEGUI::EventArgs& e)
+bool FileWindow::onOk(const CEGUI::EventArgs& e)
 {
    _select_file = _T("");
 
@@ -142,18 +143,24 @@ bool FileDialogLayout::onOk(const CEGUI::EventArgs& e)
    
    _select_file = tc_file;
    delete[] tc_file;
-   static_cast< FileDialog* >(getParent())->onSubmit();
+
+   CEGUI::WindowEventArgs ev(this);
+   fireEvent(WindowDialog::EventSubmit, ev);
+
    return true;
 }
 
-bool FileDialogLayout::onCancel(const CEGUI::EventArgs& e)
+bool FileWindow::onCancel(const CEGUI::EventArgs& e)
 {
    _select_file = _T("");
-   static_cast< FileDialog* >(getParent())->onCancel();
+
+   CEGUI::WindowEventArgs ev(this);
+   fireEvent(WindowDialog::EventCancel, ev);
+
    return true;
 }
 
-bool FileDialogLayout::onSelect(const CEGUI::EventArgs& e)
+bool FileWindow::onSelect(const CEGUI::EventArgs& e)
 {
    CEGUI::ListboxItem* item = _pFileList->getFirstSelectedItem();
    if (item == NULL) { return true; }
@@ -171,7 +178,7 @@ bool FileDialogLayout::onSelect(const CEGUI::EventArgs& e)
    return true;
 }
 
-int FileDialogLayout::list(const TCHAR* dir)
+int FileWindow::list(const TCHAR* dir)
 {
    typedef std::basic_string<TCHAR> tc_string;
    typedef std::list< tc_string >   tc_string_list;
@@ -257,7 +264,7 @@ int FileDialogLayout::list(const TCHAR* dir)
    return id;
 }
 
-void FileDialogLayout::dialog(const TCHAR* initdir, const TCHAR** exts)
+void FileWindow::setup(const TCHAR* initdir, const TCHAR** exts)
 {
    _exts.clear();
    for (const TCHAR** e=exts; *e != NULL && **e != _T('\0'); ++e) {

@@ -7,7 +7,7 @@
 #include <bootes/dances/EvStage.h>
 #include <bootes/dances/EvEditor.h>
 #include <bootes/dances/IStageManager.h>
-#include <bootes/cegui/DialogWindow.h>
+#include <bootes/cegui/MessageDialog.h>
 #include "EditorDefines.h"
 #include "CeguiTextureImage.h"
 #include "TimeEditWindow.h"
@@ -62,7 +62,7 @@ public:
    bool onDragLeave(const CEGUI::EventArgs&);
 
    void onWiimote(const ::bootes::lib::framework::WiimoteEvent*);
-   bool onTeachDialog(const CEGUI::EventArgs&);
+   bool onTeachBeginDialog(const CEGUI::EventArgs&);
    bool onTeachResultDialog(const CEGUI::EventArgs&);
    bool onTeachContDialog(const CEGUI::EventArgs&);
 
@@ -118,11 +118,16 @@ private:
    };
    CEGUI::PushButton *_pCtrlBtn[NUM_CTRL];
 
-   enum {
+   enum TeachStage {
       TEACH_NONE, TEACH_TEACHDIALOG, TEACH_TEACHING, TEACH_RESULTDIALOG, TEACH_CONTDIALOG,
    };
    int _teach_stage;
-   ::bootes::cegui::DialogWindow *_pTeachDialog, *_pTeachResultDialog, *_pTeachContDialog;
+   enum {
+      TEACH_BEGIN_START = 0, TEACH_BEGIN_CANCEL,
+      TEACH_RESULT_SUCCEED = 0, TEACH_RESULT_FAILED,
+      TEACH_CONT_RETRY = 0, TEACH_CONT_NEXT, TEACH_CONT_FINISH,
+   };
+   ::bootes::cegui::MessageDialog *_pTeachBeginDialog, *_pTeachResultDialog, *_pTeachContDialog;
    const IMove* _pTeachMove;
 
    enum {

@@ -45,7 +45,7 @@ EditWindow::~EditWindow()
    SAFE_DEL(_pValueWin);
    SAFE_DEL(_pWiimoteWin);
    SAFE_DEL(_pFrame);
-   SAFE_DEL(_pTeachDialog);
+   SAFE_DEL(_pTeachBeginDialog);
    SAFE_DEL(_pTeachResultDialog);
    SAFE_DEL(_pTeachContDialog);
 #undef SAFE_DEL
@@ -250,17 +250,18 @@ void EditWindow::onWiimote(const ::bootes::lib::framework::WiimoteEvent* ev)
          g_pFnd->getEventManager()->queue(&ev);
 
          _teach_stage = TEACH_TEACHDIALOG;
-         _pTeachDialog->dialogBegin();
+         _pTeachBeginDialog->window()->setup();
+         _pTeachBeginDialog->open();
       }
    }
 }
 
-bool EditWindow::onTeachDialog(const CEGUI::EventArgs&)
+bool EditWindow::onTeachBeginDialog(const CEGUI::EventArgs&)
 {
-   int i = _pTeachDialog->getDialogedIndex();
+   int i = _pTeachBeginDialog->window()->getDialogedButton();
    int next_stage;
 
-   if (i == 1) {
+   if (i == TEACH_BEGIN_CANCEL) {
       next_stage = TEACH_NONE;
       
    } else {
@@ -296,11 +297,6 @@ bool EditWindow::onTeachDialog(const CEGUI::EventArgs&)
    }
 
    _teach_stage = next_stage;
-   if (next_stage == TEACH_NONE) {
-      _pTeachDialog->dialogEnd();
-   } else {
-      _pTeachDialog->hide();
-   }
    return true;
 }
 
@@ -311,7 +307,8 @@ void EditWindow::onUpdate(double currentTime, int elapsedTime)
       __int64 t = pSceneSeq->getScene(false).clock().clock;
 
       if (_pTeachMove->getEndTime() + 10000000 < t) {
-         _pTeachResultDialog->dialogBegin();
+         _pTeachResultDialog->window()->setup();
+         _pTeachResultDialog->open();
          _teach_stage = TEACH_RESULTDIALOG;
 
          EvPauseMovie ev;
@@ -322,30 +319,29 @@ void EditWindow::onUpdate(double currentTime, int elapsedTime)
 
 bool EditWindow::onTeachResultDialog(const CEGUI::EventArgs&)
 {
-   int i = _pTeachResultDialog->getDialogedIndex();
-
    IWiimoteHandler* pWHandler = g_pGame->getStageManager()->getWiimoteHandler();
    if (pWHandler == NULL) { return true; }
 
-   if (i == 0) {
+   int i = _pTeachResultDialog->window()->getDialogedButton();
+   if (i == TEACH_RESULT_SUCCEED) {
       pWHandler->teachCommit(true);
    } else {
       pWHandler->teachCommit(false);
    }
 
-   _pTeachResultDialog->hide();
-   _pTeachContDialog->dialogBegin();
+   _pTeachContDialog->window()->setup();
+   _pTeachContDialog->open();
    _teach_stage = TEACH_CONTDIALOG;
    return true;
 }
 
 bool EditWindow::onTeachContDialog(const CEGUI::EventArgs&)
 {
-   int i = _pTeachContDialog->getDialogedIndex();
+   int i = _pTeachContDialog->window()->getDialogedButton();
    int next_stage;
 
    next_stage = TEACH_NONE;
-   if (i == 0 || i == 1) {
+   if (i == TEACH_CONT_RETRY || i == TEACH_CONT_NEXT) {
       do {
          IMoveEditor* pEditor = g_pGame->getStageManager()->getMoveEditor();
          IWiimoteHandler* pWHandler = g_pGame->getStageManager()->getWiimoteHandler();
@@ -357,14 +353,16 @@ bool EditWindow::onTeachContDialog(const CEGUI::EventArgs&)
          for (mi=0; mi<moves.size(); ++mi) {
             if (moves[mi] == _pTeachMove) { break; }
          }
-         if (i == 1) { //next
+         if (i == TEACH_CONT_NEXT) {
             ++mi;
+         }
+         if (moves.size() <= mi) { break; }
+
+         {
             MoveEditee me;
             me.pMove = moves[mi];
             pEditor->editeeSelect(me);
          }
-         if (moves.size() <= mi) { break; }
-
          _pTeachMove = moves[mi];
          pWHandler->teachBegin(_pTeachMove);
 
@@ -385,11 +383,6 @@ bool EditWindow::onTeachContDialog(const CEGUI::EventArgs&)
    }
 
    _teach_stage = next_stage;
-   if (next_stage == TEACH_NONE) {
-      _pTeachContDialog->dialogEnd();
-   } else {
-      _pTeachContDialog->hide();
-   }
    return true;
 }
 
@@ -627,33 +620,33 @@ bool EditWindow::init(CeguiTextureImage* pImage)
    }
 
    {
-      _pTeachDialog = ::bootes::cegui::DialogWindow::Create("");
-      _pTeachDialog->setMessage("start teach?");
-      _pTeachDialog->addButton("A: Start", ::bootes::lib::framework::WiimoteEvent::BTN_A);
-      _pTeachDialog->addButton("B: Cancel", ::bootes::lib::framework::WiimoteEvent::BTN_B);
-      _pTeachDialog->subscribeEvent(
-         ::bootes::cegui::DialogWindow::EventDialog,
-         ::CEGUI::SubscriberSlot(&EditWindow::onTeachDialog, this));
-      this->addChildWindow(_pTeachDialog);
-      _pTeachDialog->hide();
+      _pTeachBeginDialog = ::bootes::cegui::MessageDialog::Create("");
+      _pTeachBeginDialog->window()->setMessage("start teach?");
+      _pTeachBeginDialog->window()->addButton(TEACH_BEGIN_START, "A: Start", ::bootes::lib::framework::WiimoteEvent::BTN_A);
+      _pTeachBeginDialog->window()->addButton(TEACH_BEGIN_CANCEL, "B: Cancel", ::bootes::lib::framework::WiimoteEvent::BTN_B);
+      _pTeachBeginDialog->subscribeEvent(
+         ::bootes::cegui::WindowDialog::EventSubmit,
+         ::CEGUI::SubscriberSlot(&EditWindow::onTeachBeginDialog, this));
+      this->addChildWindow(_pTeachBeginDialog);
+      _pTeachBeginDialog->hide();
 
-      _pTeachResultDialog = ::bootes::cegui::DialogWindow::Create("");
-      _pTeachResultDialog->setMessage("succeed to move?");
-      _pTeachResultDialog->addButton("A: Succeed", ::bootes::lib::framework::WiimoteEvent::BTN_A);
-      _pTeachResultDialog->addButton("B: Failed", ::bootes::lib::framework::WiimoteEvent::BTN_B);
+      _pTeachResultDialog = ::bootes::cegui::MessageDialog::Create("");
+      _pTeachResultDialog->window()->setMessage("succeed to move?");
+      _pTeachResultDialog->window()->addButton(TEACH_RESULT_SUCCEED, "A: Succeed", ::bootes::lib::framework::WiimoteEvent::BTN_A);
+      _pTeachResultDialog->window()->addButton(TEACH_RESULT_FAILED, "B: Failed", ::bootes::lib::framework::WiimoteEvent::BTN_B);
       _pTeachResultDialog->subscribeEvent(
-         ::bootes::cegui::DialogWindow::EventDialog,
+         ::bootes::cegui::WindowDialog::EventSubmit,
          ::CEGUI::SubscriberSlot(&EditWindow::onTeachResultDialog, this));
       this->addChildWindow(_pTeachResultDialog);
       _pTeachResultDialog->hide();
 
-      _pTeachContDialog = ::bootes::cegui::DialogWindow::Create("");
-      _pTeachContDialog->setMessage("continue teaching?");
-      _pTeachContDialog->addButton("A: Retry.", ::bootes::lib::framework::WiimoteEvent::BTN_A);
-      _pTeachContDialog->addButton("+: Next.", ::bootes::lib::framework::WiimoteEvent::BTN_PLUS);
-      _pTeachContDialog->addButton("B: Finish.", ::bootes::lib::framework::WiimoteEvent::BTN_B);
+      _pTeachContDialog = ::bootes::cegui::MessageDialog::Create("");
+      _pTeachContDialog->window()->setMessage("continue teaching?");
+      _pTeachContDialog->window()->addButton(TEACH_CONT_RETRY, "A: Retry.", ::bootes::lib::framework::WiimoteEvent::BTN_A);
+      _pTeachContDialog->window()->addButton(TEACH_CONT_NEXT, "+: Next.", ::bootes::lib::framework::WiimoteEvent::BTN_PLUS);
+      _pTeachContDialog->window()->addButton(TEACH_CONT_FINISH, "B: Finish.", ::bootes::lib::framework::WiimoteEvent::BTN_B);
       _pTeachContDialog->subscribeEvent(
-         ::bootes::cegui::DialogWindow::EventDialog,
+         ::bootes::cegui::WindowDialog::EventSubmit,
          ::CEGUI::SubscriberSlot(&EditWindow::onTeachContDialog, this));
       this->addChildWindow(_pTeachContDialog);
       _pTeachContDialog->hide();

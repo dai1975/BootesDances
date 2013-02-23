@@ -1,8 +1,8 @@
 #include <bootes/cegui/cegui.h>
-#include <bootes/cegui/DialogWindow.h>
-#include "DialogWindowLayout.h"
+#include <bootes/cegui/WindowDialog.h>
+#include <bootes/cegui/MessageDialog.h>
 #include <bootes/cegui/FileDialog.h>
-#include "FileDialogLayout.h"
+//#include "MessageWindowLayout.h"
 
 namespace bootes { namespace cegui {
 
@@ -10,15 +10,34 @@ bool Initialize()
 {
    CEGUI::WindowManager& wm = CEGUI::WindowManager::getSingleton();
    CEGUI::WindowFactoryManager& wfm = CEGUI::WindowFactoryManager::getSingleton();
+   CEGUI::String* pType;
 
-   CEGUI::WindowFactoryManager::addFactory< CEGUI::TplWindowFactory< DialogWindow > >();
-   wfm.addFalagardWindowMapping("DialogWindow", DialogWindow::WidgetTypeName, "TaharezLook/FrameWindow", "Falagard/FrameWindow");
-   CEGUI::WindowFactoryManager::addFactory< CEGUI::TplWindowFactory< DialogWindowLayout > >();
+   CEGUI::WindowFactoryManager::addFactory< CEGUI::TplWindowFactory< WindowDialog > >();
+   wfm.addFalagardWindowMapping("WindowDialog", WindowDialog::WidgetTypeName, "TaharezLook/FrameWindow", "Falagard/FrameWindow");
 
-   CEGUI::WindowFactoryManager::addFactory< CEGUI::TplWindowFactory< FileDialog > >();
-   wfm.addFalagardWindowMapping("FileDialog", FileDialog::WidgetTypeName, "TaharezLook/FrameWindow", "Falagard/FrameWindow");
-   CEGUI::WindowFactoryManager::addFactory< CEGUI::TplWindowFactory< FileDialogLayout > >();
-//   wfm.addFalagardWindowMapping("FileDialogLayout", FileDialog::WidgetTypeName, "TaharezLook/FrameWindow", "Falagard/Default");
+//   CEGUI::WindowFactoryManager::addFactory< CEGUI::TplWindowFactory< DialogWindow > >();
+//   wfm.addFalagardWindowMapping("DialogWindow", DialogWindow::WidgetTypeName, "TaharezLook/FrameWindow", "Falagard/FrameWindow");
+//   CEGUI::WindowFactoryManager::addFactory< CEGUI::TplWindowFactory< DialogWindowLayout > >();
+
+#define SETUP_WIDGET(T) {\
+      pType = & T ::WidgetTypeName;\
+      CEGUI::WindowFactoryManager::addFactory< CEGUI::TplWindowFactory< T > >(); \
+      wfm.addFalagardWindowMapping(*pType, *pType, "TaharezLook/FrameWindow", "Falagard/FrameWindow");\
+   }
+   SETUP_WIDGET( MessageWindow );
+//   SETUP_WIDGET( MessageWindowLayout );
+   SETUP_WIDGET( FileWindow );
+
+/*
+#define SETUP_DIALOG(T) {\
+      pType = & T ::WidgetTypeName;\
+      CEGUI::WindowFactoryManager::addFactory< CEGUI::TplWindowFactory< T::WINDOW_TYPE > >(); \
+      wfm.addFalagardWindowMapping(*pType, *pType, "TaharezLook/FrameWindow", "Falagard/FrameWindow");\
+   }
+
+   SETUP_DIALOG(MessageDialog);
+   SETUP_DIALOG(FileDialog);
+*/
 
    return true;
 }  

@@ -13,10 +13,9 @@ proto_sources = [
 sources = [
     'src/cegui/cegui.cpp',
     'src/cegui/DynamicFont.cpp',
-    'src/cegui/DialogWindowLayout.cpp',
-    'src/cegui/DialogWindow.cpp',
-    'src/cegui/FileDialogLayout.cpp',
-    'src/cegui/FileDialog.cpp',
+    'src/cegui/WindowDialog.cpp',
+    'src/cegui/MessageWindow.cpp',
+    'src/cegui/FileWindow.cpp',
     'src/cegui/Direct3D9GeometryBuffer.cpp',
     'src/move/guide/Guide.cpp',
     'src/move/guide/GuideFactory.cpp',

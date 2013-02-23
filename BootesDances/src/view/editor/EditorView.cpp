@@ -188,7 +188,9 @@ bool EditorView::onMenuFileNew(const CEGUI::EventArgs& ev)
    _pFileDialog->setUserData(reinterpret_cast< void* >(mode));
    _pFileDialog->setAlwaysOnTop(true);
    const TCHAR* exts[] = { _T(".mp4"),_T(".avi"),_T("mpeg"),_T("mov"),_T("mkv"), 0 };
-   _pFileDialog->dialog( g_pGame->getUserDir(), exts);
+   //_pFileDialog->dialog( g_pGame->getUserDir(), exts);
+   _pFileDialog->window()->setup( g_pGame->getUserDir(), exts);
+   _pFileDialog->open();
    return true;
 }
 
@@ -220,8 +222,8 @@ bool EditorView::onDialogSubmit(const CEGUI::EventArgs& ev)
    const CEGUI::WindowEventArgs& wev = static_cast< const CEGUI::WindowEventArgs& >(ev);
    intptr_t mode = reinterpret_cast< intptr_t >( wev.window->getUserData() );
 
-   const TCHAR* tc_dir  = _pFileDialog->getDir();
-   const TCHAR* tc_file = _pFileDialog->getFile();
+   const TCHAR* tc_dir  = _pFileDialog->window()->getDir();
+   const TCHAR* tc_file = _pFileDialog->window()->getFile();
    if (tc_dir == NULL || tc_dir[0] == _T('\0')) { return true; }
    if (tc_file == NULL || tc_file[0] == _T('\0')) { return true; }
 
