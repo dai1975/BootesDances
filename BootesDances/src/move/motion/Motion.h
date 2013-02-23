@@ -33,7 +33,8 @@ protected:
    TEST_STATE _test_state;
 
 private:
-   std::list< TeachSequence > _teaches;
+   typedef std::list< TeachSequence > t_teaches;
+   t_teaches _teaches;
 };
 
 #endif

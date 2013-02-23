@@ -53,8 +53,6 @@ public:
    virtual void normalizeEditPoints();
 
 protected:
-
-protected:
    t_points _edit_points, _play_points;
 };
 

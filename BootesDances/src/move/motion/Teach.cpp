@@ -12,7 +12,7 @@ TeachSequence::TeachSequence(const TeachSequence& r)
 TeachSequence& TeachSequence::operator=(const TeachSequence& r)
 {
    succeed = r.succeed;
-   std::copy(r.records.begin(), r.records.end(), records.begin());
+   ::std::copy(r.records.begin(), r.records.end(), ::std::back_inserter(records));
    return *this;
 }
 

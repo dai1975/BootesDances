@@ -14,13 +14,11 @@ GuideRibbon::GuideRibbon(int subid)
 GuideRibbon::GuideRibbon(const GuideRibbon& r)
    : Guide(r)
 {
-   _edit_points.resize( r._edit_points.size() );
-   std::copy(r._edit_points.begin(), r._edit_points.end(),
-      _edit_points.begin());
+   _edit_points.reserve( r._edit_points.size() );
+   std::copy(r._edit_points.begin(), r._edit_points.end(), std::back_inserter(_edit_points));
 
-   _play_points.resize( r._play_points.size() );
-   std::copy(r._play_points.begin(), r._play_points.end(),
-      _play_points.begin());
+   _play_points.reserve( r._play_points.size() );
+   std::copy(r._play_points.begin(), r._play_points.end(), std::back_inserter(_play_points));
 }
 
 GuideRibbon::~GuideRibbon()

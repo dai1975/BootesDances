@@ -22,8 +22,8 @@ MotionWiimoteSimple::MotionWiimoteSimple(const MotionWiimoteSimple& r)
    _stept = r._stept;
    _test_state = TEST_DEFAULT;
    _teach_state = TEACH_DEFAULT;
-   std::copy(r._test_seq_min.begin(), r._test_seq_min.end(), _test_seq_min.begin());
-   std::copy(r._test_seq_max.begin(), r._test_seq_max.end(), _test_seq_max.begin());
+   ::std::copy(r._test_seq_min.begin(), r._test_seq_min.end(), ::std::back_inserter(_test_seq_min));
+   ::std::copy(r._test_seq_max.begin(), r._test_seq_max.end(), ::std::back_inserter(_test_seq_max));
 }
 
 MotionWiimoteSimple::~MotionWiimoteSimple()

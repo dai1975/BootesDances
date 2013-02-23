@@ -9,7 +9,7 @@ Motion::Motion()
 
 Motion::Motion(const Motion& r)
 {
-   std::copy(r._teaches.begin(), r._teaches.end(), _teaches.begin());
+   std::copy(r._teaches.begin(), r._teaches.end(), std::back_inserter(_teaches));
 }
 
 Motion::~Motion()

@@ -138,8 +138,8 @@ bool GuideRibbonLine::erase(size_t i)
 
 void GuideRibbonLine::calcPlayPoints()
 {
-   _play_points.resize( _edit_points.size() );
-   std::copy(_edit_points.begin(),_edit_points.end(),_play_points.begin());
+   _play_points.reserve( _edit_points.size() );
+   std::copy(_edit_points.begin(), _edit_points.end(), std::back_inserter(_play_points));
 }
 
 /**
