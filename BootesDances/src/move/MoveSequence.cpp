@@ -12,13 +12,27 @@ MoveSequence::~MoveSequence()
 {
 }
 
+IMove* MoveSequence::getMove(const char* uuid)
+{
+   std::string s(uuid);
+   t_uuid2move::iterator i = _uuid2move.find(s);
+   if (i == _uuid2move.end()) {
+      return NULL;
+   } else {
+      return i->second;
+   }
+}
+
 size_t MoveSequence::size() const
 {
+/*
    size_t n = 0;
    for (Entry* e = _head.next; e != &_tail; e = e->next) {
       ++n;
    }
    return n;
+*/
+   return _uuid2move.size();
 }
 
 MoveSequence::iterator MoveSequence::search(const IMove* m)
@@ -187,10 +201,12 @@ IMove* MoveSequence::remove(iterator& i)
    Entry* e = const_cast< Entry* >(i.e);
    if (i == end() || e == NULL) { return false; }
 
+   IMove* r = i.e->pMove;
+   _uuid2move.erase(std::string(r->getUuid()));
+
    i.e->prev->next = i.e->next;
    i.e->next->prev = i.e->prev;
 
-   IMove* r = i.e->pMove;
    delete i.e;
    i.e = NULL;
    return r;
@@ -217,6 +233,8 @@ IMove* MoveSequence::replace(iterator& i, IMove* rep)
       }
       // 置き換え Model のリスト順序は変わらないので、Entry を再利用する
       IMove* old = i.e->pMove;
+      _uuid2move.erase(std::string(old->getUuid()));
+      _uuid2move.insert( t_uuid2move::value_type(std::string(rep->getUuid()), rep) );
       i.e->pMove = rep;
       return old;
 
@@ -237,6 +255,8 @@ IMove* MoveSequence::replace(iterator& i, IMove* rep)
       }
       if (consist) { // 置き換え. Model のリスト順序は変わらない
          IMove* old = i.e->pMove;
+         _uuid2move.erase(std::string(old->getUuid()));
+         _uuid2move.insert( t_uuid2move::value_type(std::string(rep->getUuid()), rep) );
          i.e->pMove = rep;
          return old;
 
@@ -246,10 +266,10 @@ IMove* MoveSequence::replace(iterator& i, IMove* rep)
          i.e->next->prev = i.e->prev;
 
          if (add(rep) != end()) {
-            IMove* ret = i.e->pMove;
+            IMove* old = i.e->pMove;
             delete i.e;
             i.e = NULL;
-            return ret;
+            return old;
          } else {
             i.e->prev->next = i.e;
             i.e->next->prev = i.e;
@@ -262,6 +282,8 @@ IMove* MoveSequence::replace(iterator& i, IMove* rep)
 // IMove 情報を消去する。登録してあった IMove を返す。
 size_t MoveSequence::clear(std::vector< IMove* >* ret)
 {
+   _uuid2move.clear();
+
    size_t n = 0;
    for (iterator i=begin(); i!=end(); ++i) { ++n; }
 
@@ -286,6 +308,10 @@ size_t MoveSequence::clear(std::vector< IMove* >* ret)
 // 新たな IMove を追加する。重なる場合は失敗し、偽を返す。
 MoveSequence::iterator MoveSequence::add(IMove* m)
 {
+   if (m == NULL) { return end(); }
+   std::string uuid(m->getUuid());
+   if (_uuid2move.find(uuid) != _uuid2move.end()) { return end(); }
+
    __int64 t0,t1;
    m->getTime(&t0, &t1);
 
@@ -320,6 +346,8 @@ MoveSequence::iterator MoveSequence::add(IMove* m)
       }
    }
    */
+
+   _uuid2move.insert( t_uuid2move::value_type(uuid, m) );
 
    e = new Entry();
    e->pMove = m;

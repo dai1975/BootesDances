@@ -1,9 +1,7 @@
 #include "StageManagerProxy.h"
 #include "StageRealizer.h"
 #include "../../move/Move.h"
-#include "../../move/MoveRealizer.h"
-#include "../../move/motion/MotionFactory.h"
-#include "../../move/guide/GuideFactory.h"
+#include "../../move/motion/MotionRealizer.h"
 #include <bootes/lib/util/TChar.h>
 #include <sstream>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
@@ -59,9 +57,9 @@ bool StageManagerProxy::init(const TCHAR* dir, bool editable, D3DPOOL pool)
    _pWiimoteHandler = new WiimoteHandlerImpl(editable, dir);
 
    {
-      const MotionFactory::Registry& reg = MotionFactory::GetRegistry();
-      for (MotionFactory::Registry::const_iterator i = reg.begin(); i != reg.end(); ++i) {
-         const MotionFactory* f = i->second;
+      const MotionRealizer::Registry& reg = MotionRealizer::GetRegistry();
+      for (MotionRealizer::Registry::const_iterator i = reg.begin(); i != reg.end(); ++i) {
+         const MotionRealizer* f = i->second;
          _mgl.push_back( StageRealizer::MotionGuidePair(f->getMotionNameT(), f->getGuideNameT()) );
       }
    }
@@ -75,7 +73,7 @@ IMove* StageManagerProxy::createMove(IGuide* pGuide) const
    if (_pStage == NULL || _pSeq == NULL) { return NULL; }
    Move* pMove = new Move();
    pMove->setGuide(pGuide);
-   pMove->setMotion(_pSeq->getMotionFactory()->createMotion(0));
+   pMove->setMotion(_pSeq->getMotionRealizer()->createMotion(0));
    return pMove;
 }
 
@@ -215,15 +213,18 @@ bool StageManagerProxy::onEvent0(const ::bootes::lib::framework::Event* ev)
 void StageManagerProxy::doSearch()
 {
    struct Callback {
-      static void f(bool result, int index, Stage* pStage) {
+      static void f(bool result, Stage* pStage, void* data) {
          EvSearchStageResult r;
          r._result = result;
-         r._index  = index;
          r._pStage.reset(pStage);
+         int* pIndex = static_cast< int* >(data);
+         r._index = *pIndex;
+         ++*pIndex;
          g_pFnd->queue(&r);
       }
    };
-   StageRealizer::Search(&Callback::f, _dir.c_str(), _mgl);
+   int index = 0;
+   StageRealizer::Search(&Callback::f, &index, _dir.c_str(), _mgl);
 }
 
 void StageManagerProxy::doSave(const TCHAR* basename, bool neu)
@@ -256,10 +257,9 @@ void StageManagerProxy::doNew(const TCHAR* moviepath)
    if (moviepath == _T('\0')) { goto fail; }
    if (_mgl.empty()) { goto fail; }
 
-   pStage = new Stage();
-   pSeq = new MoveSequence();
-   if (! StageRealizer::SetFactory(pSeq, *_mgl.begin())) { goto fail; }
+   if (! StageRealizer::New(&pStage, &pSeq, *_mgl.begin())) { goto fail; }
 
+   // moviepath を解析して、ファイル名の . 以前を basename として得る
    {
       const TCHAR *pc0 = moviepath;
       const TCHAR *pc1 = NULL;
@@ -292,6 +292,7 @@ void StageManagerProxy::doNew(const TCHAR* moviepath)
       }
    }
 
+   //update _pStage, _pSeq, _enable
    if (! doLoadMovie(moviepath, pStage, pSeq)) { goto fail; }
 
    r._result    = true;
@@ -317,7 +318,7 @@ void StageManagerProxy::doLoad(const TCHAR* name)
    MoveSequence* pSeq = NULL;
 
    if (! StageRealizer::Load(&pStage, &pSeq, _dir.c_str(), name, _mgl)) { goto fail; }
-   if (! doLoadMovie(pStage->tc_moviepath.c_str(), pStage, pSeq)) { goto fail; }
+   if (! doLoadMovie(pStage->tc_moviepath.c_str(), pStage, pSeq)) { goto fail; } //update _pStage, _pSeq, _enable
 
    r._result    = true;
    r._basename  = _pStage->tc_basename;

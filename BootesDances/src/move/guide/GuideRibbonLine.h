@@ -13,9 +13,9 @@ public:
    virtual ~GuideRibbonLine();
    virtual IGuide* clone() const { return new GuideRibbonLine(*this); }
 
-   static const std::string TYPE;
-   virtual bool idealize(::pb::Guide*) const;
-   virtual bool realize(const ::pb::Guide&);
+   //static const std::string TYPE;
+   //virtual bool idealize(::pb::Guide*) const;
+   virtual bool realize(const ::pb::GuideRibbon& in);
    virtual bool idealize(::pb::GuideRibbon* pOut) const;
 
    void init(float x0, float y0, float x1, float y1);

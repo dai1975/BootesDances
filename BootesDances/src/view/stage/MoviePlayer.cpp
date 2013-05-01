@@ -65,6 +65,7 @@ bool MoviePlayer::load(const TCHAR* filename)
 
 bool MoviePlayer::load0(const TCHAR* filename)
 {
+   clearSceneTexture();
    DirectShowTexture::VideoInfo v;
    if (! _pPlayer->load(filename, &v)) {
       return false;
@@ -74,8 +75,8 @@ bool MoviePlayer::load0(const TCHAR* filename)
    _scene_videoInfo.width      = v.width;
    _scene_videoInfo.height     = v.height;
    _scene_clock.clock = 0;
+   _scene_playing = false;
 
-   clearSceneTexture();
    if (FAILED(_pPlayer->CreateTexture(&_scene_pTex, &_rect))) {
       clearSceneTexture();
       return false;
@@ -98,6 +99,7 @@ bool MoviePlayer::pause()
    if (! _pPlayer->pause()) { return false; }
    return true;
 }
+/*
 bool MoviePlayer::suspend()
 {
    if (! _scene_valid) { return false; }
@@ -112,6 +114,7 @@ bool MoviePlayer::resume()
    }
    return true;
 }
+*/
 
 bool MoviePlayer::seek_set(__int64 offset)
 {

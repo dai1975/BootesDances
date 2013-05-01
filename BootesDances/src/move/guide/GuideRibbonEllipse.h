@@ -12,10 +12,12 @@ public:
    virtual ~GuideRibbonEllipse();
    virtual IGuide* clone() const { return new GuideRibbonEllipse(*this); }
 
-   static const std::string TYPE;
-   virtual bool idealize(::pb::Guide*) const;
-   virtual bool realize(const ::pb::Guide&);
+   virtual bool realize(const ::pb::GuideRibbon& in);
    virtual bool idealize(::pb::GuideRibbon* pOut) const;
+   //static const std::string TYPE;
+   //virtual bool idealize(::pb::Guide*) const;
+   //virtual bool realize(const ::pb::Guide&);
+   //virtual bool idealize(::pb::GuideRibbon* pOut) const;
 
    float getCenterX() const;
    float getCenterY() const;

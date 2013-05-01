@@ -12,10 +12,12 @@ public:
    virtual ~GuideRibbonSpline();
    virtual inline GuideRibbon* clone() const { return new GuideRibbonSpline(*this); }
 
-   static const std::string TYPE;
-   virtual bool idealize(::pb::Guide*) const;
-   virtual bool realize(const ::pb::Guide&);
+   virtual bool realize(const ::pb::GuideRibbon& in);
    virtual bool idealize(::pb::GuideRibbon* pOut) const;
+   //static const std::string TYPE;
+   //virtual bool idealize(::pb::Guide*) const;
+   //virtual bool realize(const ::pb::Guide&);
+   //virtual bool idealize(::pb::GuideRibbon* pOut) const;
 
    void init(const t_points& points);
 

@@ -4,6 +4,7 @@
 #include "../../include.h"
 #include <DirectShowTextureExport.h>
 #include "CeguiTextureImage.h"
+#include "LoadDialog.h"
 #include "EditWindow.h"
 #include <bootes/cegui/FileDialog.h>
 
@@ -37,8 +38,12 @@ public:
    bool onMenuFileNew(const CEGUI::EventArgs&);
    bool onMenuFileLoad(const CEGUI::EventArgs&);
    bool onMenuFileSave(const CEGUI::EventArgs&);
-   bool onDialogSubmit(const CEGUI::EventArgs&);
-   bool onDialogCancel(const CEGUI::EventArgs&);
+
+   bool onNewDialogSubmit(const CEGUI::EventArgs&);
+   bool onNewDialogCancel(const CEGUI::EventArgs&);
+   bool onLoadDialogSubmit(const CEGUI::EventArgs&);
+   bool onLoadDialogCancel(const CEGUI::EventArgs&);
+
    void onLoad(bool result, const TCHAR* basename, bool neu);
 
 protected:
@@ -49,8 +54,6 @@ private:
    void onInitDevice();
    void createSheet();
    void createSheet0();
-   void doDialogNew(const TCHAR* dir, const TCHAR* file);
-   void doDialogLoad(const TCHAR* dir, const TCHAR* file);
 
    enum STATE {
       S_0, S_RUN,
@@ -61,11 +64,8 @@ private:
    bool _bMouseEnter;
    CEGUI::Window *_pWRoot, *_pWTheater, *_pWFile;
    EditWindow* _pEditWindow;
-   bootes::cegui::FileDialog* _pFileDialog;
-
-   enum DIALOG_MODE {
-      DIALOG_NEW, DIALOG_LOAD, DIALOG_SAVE,
-   };
+   bootes::cegui::FileDialog* _pNewDialog;
+   LoadDialog* _pLoadDialog;
 
    CeguiTextureImage _image;
    int _elapse;

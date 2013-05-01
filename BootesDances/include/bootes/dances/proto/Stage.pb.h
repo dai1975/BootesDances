@@ -33,11 +33,8 @@ void protobuf_AssignDesc_bootes_2fdances_2fproto_2fStage_2eproto();
 void protobuf_ShutdownFile_bootes_2fdances_2fproto_2fStage_2eproto();
 
 class Point;
-class Guide;
-class Motion;
-class Motion_Accel;
-class Motion_Gyro;
-class Move;
+class Accel;
+class Gyro;
 class Stage;
 
 // ===================================================================
@@ -134,14 +131,14 @@ class Point : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class Guide : public ::google::protobuf::Message {
+class Accel : public ::google::protobuf::Message {
  public:
-  Guide();
-  virtual ~Guide();
+  Accel();
+  virtual ~Accel();
   
-  Guide(const Guide& from);
+  Accel(const Accel& from);
   
-  inline Guide& operator=(const Guide& from) {
+  inline Accel& operator=(const Accel& from) {
     CopyFrom(from);
     return *this;
   }
@@ -155,117 +152,17 @@ class Guide : public ::google::protobuf::Message {
   }
   
   static const ::google::protobuf::Descriptor* descriptor();
-  static const Guide& default_instance();
+  static const Accel& default_instance();
   
-  void Swap(Guide* other);
-  
-  // implements Message ----------------------------------------------
-  
-  Guide* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const Guide& from);
-  void MergeFrom(const Guide& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required string type = 1;
-  inline bool has_type() const;
-  inline void clear_type();
-  static const int kTypeFieldNumber = 1;
-  inline const ::std::string& type() const;
-  inline void set_type(const ::std::string& value);
-  inline void set_type(const char* value);
-  inline void set_type(const char* value, size_t size);
-  inline ::std::string* mutable_type();
-  inline ::std::string* release_type();
-  
-  // required bytes code = 10;
-  inline bool has_code() const;
-  inline void clear_code();
-  static const int kCodeFieldNumber = 10;
-  inline const ::std::string& code() const;
-  inline void set_code(const ::std::string& value);
-  inline void set_code(const char* value);
-  inline void set_code(const void* value, size_t size);
-  inline ::std::string* mutable_code();
-  inline ::std::string* release_code();
-  
-  // @@protoc_insertion_point(class_scope:pb.Guide)
- private:
-  inline void set_has_type();
-  inline void clear_has_type();
-  inline void set_has_code();
-  inline void clear_has_code();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::std::string* type_;
-  ::std::string* code_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_bootes_2fdances_2fproto_2fStage_2eproto();
-  friend void protobuf_AssignDesc_bootes_2fdances_2fproto_2fStage_2eproto();
-  friend void protobuf_ShutdownFile_bootes_2fdances_2fproto_2fStage_2eproto();
-  
-  void InitAsDefaultInstance();
-  static Guide* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class Motion_Accel : public ::google::protobuf::Message {
- public:
-  Motion_Accel();
-  virtual ~Motion_Accel();
-  
-  Motion_Accel(const Motion_Accel& from);
-  
-  inline Motion_Accel& operator=(const Motion_Accel& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const Motion_Accel& default_instance();
-  
-  void Swap(Motion_Accel* other);
+  void Swap(Accel* other);
   
   // implements Message ----------------------------------------------
   
-  Motion_Accel* New() const;
+  Accel* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const Motion_Accel& from);
-  void MergeFrom(const Motion_Accel& from);
+  void CopyFrom(const Accel& from);
+  void MergeFrom(const Accel& from);
   void Clear();
   bool IsInitialized() const;
   
@@ -309,7 +206,7 @@ class Motion_Accel : public ::google::protobuf::Message {
   inline float z() const;
   inline void set_z(float value);
   
-  // @@protoc_insertion_point(class_scope:pb.Motion.Accel)
+  // @@protoc_insertion_point(class_scope:pb.Accel)
  private:
   inline void set_has_x();
   inline void clear_has_x();
@@ -332,18 +229,18 @@ class Motion_Accel : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_bootes_2fdances_2fproto_2fStage_2eproto();
   
   void InitAsDefaultInstance();
-  static Motion_Accel* default_instance_;
+  static Accel* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class Motion_Gyro : public ::google::protobuf::Message {
+class Gyro : public ::google::protobuf::Message {
  public:
-  Motion_Gyro();
-  virtual ~Motion_Gyro();
+  Gyro();
+  virtual ~Gyro();
   
-  Motion_Gyro(const Motion_Gyro& from);
+  Gyro(const Gyro& from);
   
-  inline Motion_Gyro& operator=(const Motion_Gyro& from) {
+  inline Gyro& operator=(const Gyro& from) {
     CopyFrom(from);
     return *this;
   }
@@ -357,17 +254,17 @@ class Motion_Gyro : public ::google::protobuf::Message {
   }
   
   static const ::google::protobuf::Descriptor* descriptor();
-  static const Motion_Gyro& default_instance();
+  static const Gyro& default_instance();
   
-  void Swap(Motion_Gyro* other);
+  void Swap(Gyro* other);
   
   // implements Message ----------------------------------------------
   
-  Motion_Gyro* New() const;
+  Gyro* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const Motion_Gyro& from);
-  void MergeFrom(const Motion_Gyro& from);
+  void CopyFrom(const Gyro& from);
+  void MergeFrom(const Gyro& from);
   void Clear();
   bool IsInitialized() const;
   
@@ -411,7 +308,7 @@ class Motion_Gyro : public ::google::protobuf::Message {
   inline float roll() const;
   inline void set_roll(float value);
   
-  // @@protoc_insertion_point(class_scope:pb.Motion.Gyro)
+  // @@protoc_insertion_point(class_scope:pb.Gyro)
  private:
   inline void set_has_yaw();
   inline void clear_has_yaw();
@@ -434,248 +331,7 @@ class Motion_Gyro : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_bootes_2fdances_2fproto_2fStage_2eproto();
   
   void InitAsDefaultInstance();
-  static Motion_Gyro* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class Motion : public ::google::protobuf::Message {
- public:
-  Motion();
-  virtual ~Motion();
-  
-  Motion(const Motion& from);
-  
-  inline Motion& operator=(const Motion& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const Motion& default_instance();
-  
-  void Swap(Motion* other);
-  
-  // implements Message ----------------------------------------------
-  
-  Motion* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const Motion& from);
-  void MergeFrom(const Motion& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  typedef Motion_Accel Accel;
-  typedef Motion_Gyro Gyro;
-  
-  // accessors -------------------------------------------------------
-  
-  // required string type = 1;
-  inline bool has_type() const;
-  inline void clear_type();
-  static const int kTypeFieldNumber = 1;
-  inline const ::std::string& type() const;
-  inline void set_type(const ::std::string& value);
-  inline void set_type(const char* value);
-  inline void set_type(const char* value, size_t size);
-  inline ::std::string* mutable_type();
-  inline ::std::string* release_type();
-  
-  // required bytes code = 10;
-  inline bool has_code() const;
-  inline void clear_code();
-  static const int kCodeFieldNumber = 10;
-  inline const ::std::string& code() const;
-  inline void set_code(const ::std::string& value);
-  inline void set_code(const char* value);
-  inline void set_code(const void* value, size_t size);
-  inline ::std::string* mutable_code();
-  inline ::std::string* release_code();
-  
-  // @@protoc_insertion_point(class_scope:pb.Motion)
- private:
-  inline void set_has_type();
-  inline void clear_has_type();
-  inline void set_has_code();
-  inline void clear_has_code();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::std::string* type_;
-  ::std::string* code_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_bootes_2fdances_2fproto_2fStage_2eproto();
-  friend void protobuf_AssignDesc_bootes_2fdances_2fproto_2fStage_2eproto();
-  friend void protobuf_ShutdownFile_bootes_2fdances_2fproto_2fStage_2eproto();
-  
-  void InitAsDefaultInstance();
-  static Motion* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class Move : public ::google::protobuf::Message {
- public:
-  Move();
-  virtual ~Move();
-  
-  Move(const Move& from);
-  
-  inline Move& operator=(const Move& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const Move& default_instance();
-  
-  void Swap(Move* other);
-  
-  // implements Message ----------------------------------------------
-  
-  Move* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const Move& from);
-  void MergeFrom(const Move& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required string uuid = 1;
-  inline bool has_uuid() const;
-  inline void clear_uuid();
-  static const int kUuidFieldNumber = 1;
-  inline const ::std::string& uuid() const;
-  inline void set_uuid(const ::std::string& value);
-  inline void set_uuid(const char* value);
-  inline void set_uuid(const char* value, size_t size);
-  inline ::std::string* mutable_uuid();
-  inline ::std::string* release_uuid();
-  
-  // required int64 time0 = 2;
-  inline bool has_time0() const;
-  inline void clear_time0();
-  static const int kTime0FieldNumber = 2;
-  inline ::google::protobuf::int64 time0() const;
-  inline void set_time0(::google::protobuf::int64 value);
-  
-  // required int64 time1 = 3;
-  inline bool has_time1() const;
-  inline void clear_time1();
-  static const int kTime1FieldNumber = 3;
-  inline ::google::protobuf::int64 time1() const;
-  inline void set_time1(::google::protobuf::int64 value);
-  
-  // required bool chainnext = 4;
-  inline bool has_chainnext() const;
-  inline void clear_chainnext();
-  static const int kChainnextFieldNumber = 4;
-  inline bool chainnext() const;
-  inline void set_chainnext(bool value);
-  
-  // required .pb.Guide guide = 10;
-  inline bool has_guide() const;
-  inline void clear_guide();
-  static const int kGuideFieldNumber = 10;
-  inline const ::pb::Guide& guide() const;
-  inline ::pb::Guide* mutable_guide();
-  inline ::pb::Guide* release_guide();
-  
-  // required .pb.Motion motion = 11;
-  inline bool has_motion() const;
-  inline void clear_motion();
-  static const int kMotionFieldNumber = 11;
-  inline const ::pb::Motion& motion() const;
-  inline ::pb::Motion* mutable_motion();
-  inline ::pb::Motion* release_motion();
-  
-  // @@protoc_insertion_point(class_scope:pb.Move)
- private:
-  inline void set_has_uuid();
-  inline void clear_has_uuid();
-  inline void set_has_time0();
-  inline void clear_has_time0();
-  inline void set_has_time1();
-  inline void clear_has_time1();
-  inline void set_has_chainnext();
-  inline void clear_has_chainnext();
-  inline void set_has_guide();
-  inline void clear_has_guide();
-  inline void set_has_motion();
-  inline void clear_has_motion();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::std::string* uuid_;
-  ::google::protobuf::int64 time0_;
-  ::google::protobuf::int64 time1_;
-  ::pb::Guide* guide_;
-  ::pb::Motion* motion_;
-  bool chainnext_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_bootes_2fdances_2fproto_2fStage_2eproto();
-  friend void protobuf_AssignDesc_bootes_2fdances_2fproto_2fStage_2eproto();
-  friend void protobuf_ShutdownFile_bootes_2fdances_2fproto_2fStage_2eproto();
-  
-  void InitAsDefaultInstance();
-  static Move* default_instance_;
+  static Gyro* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -762,18 +418,6 @@ class Stage : public ::google::protobuf::Message {
   inline ::std::string* mutable_moviepath();
   inline ::std::string* release_moviepath();
   
-  // repeated .pb.Move moves = 10;
-  inline int moves_size() const;
-  inline void clear_moves();
-  static const int kMovesFieldNumber = 10;
-  inline const ::pb::Move& moves(int index) const;
-  inline ::pb::Move* mutable_moves(int index);
-  inline ::pb::Move* add_moves();
-  inline const ::google::protobuf::RepeatedPtrField< ::pb::Move >&
-      moves() const;
-  inline ::google::protobuf::RepeatedPtrField< ::pb::Move >*
-      mutable_moves();
-  
   // @@protoc_insertion_point(class_scope:pb.Stage)
  private:
   inline void set_has_version();
@@ -787,11 +431,10 @@ class Stage : public ::google::protobuf::Message {
   
   ::std::string* name_;
   ::std::string* moviepath_;
-  ::google::protobuf::RepeatedPtrField< ::pb::Move > moves_;
   ::google::protobuf::int32 version_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   friend void  protobuf_AddDesc_bootes_2fdances_2fproto_2fStage_2eproto();
   friend void protobuf_AssignDesc_bootes_2fdances_2fproto_2fStage_2eproto();
@@ -853,568 +496,142 @@ inline void Point::set_y(float value) {
 
 // -------------------------------------------------------------------
 
-// Guide
-
-// required string type = 1;
-inline bool Guide::has_type() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void Guide::set_has_type() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void Guide::clear_has_type() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void Guide::clear_type() {
-  if (type_ != &::google::protobuf::internal::kEmptyString) {
-    type_->clear();
-  }
-  clear_has_type();
-}
-inline const ::std::string& Guide::type() const {
-  return *type_;
-}
-inline void Guide::set_type(const ::std::string& value) {
-  set_has_type();
-  if (type_ == &::google::protobuf::internal::kEmptyString) {
-    type_ = new ::std::string;
-  }
-  type_->assign(value);
-}
-inline void Guide::set_type(const char* value) {
-  set_has_type();
-  if (type_ == &::google::protobuf::internal::kEmptyString) {
-    type_ = new ::std::string;
-  }
-  type_->assign(value);
-}
-inline void Guide::set_type(const char* value, size_t size) {
-  set_has_type();
-  if (type_ == &::google::protobuf::internal::kEmptyString) {
-    type_ = new ::std::string;
-  }
-  type_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* Guide::mutable_type() {
-  set_has_type();
-  if (type_ == &::google::protobuf::internal::kEmptyString) {
-    type_ = new ::std::string;
-  }
-  return type_;
-}
-inline ::std::string* Guide::release_type() {
-  clear_has_type();
-  if (type_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = type_;
-    type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
-}
-
-// required bytes code = 10;
-inline bool Guide::has_code() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void Guide::set_has_code() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void Guide::clear_has_code() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void Guide::clear_code() {
-  if (code_ != &::google::protobuf::internal::kEmptyString) {
-    code_->clear();
-  }
-  clear_has_code();
-}
-inline const ::std::string& Guide::code() const {
-  return *code_;
-}
-inline void Guide::set_code(const ::std::string& value) {
-  set_has_code();
-  if (code_ == &::google::protobuf::internal::kEmptyString) {
-    code_ = new ::std::string;
-  }
-  code_->assign(value);
-}
-inline void Guide::set_code(const char* value) {
-  set_has_code();
-  if (code_ == &::google::protobuf::internal::kEmptyString) {
-    code_ = new ::std::string;
-  }
-  code_->assign(value);
-}
-inline void Guide::set_code(const void* value, size_t size) {
-  set_has_code();
-  if (code_ == &::google::protobuf::internal::kEmptyString) {
-    code_ = new ::std::string;
-  }
-  code_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* Guide::mutable_code() {
-  set_has_code();
-  if (code_ == &::google::protobuf::internal::kEmptyString) {
-    code_ = new ::std::string;
-  }
-  return code_;
-}
-inline ::std::string* Guide::release_code() {
-  clear_has_code();
-  if (code_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = code_;
-    code_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
-}
-
-// -------------------------------------------------------------------
-
-// Motion_Accel
+// Accel
 
 // required float x = 1;
-inline bool Motion_Accel::has_x() const {
+inline bool Accel::has_x() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void Motion_Accel::set_has_x() {
+inline void Accel::set_has_x() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void Motion_Accel::clear_has_x() {
+inline void Accel::clear_has_x() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void Motion_Accel::clear_x() {
+inline void Accel::clear_x() {
   x_ = 0;
   clear_has_x();
 }
-inline float Motion_Accel::x() const {
+inline float Accel::x() const {
   return x_;
 }
-inline void Motion_Accel::set_x(float value) {
+inline void Accel::set_x(float value) {
   set_has_x();
   x_ = value;
 }
 
 // required float y = 2;
-inline bool Motion_Accel::has_y() const {
+inline bool Accel::has_y() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void Motion_Accel::set_has_y() {
+inline void Accel::set_has_y() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void Motion_Accel::clear_has_y() {
+inline void Accel::clear_has_y() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void Motion_Accel::clear_y() {
+inline void Accel::clear_y() {
   y_ = 0;
   clear_has_y();
 }
-inline float Motion_Accel::y() const {
+inline float Accel::y() const {
   return y_;
 }
-inline void Motion_Accel::set_y(float value) {
+inline void Accel::set_y(float value) {
   set_has_y();
   y_ = value;
 }
 
 // required float z = 3;
-inline bool Motion_Accel::has_z() const {
+inline bool Accel::has_z() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void Motion_Accel::set_has_z() {
+inline void Accel::set_has_z() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void Motion_Accel::clear_has_z() {
+inline void Accel::clear_has_z() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void Motion_Accel::clear_z() {
+inline void Accel::clear_z() {
   z_ = 0;
   clear_has_z();
 }
-inline float Motion_Accel::z() const {
+inline float Accel::z() const {
   return z_;
 }
-inline void Motion_Accel::set_z(float value) {
+inline void Accel::set_z(float value) {
   set_has_z();
   z_ = value;
 }
 
 // -------------------------------------------------------------------
 
-// Motion_Gyro
+// Gyro
 
 // required float yaw = 1;
-inline bool Motion_Gyro::has_yaw() const {
+inline bool Gyro::has_yaw() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void Motion_Gyro::set_has_yaw() {
+inline void Gyro::set_has_yaw() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void Motion_Gyro::clear_has_yaw() {
+inline void Gyro::clear_has_yaw() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void Motion_Gyro::clear_yaw() {
+inline void Gyro::clear_yaw() {
   yaw_ = 0;
   clear_has_yaw();
 }
-inline float Motion_Gyro::yaw() const {
+inline float Gyro::yaw() const {
   return yaw_;
 }
-inline void Motion_Gyro::set_yaw(float value) {
+inline void Gyro::set_yaw(float value) {
   set_has_yaw();
   yaw_ = value;
 }
 
 // required float pitch = 2;
-inline bool Motion_Gyro::has_pitch() const {
+inline bool Gyro::has_pitch() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void Motion_Gyro::set_has_pitch() {
+inline void Gyro::set_has_pitch() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void Motion_Gyro::clear_has_pitch() {
+inline void Gyro::clear_has_pitch() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void Motion_Gyro::clear_pitch() {
+inline void Gyro::clear_pitch() {
   pitch_ = 0;
   clear_has_pitch();
 }
-inline float Motion_Gyro::pitch() const {
+inline float Gyro::pitch() const {
   return pitch_;
 }
-inline void Motion_Gyro::set_pitch(float value) {
+inline void Gyro::set_pitch(float value) {
   set_has_pitch();
   pitch_ = value;
 }
 
 // required float roll = 3;
-inline bool Motion_Gyro::has_roll() const {
+inline bool Gyro::has_roll() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void Motion_Gyro::set_has_roll() {
+inline void Gyro::set_has_roll() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void Motion_Gyro::clear_has_roll() {
+inline void Gyro::clear_has_roll() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void Motion_Gyro::clear_roll() {
+inline void Gyro::clear_roll() {
   roll_ = 0;
   clear_has_roll();
 }
-inline float Motion_Gyro::roll() const {
+inline float Gyro::roll() const {
   return roll_;
 }
-inline void Motion_Gyro::set_roll(float value) {
+inline void Gyro::set_roll(float value) {
   set_has_roll();
   roll_ = value;
-}
-
-// -------------------------------------------------------------------
-
-// Motion
-
-// required string type = 1;
-inline bool Motion::has_type() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void Motion::set_has_type() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void Motion::clear_has_type() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void Motion::clear_type() {
-  if (type_ != &::google::protobuf::internal::kEmptyString) {
-    type_->clear();
-  }
-  clear_has_type();
-}
-inline const ::std::string& Motion::type() const {
-  return *type_;
-}
-inline void Motion::set_type(const ::std::string& value) {
-  set_has_type();
-  if (type_ == &::google::protobuf::internal::kEmptyString) {
-    type_ = new ::std::string;
-  }
-  type_->assign(value);
-}
-inline void Motion::set_type(const char* value) {
-  set_has_type();
-  if (type_ == &::google::protobuf::internal::kEmptyString) {
-    type_ = new ::std::string;
-  }
-  type_->assign(value);
-}
-inline void Motion::set_type(const char* value, size_t size) {
-  set_has_type();
-  if (type_ == &::google::protobuf::internal::kEmptyString) {
-    type_ = new ::std::string;
-  }
-  type_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* Motion::mutable_type() {
-  set_has_type();
-  if (type_ == &::google::protobuf::internal::kEmptyString) {
-    type_ = new ::std::string;
-  }
-  return type_;
-}
-inline ::std::string* Motion::release_type() {
-  clear_has_type();
-  if (type_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = type_;
-    type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
-}
-
-// required bytes code = 10;
-inline bool Motion::has_code() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void Motion::set_has_code() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void Motion::clear_has_code() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void Motion::clear_code() {
-  if (code_ != &::google::protobuf::internal::kEmptyString) {
-    code_->clear();
-  }
-  clear_has_code();
-}
-inline const ::std::string& Motion::code() const {
-  return *code_;
-}
-inline void Motion::set_code(const ::std::string& value) {
-  set_has_code();
-  if (code_ == &::google::protobuf::internal::kEmptyString) {
-    code_ = new ::std::string;
-  }
-  code_->assign(value);
-}
-inline void Motion::set_code(const char* value) {
-  set_has_code();
-  if (code_ == &::google::protobuf::internal::kEmptyString) {
-    code_ = new ::std::string;
-  }
-  code_->assign(value);
-}
-inline void Motion::set_code(const void* value, size_t size) {
-  set_has_code();
-  if (code_ == &::google::protobuf::internal::kEmptyString) {
-    code_ = new ::std::string;
-  }
-  code_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* Motion::mutable_code() {
-  set_has_code();
-  if (code_ == &::google::protobuf::internal::kEmptyString) {
-    code_ = new ::std::string;
-  }
-  return code_;
-}
-inline ::std::string* Motion::release_code() {
-  clear_has_code();
-  if (code_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = code_;
-    code_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
-}
-
-// -------------------------------------------------------------------
-
-// Move
-
-// required string uuid = 1;
-inline bool Move::has_uuid() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void Move::set_has_uuid() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void Move::clear_has_uuid() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void Move::clear_uuid() {
-  if (uuid_ != &::google::protobuf::internal::kEmptyString) {
-    uuid_->clear();
-  }
-  clear_has_uuid();
-}
-inline const ::std::string& Move::uuid() const {
-  return *uuid_;
-}
-inline void Move::set_uuid(const ::std::string& value) {
-  set_has_uuid();
-  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
-    uuid_ = new ::std::string;
-  }
-  uuid_->assign(value);
-}
-inline void Move::set_uuid(const char* value) {
-  set_has_uuid();
-  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
-    uuid_ = new ::std::string;
-  }
-  uuid_->assign(value);
-}
-inline void Move::set_uuid(const char* value, size_t size) {
-  set_has_uuid();
-  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
-    uuid_ = new ::std::string;
-  }
-  uuid_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* Move::mutable_uuid() {
-  set_has_uuid();
-  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
-    uuid_ = new ::std::string;
-  }
-  return uuid_;
-}
-inline ::std::string* Move::release_uuid() {
-  clear_has_uuid();
-  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = uuid_;
-    uuid_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
-}
-
-// required int64 time0 = 2;
-inline bool Move::has_time0() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void Move::set_has_time0() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void Move::clear_has_time0() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void Move::clear_time0() {
-  time0_ = GOOGLE_LONGLONG(0);
-  clear_has_time0();
-}
-inline ::google::protobuf::int64 Move::time0() const {
-  return time0_;
-}
-inline void Move::set_time0(::google::protobuf::int64 value) {
-  set_has_time0();
-  time0_ = value;
-}
-
-// required int64 time1 = 3;
-inline bool Move::has_time1() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void Move::set_has_time1() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void Move::clear_has_time1() {
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline void Move::clear_time1() {
-  time1_ = GOOGLE_LONGLONG(0);
-  clear_has_time1();
-}
-inline ::google::protobuf::int64 Move::time1() const {
-  return time1_;
-}
-inline void Move::set_time1(::google::protobuf::int64 value) {
-  set_has_time1();
-  time1_ = value;
-}
-
-// required bool chainnext = 4;
-inline bool Move::has_chainnext() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void Move::set_has_chainnext() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void Move::clear_has_chainnext() {
-  _has_bits_[0] &= ~0x00000008u;
-}
-inline void Move::clear_chainnext() {
-  chainnext_ = false;
-  clear_has_chainnext();
-}
-inline bool Move::chainnext() const {
-  return chainnext_;
-}
-inline void Move::set_chainnext(bool value) {
-  set_has_chainnext();
-  chainnext_ = value;
-}
-
-// required .pb.Guide guide = 10;
-inline bool Move::has_guide() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
-}
-inline void Move::set_has_guide() {
-  _has_bits_[0] |= 0x00000010u;
-}
-inline void Move::clear_has_guide() {
-  _has_bits_[0] &= ~0x00000010u;
-}
-inline void Move::clear_guide() {
-  if (guide_ != NULL) guide_->::pb::Guide::Clear();
-  clear_has_guide();
-}
-inline const ::pb::Guide& Move::guide() const {
-  return guide_ != NULL ? *guide_ : *default_instance_->guide_;
-}
-inline ::pb::Guide* Move::mutable_guide() {
-  set_has_guide();
-  if (guide_ == NULL) guide_ = new ::pb::Guide;
-  return guide_;
-}
-inline ::pb::Guide* Move::release_guide() {
-  clear_has_guide();
-  ::pb::Guide* temp = guide_;
-  guide_ = NULL;
-  return temp;
-}
-
-// required .pb.Motion motion = 11;
-inline bool Move::has_motion() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
-}
-inline void Move::set_has_motion() {
-  _has_bits_[0] |= 0x00000020u;
-}
-inline void Move::clear_has_motion() {
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline void Move::clear_motion() {
-  if (motion_ != NULL) motion_->::pb::Motion::Clear();
-  clear_has_motion();
-}
-inline const ::pb::Motion& Move::motion() const {
-  return motion_ != NULL ? *motion_ : *default_instance_->motion_;
-}
-inline ::pb::Motion* Move::mutable_motion() {
-  set_has_motion();
-  if (motion_ == NULL) motion_ = new ::pb::Motion;
-  return motion_;
-}
-inline ::pb::Motion* Move::release_motion() {
-  clear_has_motion();
-  ::pb::Motion* temp = motion_;
-  motion_ = NULL;
-  return temp;
 }
 
 // -------------------------------------------------------------------
@@ -1557,31 +774,6 @@ inline ::std::string* Stage::release_moviepath() {
     moviepath_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
-}
-
-// repeated .pb.Move moves = 10;
-inline int Stage::moves_size() const {
-  return moves_.size();
-}
-inline void Stage::clear_moves() {
-  moves_.Clear();
-}
-inline const ::pb::Move& Stage::moves(int index) const {
-  return moves_.Get(index);
-}
-inline ::pb::Move* Stage::mutable_moves(int index) {
-  return moves_.Mutable(index);
-}
-inline ::pb::Move* Stage::add_moves() {
-  return moves_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::pb::Move >&
-Stage::moves() const {
-  return moves_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::pb::Move >*
-Stage::mutable_moves() {
-  return &moves_;
 }
 
 

@@ -102,21 +102,21 @@ class TeachRecord : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 time() const;
   inline void set_time(::google::protobuf::int32 value);
   
-  // required .pb.Motion.Accel accel = 10;
+  // required .pb.Accel accel = 10;
   inline bool has_accel() const;
   inline void clear_accel();
   static const int kAccelFieldNumber = 10;
-  inline const ::pb::Motion_Accel& accel() const;
-  inline ::pb::Motion_Accel* mutable_accel();
-  inline ::pb::Motion_Accel* release_accel();
+  inline const ::pb::Accel& accel() const;
+  inline ::pb::Accel* mutable_accel();
+  inline ::pb::Accel* release_accel();
   
-  // required .pb.Motion.Gyro gyro = 11;
+  // required .pb.Gyro gyro = 11;
   inline bool has_gyro() const;
   inline void clear_gyro();
   static const int kGyroFieldNumber = 11;
-  inline const ::pb::Motion_Gyro& gyro() const;
-  inline ::pb::Motion_Gyro* mutable_gyro();
-  inline ::pb::Motion_Gyro* release_gyro();
+  inline const ::pb::Gyro& gyro() const;
+  inline ::pb::Gyro* mutable_gyro();
+  inline ::pb::Gyro* release_gyro();
   
   // @@protoc_insertion_point(class_scope:pb.TeachRecord)
  private:
@@ -129,8 +129,8 @@ class TeachRecord : public ::google::protobuf::Message {
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::pb::Motion_Accel* accel_;
-  ::pb::Motion_Gyro* gyro_;
+  ::pb::Accel* accel_;
+  ::pb::Gyro* gyro_;
   ::google::protobuf::int32 time_;
   
   mutable int _cached_size_;
@@ -546,7 +546,7 @@ inline void TeachRecord::set_time(::google::protobuf::int32 value) {
   time_ = value;
 }
 
-// required .pb.Motion.Accel accel = 10;
+// required .pb.Accel accel = 10;
 inline bool TeachRecord::has_accel() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -557,25 +557,25 @@ inline void TeachRecord::clear_has_accel() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline void TeachRecord::clear_accel() {
-  if (accel_ != NULL) accel_->::pb::Motion_Accel::Clear();
+  if (accel_ != NULL) accel_->::pb::Accel::Clear();
   clear_has_accel();
 }
-inline const ::pb::Motion_Accel& TeachRecord::accel() const {
+inline const ::pb::Accel& TeachRecord::accel() const {
   return accel_ != NULL ? *accel_ : *default_instance_->accel_;
 }
-inline ::pb::Motion_Accel* TeachRecord::mutable_accel() {
+inline ::pb::Accel* TeachRecord::mutable_accel() {
   set_has_accel();
-  if (accel_ == NULL) accel_ = new ::pb::Motion_Accel;
+  if (accel_ == NULL) accel_ = new ::pb::Accel;
   return accel_;
 }
-inline ::pb::Motion_Accel* TeachRecord::release_accel() {
+inline ::pb::Accel* TeachRecord::release_accel() {
   clear_has_accel();
-  ::pb::Motion_Accel* temp = accel_;
+  ::pb::Accel* temp = accel_;
   accel_ = NULL;
   return temp;
 }
 
-// required .pb.Motion.Gyro gyro = 11;
+// required .pb.Gyro gyro = 11;
 inline bool TeachRecord::has_gyro() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -586,20 +586,20 @@ inline void TeachRecord::clear_has_gyro() {
   _has_bits_[0] &= ~0x00000004u;
 }
 inline void TeachRecord::clear_gyro() {
-  if (gyro_ != NULL) gyro_->::pb::Motion_Gyro::Clear();
+  if (gyro_ != NULL) gyro_->::pb::Gyro::Clear();
   clear_has_gyro();
 }
-inline const ::pb::Motion_Gyro& TeachRecord::gyro() const {
+inline const ::pb::Gyro& TeachRecord::gyro() const {
   return gyro_ != NULL ? *gyro_ : *default_instance_->gyro_;
 }
-inline ::pb::Motion_Gyro* TeachRecord::mutable_gyro() {
+inline ::pb::Gyro* TeachRecord::mutable_gyro() {
   set_has_gyro();
-  if (gyro_ == NULL) gyro_ = new ::pb::Motion_Gyro;
+  if (gyro_ == NULL) gyro_ = new ::pb::Gyro;
   return gyro_;
 }
-inline ::pb::Motion_Gyro* TeachRecord::release_gyro() {
+inline ::pb::Gyro* TeachRecord::release_gyro() {
   clear_has_gyro();
-  ::pb::Motion_Gyro* temp = gyro_;
+  ::pb::Gyro* temp = gyro_;
   gyro_ = NULL;
   return temp;
 }

@@ -1,5 +1,7 @@
 #include "StageRealizer.h"
 #include "../../move/MoveRealizer.h"
+#include "../../move/guide/GuideRealizer.h"
+#include "../../move/motion/MotionRealizer.h"
 #include <bootes/lib/util/TChar.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/text_format.h>
@@ -9,12 +11,10 @@
 #include <share.h>
 #include <fcntl.h>
 #include <sstream>
-#include "../../move/guide/GuideFactory.h"
-#include "../../move/motion/MotionFactory.h"
 
 bool StageRealizer::Idealize(::pb::Stage* pOut, const Stage& in)
 {
-   pOut->clear_moves();
+   //pOut->clear_moves();
    pOut->set_version(in.version);
    pOut->set_name(in.name);
    pOut->set_moviepath(in.moviepath);
@@ -38,22 +38,14 @@ bool StageRealizer::Realize(Stage** ppOut, const pb::Stage& in, const TCHAR* nam
       pStage->tc_moviepath = tmp;
       delete[] tmp;
    }
-/*
-   // add move models
-   pStage->seq.clear();
-   pStage->seq.setGuideName("GuideRibbon");
-   pStage->seq.setMotionName("MotionWiimoteSimple");
-   bool chain0 = false;
-   for (int i=0; i < in.moves_size(); ++i) {
-      const ::pb::Move& idea = in.moves(i);
-      IMove* rea = NULL;
-      if (! MoveRealizer::Realize(&rea, &idea)) { goto fail; }
-
-      MoveSequence::iterator ite = pStage->seq.add(rea); //pass ownership
-      if (chain0) { pStage->seq.chainPrev(ite, true); }
-      chain0 = idea.chainnext();
+   {
+      char* tmp;
+      tmp = ::bootes::lib::util::TChar::T2C(pStage->tc_basename.c_str());
+      if (tmp == NULL) { goto fail; }
+      pStage->basename = tmp;
+      delete[] tmp;
    }
-*/
+
    *ppOut = pStage;
    return true;
 
@@ -63,6 +55,14 @@ fail:
 }
 
 namespace {
+
+/*
+ * create dedicated directory to the stage under global root directory:
+ *   <basedir>/...../<basename>
+ *
+ * stage file is "stage.txt"
+ *
+ */
 
 inline bool IsStageFileName(const TCHAR* name)
 {
@@ -84,6 +84,7 @@ std::basic_string< TCHAR > GetFilePath(const TCHAR* dir, const TCHAR* name)
 }
 }
 
+/*
 bool StageRealizer::SetFactory(MoveSequence* pSeq, const MotionGuidePair& mg)
 {
    char* c;
@@ -94,6 +95,33 @@ bool StageRealizer::SetFactory(MoveSequence* pSeq, const MotionGuidePair& mg)
    c = ::bootes::lib::util::TChar::T2C(mg.motion.c_str());
    pSeq->setMotionFactory(MotionFactory::GetFactory(c));
    delete[] c;
+   return true;
+}
+*/
+bool StageRealizer::New(Stage** ppStage, MoveSequence** ppSeq, const MotionGuidePair& mg)
+{
+   const GuideRealizer*  pGuideRealizer = NULL;
+   const MotionRealizer* pMotionRealizer = NULL;
+   {
+      char* c;
+      c = ::bootes::lib::util::TChar::T2C(mg.guide.c_str());
+      pGuideRealizer = GuideRealizer::GetRealizer(c);
+      delete[] c;
+
+      c = ::bootes::lib::util::TChar::T2C(mg.motion.c_str());
+      pMotionRealizer = MotionRealizer::GetRealizer(c);
+      delete[] c;
+   }
+   if (pGuideRealizer == NULL) { return false; }
+   if (pMotionRealizer == NULL) { return false; }
+
+   Stage* pStage = new Stage();
+   MoveSequence* pSeq = new MoveSequence();
+   pSeq->setGuideRealizer(pGuideRealizer);
+   pSeq->setMotionRealizer(pMotionRealizer);
+
+   *ppStage = pStage;
+   *ppSeq   = pSeq;
    return true;
 }
 
@@ -115,6 +143,9 @@ bool StageRealizer::Load(Stage** ppStage, MoveSequence** ppSeq, const TCHAR* dir
    MotionGuidePair mg;
    if (! MoveRealizer::IsExist(&mg, dir, name, mgl)) { return false; }
 
+   Stage* pStage = NULL;
+   MoveSequence* pSeq = NULL;
+
    {
       int fd;
       std::basic_string< TCHAR > path = GetFilePath(dir, name);
@@ -132,16 +163,26 @@ bool StageRealizer::Load(Stage** ppStage, MoveSequence** ppSeq, const TCHAR* dir
          return false;
       }
 
-      if (! StageRealizer::Realize(ppStage, idea, name)) {
+      if (! StageRealizer::Realize(&pStage, idea, name)) {
          return false;
       }
    }
 
-   if (ppSeq != NULL) {
-      //MoveRealizer::Load(p);
-      SetFactory(*ppSeq, mg);
+   if (ppSeq) {
+      if (! MoveRealizer::Load(&pSeq, dir, name, mg)) {
+         goto fail;
+      }
    }
 
+   *ppStage = pStage;
+   if (ppSeq) { *ppSeq = pSeq; }
+   return true;
+
+fail:
+   if (pStage) { delete pStage; }
+   if (pSeq) { delete pSeq; }
+   if (ppStage) { *ppStage = NULL; }
+   if (ppSeq) { *ppSeq = NULL; }
    return true;
 }
 
@@ -228,7 +269,7 @@ fail:
    return false;
 }
 
-bool StageRealizer::Search(void(*cb)(bool,int,Stage*), const TCHAR* dir, const MotionGuideList& mgl)
+bool StageRealizer::Search(void(*cb)(bool,Stage*,void*), void* data, const TCHAR* dir, const MotionGuideList& mgl)
 {
    WIN32_FIND_DATA find;
    HANDLE hFind;
@@ -242,44 +283,68 @@ bool StageRealizer::Search(void(*cb)(bool,int,Stage*), const TCHAR* dir, const M
       }
    }
 
-   int index = 0;
+   std::list< std::basic_string< TCHAR > > dirs;
    for (BOOL found = TRUE; found; found=FindNextFile(hFind, &find)) {
       if ((find.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) {
          if (find.cFileName[0] != _T('.')) {
-            std::basic_ostringstream< TCHAR > os;
-            os << dir << _T('\\') << find.cFileName;
-            Search(cb, os.str().c_str(), mgl); //recursive
+            dirs.push_back( std::basic_string< TCHAR >(find.cFileName) );
          }
-         continue;
-
-      } else if ((find.dwFileAttributes & FILE_ATTRIBUTE_NORMAL) != 0) {
-         continue;
-
-      } else if (! IsStageFileName(find.cFileName)) {
-         continue;
-
-      } else {
-         std::basic_ostringstream< TCHAR > os;
-         os << dir << _T('\\') << find.cFileName;
-
-         HANDLE hFile = INVALID_HANDLE_VALUE;
-         int fd;
-         errno_t err = _tsopen_s(&fd, os.str().c_str(),
-                                 _O_RDONLY|_O_BINARY, _SH_DENYWR, _S_IREAD|_S_IWRITE);
-         if (err != 0) {
-            continue;
-         }
-
-         Stage* pStage = NULL;
-         if (! StageRealizer::Load(&pStage, NULL, dir, find.cFileName, mgl)) {
-            continue;
-         }
-         (*cb)(true, index++, pStage);
       }
    } //for found
    FindClose(hFind);
 
-   (*cb)(true, index++, NULL);
+   for (std::list< std::basic_string< TCHAR > >::iterator i = dirs.begin(); i != dirs.end(); ++i) {
+      Search(cb, data, dir, i->c_str(), mgl);
+   }
+
+   (*cb)(true, NULL, data);
+   return true;
+}
+
+bool StageRealizer::Search(void(*cb)(bool,Stage*,void*), void* data, const TCHAR* parentdir, const TCHAR* name, const MotionGuideList& mgl)
+{
+   std::basic_string< TCHAR > dir;
+   dir.append(parentdir).append(_T("\\")).append(name);
+
+   WIN32_FIND_DATA find;
+   HANDLE hFind;
+   {
+      std::basic_string< TCHAR > query;
+      query.append(dir).append(_T("\\*"));
+      hFind = FindFirstFile(query.c_str(), &find);
+      if (hFind == INVALID_HANDLE_VALUE) {
+         (*cb)(false, 0, NULL);
+         return false;
+      }
+   }
+
+   std::list< std::basic_string< TCHAR > > dirs;
+   bool has_stagefile = false;
+   for (BOOL found = TRUE; found; found=FindNextFile(hFind, &find)) {
+      if ((find.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) {
+         if (find.cFileName[0] != _T('.')) {
+            dirs.push_back(find.cFileName);
+         }
+
+      } else if ((find.dwFileAttributes & FILE_ATTRIBUTE_NORMAL) != 0) {
+         continue;
+
+      } else if (IsStageFileName(find.cFileName)) {
+         has_stagefile = true;
+      }
+   } //for found
+   FindClose(hFind);
+
+   for (std::list< std::basic_string< TCHAR > >::iterator i = dirs.begin(); i != dirs.end(); ++i) {
+      Search(cb, data, dir.c_str(), i->c_str(), mgl);
+   }
+   if (has_stagefile) {
+      Stage* pStage = NULL;
+      if (StageRealizer::Load(&pStage, NULL, parentdir, name, mgl)) {
+         (*cb)(true, pStage, data);
+      }
+   }
+
    return true;
 }
 

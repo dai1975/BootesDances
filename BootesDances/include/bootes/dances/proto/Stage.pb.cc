@@ -20,21 +20,12 @@ namespace {
 const ::google::protobuf::Descriptor* Point_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Point_reflection_ = NULL;
-const ::google::protobuf::Descriptor* Guide_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* Accel_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  Guide_reflection_ = NULL;
-const ::google::protobuf::Descriptor* Motion_descriptor_ = NULL;
+  Accel_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Gyro_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  Motion_reflection_ = NULL;
-const ::google::protobuf::Descriptor* Motion_Accel_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  Motion_Accel_reflection_ = NULL;
-const ::google::protobuf::Descriptor* Motion_Gyro_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  Motion_Gyro_reflection_ = NULL;
-const ::google::protobuf::Descriptor* Move_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  Move_reflection_ = NULL;
+  Gyro_reflection_ = NULL;
 const ::google::protobuf::Descriptor* Stage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Stage_reflection_ = NULL;
@@ -64,98 +55,45 @@ void protobuf_AssignDesc_bootes_2fdances_2fproto_2fStage_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Point));
-  Guide_descriptor_ = file->message_type(1);
-  static const int Guide_offsets_[2] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Guide, type_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Guide, code_),
+  Accel_descriptor_ = file->message_type(1);
+  static const int Accel_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Accel, x_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Accel, y_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Accel, z_),
   };
-  Guide_reflection_ =
+  Accel_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      Guide_descriptor_,
-      Guide::default_instance_,
-      Guide_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Guide, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Guide, _unknown_fields_),
+      Accel_descriptor_,
+      Accel::default_instance_,
+      Accel_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Accel, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Accel, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(Guide));
-  Motion_descriptor_ = file->message_type(2);
-  static const int Motion_offsets_[2] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Motion, type_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Motion, code_),
+      sizeof(Accel));
+  Gyro_descriptor_ = file->message_type(2);
+  static const int Gyro_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gyro, yaw_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gyro, pitch_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gyro, roll_),
   };
-  Motion_reflection_ =
+  Gyro_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      Motion_descriptor_,
-      Motion::default_instance_,
-      Motion_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Motion, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Motion, _unknown_fields_),
+      Gyro_descriptor_,
+      Gyro::default_instance_,
+      Gyro_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gyro, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Gyro, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(Motion));
-  Motion_Accel_descriptor_ = Motion_descriptor_->nested_type(0);
-  static const int Motion_Accel_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Motion_Accel, x_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Motion_Accel, y_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Motion_Accel, z_),
-  };
-  Motion_Accel_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      Motion_Accel_descriptor_,
-      Motion_Accel::default_instance_,
-      Motion_Accel_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Motion_Accel, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Motion_Accel, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(Motion_Accel));
-  Motion_Gyro_descriptor_ = Motion_descriptor_->nested_type(1);
-  static const int Motion_Gyro_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Motion_Gyro, yaw_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Motion_Gyro, pitch_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Motion_Gyro, roll_),
-  };
-  Motion_Gyro_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      Motion_Gyro_descriptor_,
-      Motion_Gyro::default_instance_,
-      Motion_Gyro_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Motion_Gyro, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Motion_Gyro, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(Motion_Gyro));
-  Move_descriptor_ = file->message_type(3);
-  static const int Move_offsets_[6] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Move, uuid_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Move, time0_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Move, time1_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Move, chainnext_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Move, guide_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Move, motion_),
-  };
-  Move_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      Move_descriptor_,
-      Move::default_instance_,
-      Move_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Move, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Move, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(Move));
-  Stage_descriptor_ = file->message_type(4);
-  static const int Stage_offsets_[4] = {
+      sizeof(Gyro));
+  Stage_descriptor_ = file->message_type(3);
+  static const int Stage_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Stage, version_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Stage, name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Stage, moviepath_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Stage, moves_),
   };
   Stage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -183,15 +121,9 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Point_descriptor_, &Point::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    Guide_descriptor_, &Guide::default_instance());
+    Accel_descriptor_, &Accel::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    Motion_descriptor_, &Motion::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    Motion_Accel_descriptor_, &Motion_Accel::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    Motion_Gyro_descriptor_, &Motion_Gyro::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    Move_descriptor_, &Move::default_instance());
+    Gyro_descriptor_, &Gyro::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Stage_descriptor_, &Stage::default_instance());
 }
@@ -201,16 +133,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
 void protobuf_ShutdownFile_bootes_2fdances_2fproto_2fStage_2eproto() {
   delete Point::default_instance_;
   delete Point_reflection_;
-  delete Guide::default_instance_;
-  delete Guide_reflection_;
-  delete Motion::default_instance_;
-  delete Motion_reflection_;
-  delete Motion_Accel::default_instance_;
-  delete Motion_Accel_reflection_;
-  delete Motion_Gyro::default_instance_;
-  delete Motion_Gyro_reflection_;
-  delete Move::default_instance_;
-  delete Move_reflection_;
+  delete Accel::default_instance_;
+  delete Accel_reflection_;
+  delete Gyro::default_instance_;
+  delete Gyro_reflection_;
   delete Stage::default_instance_;
   delete Stage_reflection_;
 }
@@ -223,32 +149,20 @@ void protobuf_AddDesc_bootes_2fdances_2fproto_2fStage_2eproto() {
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\037bootes/dances/proto/Stage.proto\022\002pb\"\035\n"
-    "\005Point\022\t\n\001x\030\001 \002(\002\022\t\n\001y\030\002 \002(\002\"#\n\005Guide\022\014\n"
-    "\004type\030\001 \002(\t\022\014\n\004code\030\n \002(\014\"\200\001\n\006Motion\022\014\n\004"
-    "type\030\001 \002(\t\022\014\n\004code\030\n \002(\014\032(\n\005Accel\022\t\n\001x\030\001"
-    " \002(\002\022\t\n\001y\030\002 \002(\002\022\t\n\001z\030\003 \002(\002\0320\n\004Gyro\022\013\n\003ya"
-    "w\030\001 \002(\002\022\r\n\005pitch\030\002 \002(\002\022\014\n\004roll\030\003 \002(\002\"{\n\004"
-    "Move\022\014\n\004uuid\030\001 \002(\t\022\r\n\005time0\030\002 \002(\003\022\r\n\005tim"
-    "e1\030\003 \002(\003\022\021\n\tchainnext\030\004 \002(\010\022\030\n\005guide\030\n \002"
-    "(\0132\t.pb.Guide\022\032\n\006motion\030\013 \002(\0132\n.pb.Motio"
-    "n\"R\n\005Stage\022\017\n\007version\030\001 \002(\005\022\014\n\004name\030\002 \002("
-    "\t\022\021\n\tmoviepath\030\003 \002(\t\022\027\n\005moves\030\n \003(\0132\010.pb"
-    ".Move", 445);
+    "\005Point\022\t\n\001x\030\001 \002(\002\022\t\n\001y\030\002 \002(\002\"(\n\005Accel\022\t\n"
+    "\001x\030\001 \002(\002\022\t\n\001y\030\002 \002(\002\022\t\n\001z\030\003 \002(\002\"0\n\004Gyro\022\013"
+    "\n\003yaw\030\001 \002(\002\022\r\n\005pitch\030\002 \002(\002\022\014\n\004roll\030\003 \002(\002"
+    "\"9\n\005Stage\022\017\n\007version\030\001 \002(\005\022\014\n\004name\030\002 \002(\t"
+    "\022\021\n\tmoviepath\030\003 \002(\t", 219);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "bootes/dances/proto/Stage.proto", &protobuf_RegisterTypes);
   Point::default_instance_ = new Point();
-  Guide::default_instance_ = new Guide();
-  Motion::default_instance_ = new Motion();
-  Motion_Accel::default_instance_ = new Motion_Accel();
-  Motion_Gyro::default_instance_ = new Motion_Gyro();
-  Move::default_instance_ = new Move();
+  Accel::default_instance_ = new Accel();
+  Gyro::default_instance_ = new Gyro();
   Stage::default_instance_ = new Stage();
   Point::default_instance_->InitAsDefaultInstance();
-  Guide::default_instance_->InitAsDefaultInstance();
-  Motion::default_instance_->InitAsDefaultInstance();
-  Motion_Accel::default_instance_->InitAsDefaultInstance();
-  Motion_Gyro::default_instance_->InitAsDefaultInstance();
-  Move::default_instance_->InitAsDefaultInstance();
+  Accel::default_instance_->InitAsDefaultInstance();
+  Gyro::default_instance_->InitAsDefaultInstance();
   Stage::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_bootes_2fdances_2fproto_2fStage_2eproto);
 }
@@ -508,299 +422,26 @@ void Point::Swap(Point* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int Guide::kTypeFieldNumber;
-const int Guide::kCodeFieldNumber;
+const int Accel::kXFieldNumber;
+const int Accel::kYFieldNumber;
+const int Accel::kZFieldNumber;
 #endif  // !_MSC_VER
 
-Guide::Guide()
+Accel::Accel()
   : ::google::protobuf::Message() {
   SharedCtor();
 }
 
-void Guide::InitAsDefaultInstance() {
+void Accel::InitAsDefaultInstance() {
 }
 
-Guide::Guide(const Guide& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void Guide::SharedCtor() {
-  _cached_size_ = 0;
-  type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  code_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-Guide::~Guide() {
-  SharedDtor();
-}
-
-void Guide::SharedDtor() {
-  if (type_ != &::google::protobuf::internal::kEmptyString) {
-    delete type_;
-  }
-  if (code_ != &::google::protobuf::internal::kEmptyString) {
-    delete code_;
-  }
-  if (this != default_instance_) {
-  }
-}
-
-void Guide::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* Guide::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return Guide_descriptor_;
-}
-
-const Guide& Guide::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_bootes_2fdances_2fproto_2fStage_2eproto();  return *default_instance_;
-}
-
-Guide* Guide::default_instance_ = NULL;
-
-Guide* Guide::New() const {
-  return new Guide;
-}
-
-void Guide::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (has_type()) {
-      if (type_ != &::google::protobuf::internal::kEmptyString) {
-        type_->clear();
-      }
-    }
-    if (has_code()) {
-      if (code_ != &::google::protobuf::internal::kEmptyString) {
-        code_->clear();
-      }
-    }
-  }
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool Guide::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string type = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_type()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->type().data(), this->type().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(82)) goto parse_code;
-        break;
-      }
-      
-      // required bytes code = 10;
-      case 10: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_code:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
-                input, this->mutable_code()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void Guide::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // required string type = 1;
-  if (has_type()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->type().data(), this->type().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      1, this->type(), output);
-  }
-  
-  // required bytes code = 10;
-  if (has_code()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBytes(
-      10, this->code(), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* Guide::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // required string type = 1;
-  if (has_type()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->type().data(), this->type().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->type(), target);
-  }
-  
-  // required bytes code = 10;
-  if (has_code()) {
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        10, this->code(), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int Guide::ByteSize() const {
-  int total_size = 0;
-  
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required string type = 1;
-    if (has_type()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->type());
-    }
-    
-    // required bytes code = 10;
-    if (has_code()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::BytesSize(
-          this->code());
-    }
-    
-  }
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void Guide::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const Guide* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const Guide*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void Guide::MergeFrom(const Guide& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_type()) {
-      set_type(from.type());
-    }
-    if (from.has_code()) {
-      set_code(from.code());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void Guide::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void Guide::CopyFrom(const Guide& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool Guide::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
-  
-  return true;
-}
-
-void Guide::Swap(Guide* other) {
-  if (other != this) {
-    std::swap(type_, other->type_);
-    std::swap(code_, other->code_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata Guide::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = Guide_descriptor_;
-  metadata.reflection = Guide_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int Motion_Accel::kXFieldNumber;
-const int Motion_Accel::kYFieldNumber;
-const int Motion_Accel::kZFieldNumber;
-#endif  // !_MSC_VER
-
-Motion_Accel::Motion_Accel()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void Motion_Accel::InitAsDefaultInstance() {
-}
-
-Motion_Accel::Motion_Accel(const Motion_Accel& from)
+Accel::Accel(const Accel& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
 }
 
-void Motion_Accel::SharedCtor() {
+void Accel::SharedCtor() {
   _cached_size_ = 0;
   x_ = 0;
   y_ = 0;
@@ -808,36 +449,36 @@ void Motion_Accel::SharedCtor() {
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-Motion_Accel::~Motion_Accel() {
+Accel::~Accel() {
   SharedDtor();
 }
 
-void Motion_Accel::SharedDtor() {
+void Accel::SharedDtor() {
   if (this != default_instance_) {
   }
 }
 
-void Motion_Accel::SetCachedSize(int size) const {
+void Accel::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* Motion_Accel::descriptor() {
+const ::google::protobuf::Descriptor* Accel::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return Motion_Accel_descriptor_;
+  return Accel_descriptor_;
 }
 
-const Motion_Accel& Motion_Accel::default_instance() {
+const Accel& Accel::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_bootes_2fdances_2fproto_2fStage_2eproto();  return *default_instance_;
 }
 
-Motion_Accel* Motion_Accel::default_instance_ = NULL;
+Accel* Accel::default_instance_ = NULL;
 
-Motion_Accel* Motion_Accel::New() const {
-  return new Motion_Accel;
+Accel* Accel::New() const {
+  return new Accel;
 }
 
-void Motion_Accel::Clear() {
+void Accel::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     x_ = 0;
     y_ = 0;
@@ -847,7 +488,7 @@ void Motion_Accel::Clear() {
   mutable_unknown_fields()->Clear();
 }
 
-bool Motion_Accel::MergePartialFromCodedStream(
+bool Accel::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
@@ -916,7 +557,7 @@ bool Motion_Accel::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void Motion_Accel::SerializeWithCachedSizes(
+void Accel::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required float x = 1;
   if (has_x()) {
@@ -939,7 +580,7 @@ void Motion_Accel::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* Motion_Accel::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* Accel::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required float x = 1;
   if (has_x()) {
@@ -963,7 +604,7 @@ void Motion_Accel::SerializeWithCachedSizes(
   return target;
 }
 
-int Motion_Accel::ByteSize() const {
+int Accel::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
@@ -994,10 +635,10 @@ int Motion_Accel::ByteSize() const {
   return total_size;
 }
 
-void Motion_Accel::MergeFrom(const ::google::protobuf::Message& from) {
+void Accel::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const Motion_Accel* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const Motion_Accel*>(
+  const Accel* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const Accel*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -1006,7 +647,7 @@ void Motion_Accel::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void Motion_Accel::MergeFrom(const Motion_Accel& from) {
+void Accel::MergeFrom(const Accel& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_x()) {
@@ -1022,25 +663,25 @@ void Motion_Accel::MergeFrom(const Motion_Accel& from) {
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void Motion_Accel::CopyFrom(const ::google::protobuf::Message& from) {
+void Accel::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void Motion_Accel::CopyFrom(const Motion_Accel& from) {
+void Accel::CopyFrom(const Accel& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool Motion_Accel::IsInitialized() const {
+bool Accel::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
   
   return true;
 }
 
-void Motion_Accel::Swap(Motion_Accel* other) {
+void Accel::Swap(Accel* other) {
   if (other != this) {
     std::swap(x_, other->x_);
     std::swap(y_, other->y_);
@@ -1051,38 +692,38 @@ void Motion_Accel::Swap(Motion_Accel* other) {
   }
 }
 
-::google::protobuf::Metadata Motion_Accel::GetMetadata() const {
+::google::protobuf::Metadata Accel::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = Motion_Accel_descriptor_;
-  metadata.reflection = Motion_Accel_reflection_;
+  metadata.descriptor = Accel_descriptor_;
+  metadata.reflection = Accel_reflection_;
   return metadata;
 }
 
 
-// -------------------------------------------------------------------
+// ===================================================================
 
 #ifndef _MSC_VER
-const int Motion_Gyro::kYawFieldNumber;
-const int Motion_Gyro::kPitchFieldNumber;
-const int Motion_Gyro::kRollFieldNumber;
+const int Gyro::kYawFieldNumber;
+const int Gyro::kPitchFieldNumber;
+const int Gyro::kRollFieldNumber;
 #endif  // !_MSC_VER
 
-Motion_Gyro::Motion_Gyro()
+Gyro::Gyro()
   : ::google::protobuf::Message() {
   SharedCtor();
 }
 
-void Motion_Gyro::InitAsDefaultInstance() {
+void Gyro::InitAsDefaultInstance() {
 }
 
-Motion_Gyro::Motion_Gyro(const Motion_Gyro& from)
+Gyro::Gyro(const Gyro& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
 }
 
-void Motion_Gyro::SharedCtor() {
+void Gyro::SharedCtor() {
   _cached_size_ = 0;
   yaw_ = 0;
   pitch_ = 0;
@@ -1090,36 +731,36 @@ void Motion_Gyro::SharedCtor() {
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-Motion_Gyro::~Motion_Gyro() {
+Gyro::~Gyro() {
   SharedDtor();
 }
 
-void Motion_Gyro::SharedDtor() {
+void Gyro::SharedDtor() {
   if (this != default_instance_) {
   }
 }
 
-void Motion_Gyro::SetCachedSize(int size) const {
+void Gyro::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* Motion_Gyro::descriptor() {
+const ::google::protobuf::Descriptor* Gyro::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return Motion_Gyro_descriptor_;
+  return Gyro_descriptor_;
 }
 
-const Motion_Gyro& Motion_Gyro::default_instance() {
+const Gyro& Gyro::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_bootes_2fdances_2fproto_2fStage_2eproto();  return *default_instance_;
 }
 
-Motion_Gyro* Motion_Gyro::default_instance_ = NULL;
+Gyro* Gyro::default_instance_ = NULL;
 
-Motion_Gyro* Motion_Gyro::New() const {
-  return new Motion_Gyro;
+Gyro* Gyro::New() const {
+  return new Gyro;
 }
 
-void Motion_Gyro::Clear() {
+void Gyro::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     yaw_ = 0;
     pitch_ = 0;
@@ -1129,7 +770,7 @@ void Motion_Gyro::Clear() {
   mutable_unknown_fields()->Clear();
 }
 
-bool Motion_Gyro::MergePartialFromCodedStream(
+bool Gyro::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
@@ -1198,7 +839,7 @@ bool Motion_Gyro::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void Motion_Gyro::SerializeWithCachedSizes(
+void Gyro::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required float yaw = 1;
   if (has_yaw()) {
@@ -1221,7 +862,7 @@ void Motion_Gyro::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* Motion_Gyro::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* Gyro::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required float yaw = 1;
   if (has_yaw()) {
@@ -1245,7 +886,7 @@ void Motion_Gyro::SerializeWithCachedSizes(
   return target;
 }
 
-int Motion_Gyro::ByteSize() const {
+int Gyro::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
@@ -1276,10 +917,10 @@ int Motion_Gyro::ByteSize() const {
   return total_size;
 }
 
-void Motion_Gyro::MergeFrom(const ::google::protobuf::Message& from) {
+void Gyro::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const Motion_Gyro* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const Motion_Gyro*>(
+  const Gyro* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const Gyro*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -1288,7 +929,7 @@ void Motion_Gyro::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void Motion_Gyro::MergeFrom(const Motion_Gyro& from) {
+void Gyro::MergeFrom(const Gyro& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_yaw()) {
@@ -1304,25 +945,25 @@ void Motion_Gyro::MergeFrom(const Motion_Gyro& from) {
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void Motion_Gyro::CopyFrom(const ::google::protobuf::Message& from) {
+void Gyro::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void Motion_Gyro::CopyFrom(const Motion_Gyro& from) {
+void Gyro::CopyFrom(const Gyro& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool Motion_Gyro::IsInitialized() const {
+bool Gyro::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
   
   return true;
 }
 
-void Motion_Gyro::Swap(Motion_Gyro* other) {
+void Gyro::Swap(Gyro* other) {
   if (other != this) {
     std::swap(yaw_, other->yaw_);
     std::swap(pitch_, other->pitch_);
@@ -1333,723 +974,11 @@ void Motion_Gyro::Swap(Motion_Gyro* other) {
   }
 }
 
-::google::protobuf::Metadata Motion_Gyro::GetMetadata() const {
+::google::protobuf::Metadata Gyro::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = Motion_Gyro_descriptor_;
-  metadata.reflection = Motion_Gyro_reflection_;
-  return metadata;
-}
-
-
-// -------------------------------------------------------------------
-
-#ifndef _MSC_VER
-const int Motion::kTypeFieldNumber;
-const int Motion::kCodeFieldNumber;
-#endif  // !_MSC_VER
-
-Motion::Motion()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void Motion::InitAsDefaultInstance() {
-}
-
-Motion::Motion(const Motion& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void Motion::SharedCtor() {
-  _cached_size_ = 0;
-  type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  code_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-Motion::~Motion() {
-  SharedDtor();
-}
-
-void Motion::SharedDtor() {
-  if (type_ != &::google::protobuf::internal::kEmptyString) {
-    delete type_;
-  }
-  if (code_ != &::google::protobuf::internal::kEmptyString) {
-    delete code_;
-  }
-  if (this != default_instance_) {
-  }
-}
-
-void Motion::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* Motion::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return Motion_descriptor_;
-}
-
-const Motion& Motion::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_bootes_2fdances_2fproto_2fStage_2eproto();  return *default_instance_;
-}
-
-Motion* Motion::default_instance_ = NULL;
-
-Motion* Motion::New() const {
-  return new Motion;
-}
-
-void Motion::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (has_type()) {
-      if (type_ != &::google::protobuf::internal::kEmptyString) {
-        type_->clear();
-      }
-    }
-    if (has_code()) {
-      if (code_ != &::google::protobuf::internal::kEmptyString) {
-        code_->clear();
-      }
-    }
-  }
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool Motion::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string type = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_type()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->type().data(), this->type().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(82)) goto parse_code;
-        break;
-      }
-      
-      // required bytes code = 10;
-      case 10: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_code:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
-                input, this->mutable_code()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void Motion::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // required string type = 1;
-  if (has_type()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->type().data(), this->type().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      1, this->type(), output);
-  }
-  
-  // required bytes code = 10;
-  if (has_code()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBytes(
-      10, this->code(), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* Motion::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // required string type = 1;
-  if (has_type()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->type().data(), this->type().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->type(), target);
-  }
-  
-  // required bytes code = 10;
-  if (has_code()) {
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        10, this->code(), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int Motion::ByteSize() const {
-  int total_size = 0;
-  
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required string type = 1;
-    if (has_type()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->type());
-    }
-    
-    // required bytes code = 10;
-    if (has_code()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::BytesSize(
-          this->code());
-    }
-    
-  }
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void Motion::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const Motion* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const Motion*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void Motion::MergeFrom(const Motion& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_type()) {
-      set_type(from.type());
-    }
-    if (from.has_code()) {
-      set_code(from.code());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void Motion::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void Motion::CopyFrom(const Motion& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool Motion::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
-  
-  return true;
-}
-
-void Motion::Swap(Motion* other) {
-  if (other != this) {
-    std::swap(type_, other->type_);
-    std::swap(code_, other->code_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata Motion::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = Motion_descriptor_;
-  metadata.reflection = Motion_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int Move::kUuidFieldNumber;
-const int Move::kTime0FieldNumber;
-const int Move::kTime1FieldNumber;
-const int Move::kChainnextFieldNumber;
-const int Move::kGuideFieldNumber;
-const int Move::kMotionFieldNumber;
-#endif  // !_MSC_VER
-
-Move::Move()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void Move::InitAsDefaultInstance() {
-  guide_ = const_cast< ::pb::Guide*>(&::pb::Guide::default_instance());
-  motion_ = const_cast< ::pb::Motion*>(&::pb::Motion::default_instance());
-}
-
-Move::Move(const Move& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void Move::SharedCtor() {
-  _cached_size_ = 0;
-  uuid_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  time0_ = GOOGLE_LONGLONG(0);
-  time1_ = GOOGLE_LONGLONG(0);
-  chainnext_ = false;
-  guide_ = NULL;
-  motion_ = NULL;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-Move::~Move() {
-  SharedDtor();
-}
-
-void Move::SharedDtor() {
-  if (uuid_ != &::google::protobuf::internal::kEmptyString) {
-    delete uuid_;
-  }
-  if (this != default_instance_) {
-    delete guide_;
-    delete motion_;
-  }
-}
-
-void Move::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* Move::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return Move_descriptor_;
-}
-
-const Move& Move::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_bootes_2fdances_2fproto_2fStage_2eproto();  return *default_instance_;
-}
-
-Move* Move::default_instance_ = NULL;
-
-Move* Move::New() const {
-  return new Move;
-}
-
-void Move::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (has_uuid()) {
-      if (uuid_ != &::google::protobuf::internal::kEmptyString) {
-        uuid_->clear();
-      }
-    }
-    time0_ = GOOGLE_LONGLONG(0);
-    time1_ = GOOGLE_LONGLONG(0);
-    chainnext_ = false;
-    if (has_guide()) {
-      if (guide_ != NULL) guide_->::pb::Guide::Clear();
-    }
-    if (has_motion()) {
-      if (motion_ != NULL) motion_->::pb::Motion::Clear();
-    }
-  }
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool Move::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string uuid = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_uuid()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->uuid().data(), this->uuid().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(16)) goto parse_time0;
-        break;
-      }
-      
-      // required int64 time0 = 2;
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_time0:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &time0_)));
-          set_has_time0();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(24)) goto parse_time1;
-        break;
-      }
-      
-      // required int64 time1 = 3;
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_time1:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &time1_)));
-          set_has_time1();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(32)) goto parse_chainnext;
-        break;
-      }
-      
-      // required bool chainnext = 4;
-      case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_chainnext:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &chainnext_)));
-          set_has_chainnext();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(82)) goto parse_guide;
-        break;
-      }
-      
-      // required .pb.Guide guide = 10;
-      case 10: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_guide:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_guide()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(90)) goto parse_motion;
-        break;
-      }
-      
-      // required .pb.Motion motion = 11;
-      case 11: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_motion:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_motion()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void Move::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // required string uuid = 1;
-  if (has_uuid()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->uuid().data(), this->uuid().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      1, this->uuid(), output);
-  }
-  
-  // required int64 time0 = 2;
-  if (has_time0()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->time0(), output);
-  }
-  
-  // required int64 time1 = 3;
-  if (has_time1()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->time1(), output);
-  }
-  
-  // required bool chainnext = 4;
-  if (has_chainnext()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->chainnext(), output);
-  }
-  
-  // required .pb.Guide guide = 10;
-  if (has_guide()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      10, this->guide(), output);
-  }
-  
-  // required .pb.Motion motion = 11;
-  if (has_motion()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      11, this->motion(), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* Move::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // required string uuid = 1;
-  if (has_uuid()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->uuid().data(), this->uuid().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->uuid(), target);
-  }
-  
-  // required int64 time0 = 2;
-  if (has_time0()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->time0(), target);
-  }
-  
-  // required int64 time1 = 3;
-  if (has_time1()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->time1(), target);
-  }
-  
-  // required bool chainnext = 4;
-  if (has_chainnext()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->chainnext(), target);
-  }
-  
-  // required .pb.Guide guide = 10;
-  if (has_guide()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        10, this->guide(), target);
-  }
-  
-  // required .pb.Motion motion = 11;
-  if (has_motion()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        11, this->motion(), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int Move::ByteSize() const {
-  int total_size = 0;
-  
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required string uuid = 1;
-    if (has_uuid()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->uuid());
-    }
-    
-    // required int64 time0 = 2;
-    if (has_time0()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int64Size(
-          this->time0());
-    }
-    
-    // required int64 time1 = 3;
-    if (has_time1()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int64Size(
-          this->time1());
-    }
-    
-    // required bool chainnext = 4;
-    if (has_chainnext()) {
-      total_size += 1 + 1;
-    }
-    
-    // required .pb.Guide guide = 10;
-    if (has_guide()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->guide());
-    }
-    
-    // required .pb.Motion motion = 11;
-    if (has_motion()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->motion());
-    }
-    
-  }
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void Move::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const Move* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const Move*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void Move::MergeFrom(const Move& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_uuid()) {
-      set_uuid(from.uuid());
-    }
-    if (from.has_time0()) {
-      set_time0(from.time0());
-    }
-    if (from.has_time1()) {
-      set_time1(from.time1());
-    }
-    if (from.has_chainnext()) {
-      set_chainnext(from.chainnext());
-    }
-    if (from.has_guide()) {
-      mutable_guide()->::pb::Guide::MergeFrom(from.guide());
-    }
-    if (from.has_motion()) {
-      mutable_motion()->::pb::Motion::MergeFrom(from.motion());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void Move::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void Move::CopyFrom(const Move& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool Move::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000003f) != 0x0000003f) return false;
-  
-  if (has_guide()) {
-    if (!this->guide().IsInitialized()) return false;
-  }
-  if (has_motion()) {
-    if (!this->motion().IsInitialized()) return false;
-  }
-  return true;
-}
-
-void Move::Swap(Move* other) {
-  if (other != this) {
-    std::swap(uuid_, other->uuid_);
-    std::swap(time0_, other->time0_);
-    std::swap(time1_, other->time1_);
-    std::swap(chainnext_, other->chainnext_);
-    std::swap(guide_, other->guide_);
-    std::swap(motion_, other->motion_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata Move::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = Move_descriptor_;
-  metadata.reflection = Move_reflection_;
+  metadata.descriptor = Gyro_descriptor_;
+  metadata.reflection = Gyro_reflection_;
   return metadata;
 }
 
@@ -2060,7 +989,6 @@ void Move::Swap(Move* other) {
 const int Stage::kVersionFieldNumber;
 const int Stage::kNameFieldNumber;
 const int Stage::kMoviepathFieldNumber;
-const int Stage::kMovesFieldNumber;
 #endif  // !_MSC_VER
 
 Stage::Stage()
@@ -2134,7 +1062,6 @@ void Stage::Clear() {
       }
     }
   }
-  moves_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -2190,21 +1117,6 @@ bool Stage::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(82)) goto parse_moves;
-        break;
-      }
-      
-      // repeated .pb.Move moves = 10;
-      case 10: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_moves:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_moves()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(82)) goto parse_moves;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -2250,12 +1162,6 @@ void Stage::SerializeWithCachedSizes(
       3, this->moviepath(), output);
   }
   
-  // repeated .pb.Move moves = 10;
-  for (int i = 0; i < this->moves_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      10, this->moves(i), output);
-  }
-  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -2287,13 +1193,6 @@ void Stage::SerializeWithCachedSizes(
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         3, this->moviepath(), target);
-  }
-  
-  // repeated .pb.Move moves = 10;
-  for (int i = 0; i < this->moves_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        10, this->moves(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -2329,14 +1228,6 @@ int Stage::ByteSize() const {
     }
     
   }
-  // repeated .pb.Move moves = 10;
-  total_size += 1 * this->moves_size();
-  for (int i = 0; i < this->moves_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->moves(i));
-  }
-  
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -2362,7 +1253,6 @@ void Stage::MergeFrom(const ::google::protobuf::Message& from) {
 
 void Stage::MergeFrom(const Stage& from) {
   GOOGLE_CHECK_NE(&from, this);
-  moves_.MergeFrom(from.moves_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_version()) {
       set_version(from.version());
@@ -2392,9 +1282,6 @@ void Stage::CopyFrom(const Stage& from) {
 bool Stage::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
   
-  for (int i = 0; i < moves_size(); i++) {
-    if (!this->moves(i).IsInitialized()) return false;
-  }
   return true;
 }
 
@@ -2403,7 +1290,6 @@ void Stage::Swap(Stage* other) {
     std::swap(version_, other->version_);
     std::swap(name_, other->name_);
     std::swap(moviepath_, other->moviepath_);
-    moves_.Swap(&other->moves_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

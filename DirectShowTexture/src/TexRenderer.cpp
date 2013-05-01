@@ -31,6 +31,7 @@ TexRenderer::TexRenderer(IDirect3DDevice9* pDev, D3DPOOL pool, HRESULT *phr)
 
 TexRenderer::~TexRenderer()
 {
+	m_pInputPin->Release();
 	m_pTexInputPin->Release();
 
 	if (m_pLatestSample) {
@@ -176,14 +177,33 @@ HRESULT TexRenderer::PrepareReceive(IMediaSample *pMediaSample)
 }
 
 /*
-Take..Release 中は渡したテクスチャをレンダラ側で変更はしない。
-
 MediaSample の扱い:
-  ストリームを渡ってくる MediaSample と、自分で保持しておく MediaSample の二つがある。
-  DoRendererSample() で新たなサンプルを受け取った時に、保持用の MediaSample と差し替える。
-  最上流レンダラの MediaSample 確保処理では、参照がなくなった MediaSample を再利用する。
+  最上流レンダラの MediaSample 確保処理では、参照がなくなった MediaSample を再利用する(m_lFree)。
   二枚の MediaSample があれば、常にどちらかはフリーになっているので停止せず動く。
-  さらに TexRenderer では常に最新のサンプルを保持しておける。
+
+  DoRenderSample() で上流から MediaSample を受け取る。
+  TexRenderer では最新の一枚を保持しておく(m_pLatestSample)
+  具体的には、DoRenderSample() で、現在保持しているサンプルを Release し、貰ったサンプルを AddRef する。
+
+
+サンプルとテクスチャ:
+  MediaSample は自前の TexMediaSample と標準のサンプルの二つの型がある。基本的に前者だが、エラー時には後者で来る。
+  TexMediaSample は内部にテクスチャを持っている。
+  TexRenderer はサンプルをテクスチャにして扱う。
+  TexMediaSample の場合は自前のテクスチャと内部テクスチャと差し替えるだけですむが、
+  DefaultMediaSample ではピクセルのコピーを行う。詳しくは後述。
+  ここで両者の差は隠蔽され、後は「最新のサンプルの画を持ったテクスチャ」を扱えばよい。
+
+API:
+  アプリには TakeTexture, ReleaseTexture, CreateTexture, SwapTexture を提供。
+  Take では内部で持っている最新サンプルの画のテクスチャを渡す。カウントは加えておく。
+  使い終わったら Release を呼ぶ。引数は不要。
+  Take..Release は入れ子にしてはいけない。(Take,Take はダメ)
+
+  Swap はテクスチャを渡して、TexRenderer 内部の最新画テクスチャと交換する。
+  渡すテクスチャは CreateTexture で作ったもの。
+  Swap の場合は Release を呼ぶ必要はない。
+  以前の Swap からサンプルが更新されていない状態で新たに Swap した場合、テクスチャは交換されない。
 
 TexAllocator の場合:
   MediaSample はそのまま最新への参照を持っておく。

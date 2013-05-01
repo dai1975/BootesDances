@@ -18,11 +18,15 @@ public:
    typedef MoveRealizer::MotionGuidePair MotionGuidePair;
    typedef MoveRealizer::MotionGuideList MotionGuideList;
    static bool IsExist(const TCHAR* dir, const TCHAR* name);
-   static bool SetFactory(MoveSequence* pSeq, const MotionGuidePair& mg);
+   //static bool SetFactory(MoveSequence* pSeq, const MotionGuidePair& mg);
 
-   static bool Search(void(*cb)(bool,int,Stage*), const TCHAR* dir, const MotionGuideList&);
+   static bool Search(void(*cb)(bool,Stage*,void*), void* data, const TCHAR* dir, const MotionGuideList&);
    static bool Save(std::basic_string<TCHAR>*, const TCHAR* dir, const TCHAR* name, bool neu, const Stage&, const MoveSequence&);
    static bool Load(Stage**, MoveSequence**, const TCHAR* dir, const TCHAR* name, const MotionGuideList&);
+   static bool New(Stage**, MoveSequence**, const MotionGuidePair& mg);
+
+private:
+   static bool Search(void(*cb)(bool,Stage*,void*), void* data, const TCHAR* pdir, const TCHAR* name, const MotionGuideList&);
 };
 
 #endif

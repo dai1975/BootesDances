@@ -1,5 +1,4 @@
 #include "MotionRealizer.h"
-#include "MotionFactory.h"
 #include "MotionWiimoteSimple.h"
 #include <bootes/lib/util/TChar.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
@@ -10,6 +9,62 @@
 #include <fcntl.h>
 #include <sstream>
 
+namespace {
+
+class Static
+{
+public:
+   MotionRealizer::Registry registry;
+
+   Static() {
+   }
+
+   ~Static() {
+      for (MotionRealizer::Registry::iterator i = registry.begin(); i != registry.end(); ++i) {
+         MotionRealizer* p = const_cast< MotionRealizer* >(i->second);
+         delete p;
+      }
+      registry.clear();
+   }
+};
+Static _static;
+
+}
+
+const MotionRealizer::Registry& MotionRealizer::GetRegistry()
+{
+   return _static.registry;
+}
+
+bool MotionRealizer::Register(MotionRealizer* p)
+{
+   Registry& registry = _static.registry;
+   const std::string name = p->getMotionName();
+   Registry::iterator i = registry.find(name);
+   if (i != registry.end()) {
+      return false;
+   }
+   registry.insert( Registry::value_type(name,p) );
+   return true;
+}
+
+const MotionRealizer* MotionRealizer::GetRealizer(const char* name)
+{
+   Registry& registry = _static.registry;
+   Registry::iterator i = registry.find(std::string(name));
+   if (i == registry.end()) {
+      return NULL;
+   }
+   return i->second;
+}
+
+MotionRealizer::MotionRealizer()
+{ }
+
+MotionRealizer::~MotionRealizer()
+{ }
+
+/*
 bool MotionRealizer::Idealize(::pb::Motion* pOut, const IMotion& in)
 {
    return in.idealize(pOut);
@@ -36,17 +91,13 @@ bool MotionRealizer::Realize(IMotion** ppOut, const ::pb::Motion& in)
    *ppOut = p;
    return true;
 }
+*/
 
-
-namespace {
-
-std::basic_string< TCHAR > GetFilePath(const TCHAR* dir, const TCHAR* name, const TCHAR* motion)
+std::basic_string< TCHAR > MotionRealizer::GetFilePath(const TCHAR* dir, const TCHAR* name, const TCHAR* motion)
 {
    std::basic_ostringstream< TCHAR > o;
    o << dir << _T("\\") << name << _T("\\motion-") << motion << _T(".txt");
    return o.str();
-}
-
 }
 
 bool MotionRealizer::IsExist(const TCHAR* dir, const TCHAR* name, const TCHAR* motion)
@@ -59,24 +110,24 @@ bool MotionRealizer::IsExist(const TCHAR* dir, const TCHAR* name, const TCHAR* m
    return true;
 }
 
-bool MotionRealizer::Load(MoveSequence* seq, const TCHAR* dir, const TCHAR* name, const TCHAR* motion)
+bool MotionRealizer::load(std::list< MotionData >* pOut, const TCHAR* dir, const TCHAR* name) const
 {
-   return false;
+   int fd = -1;
+   std::basic_string< TCHAR > path = GetFilePath(dir, name, getMotionNameT());
+   errno_t err = _tsopen_s(&fd, path.c_str(), 
+                           _O_RDONLY|_O_BINARY, _SH_DENYWR, _S_IREAD|_S_IWRITE);
+   if (err != 0) { return false; }
+   if (fd < 0) { return false; }
+
+   bool ret = load(pOut, fd);
+   close(fd);
+   return ret;
 }
 
-bool MotionRealizer::Save(const TCHAR* dir, const TCHAR* name, const MoveSequence& seq)
+bool MotionRealizer::save(const TCHAR* dir, const TCHAR* name, const MoveSequence& seq) const
 {
-   const MotionFactory* reg = NULL;
    std::basic_string< TCHAR > path, tmppath, oldpath;
-   {
-      reg = seq.getMotionFactory();
-      if (reg == NULL) { return false; }
-      const char* motion_name = reg->getMotionName();
-
-      TCHAR* motion_tname = ::bootes::lib::util::TChar::C2T(motion_name);
-      path = GetFilePath(dir, name, motion_tname);
-      delete[] motion_tname;
-   }
+   path = MotionRealizer::GetFilePath(dir, name, getMotionNameT());
    tmppath.append(path).append(_T(".tmp"));
    oldpath.append(path).append(_T(".old"));
 
@@ -85,16 +136,10 @@ bool MotionRealizer::Save(const TCHAR* dir, const TCHAR* name, const MoveSequenc
       errno_t err = _tsopen_s(&fd, tmppath.c_str(), 
                               _O_WRONLY|_O_BINARY|_O_CREAT|_O_TRUNC, _SH_DENYWR, _S_IREAD|_S_IWRITE);
       if (err != 0) { return false; }
-      
-      google::protobuf::io::FileOutputStream out(fd);
-      bool b = reg->save(out, seq);
 
-      out.Flush();
-      out.Close();
-
-      if (!b) {
-         return false;
-      }
+      bool b = save(fd, seq);
+      close(fd);
+      if (!b) { return false; }
    }
 
    if (! DeleteFile(oldpath.c_str())) {

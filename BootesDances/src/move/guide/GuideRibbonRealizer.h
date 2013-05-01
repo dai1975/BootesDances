@@ -1,15 +1,19 @@
 #ifndef BOOTESDANCES_GUIDE_RIBBONREALIZER_H
 #define BOOTESDANCES_GUIDE_RIBBONREALIZER_H
 
-#include "GuideFactory.h"
+#include "GuideRealizer.h"
 
-class GuideRibbonRealizer: public GuideFactory
+class GuideRibbonRealizer: public GuideRealizer
 {
 public:
    virtual const char* getGuideName() const;
+   virtual const TCHAR* getGuideNameT() const;
    virtual int countSubIds() const;
    virtual IGuide* createGuide(int subid) const;
-   virtual bool save(::google::protobuf::io::ZeroCopyOutputStream& out, const MoveSequence&) const;
+
+protected:
+   virtual bool save(int fd, const MoveSequence&) const;
+   virtual bool load(std::list< GuideData >* pOut, int fd) const;
 };
 
 #endif

@@ -3,8 +3,8 @@ package pb;
 
 message TeachRecord {
   required int32 time  = 1;
-  required Motion.Accel accel = 10;
-  required Motion.Gyro  gyro  = 11;
+  required Accel accel = 10;
+  required Gyro  gyro  = 11;
 }
 
 message TeachSequence {

@@ -26,8 +26,8 @@ public:
    bool load(const TCHAR* filename);
    bool play();
    bool pause();
-   bool suspend();
-   bool resume();
+//   bool suspend();
+//   bool resume();
    bool seek_set(__int64 offset);
    bool seek_cur(__int64 offset);
    bool seek_end(__int64 offset);
@@ -43,7 +43,7 @@ private:
    D3DPOOL _pool;
    DirectShowTexture::Player* _pPlayer;
    DirectShowTexture::RectInfo _rect;
-   bool _resume_play;
+//   bool _resume_play;
 };
 
 #endif

@@ -5,6 +5,18 @@ message Point {
   required float y = 2;
 }
 
+message Accel {
+  required float x = 1;
+  required float y = 2;
+  required float z = 3;
+}
+message Gyro {
+  required float yaw   = 1;
+  required float pitch = 2;
+  required float roll  = 3;
+}
+
+/*
 message Guide {
   required string type = 1;
   required bytes  code = 10;
@@ -35,11 +47,12 @@ message Move {
   required Guide  guide  = 10;
   required Motion motion = 11;
 }
+*/
 
 message Stage {
   required int32    version   = 1;
   required string   name      = 2;
   required string   moviepath = 3;
 
-  repeated Move moves  = 10;
+//  repeated Move moves  = 10;
 }

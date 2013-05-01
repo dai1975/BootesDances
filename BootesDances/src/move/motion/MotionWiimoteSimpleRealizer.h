@@ -1,9 +1,9 @@
 #ifndef BOOTESDANCES_MOTION_WIIMOTESIMPLEREALIZER_H
 #define BOOTESDANCES_MOTION_WIIMOTESIMPLEREALIZER_H
 
-#include "MotionFactory.h"
+#include "MotionRealizer.h"
 
-class MotionWiimoteSimpleRealizer: public MotionFactory
+class MotionWiimoteSimpleRealizer: public MotionRealizer
 {
 public:
    virtual const char* getGuideName() const;
@@ -12,7 +12,10 @@ public:
    virtual const TCHAR* getMotionNameT() const;
    virtual int countSubIds() const;
    virtual IMotion* createMotion(int subid) const;
-   virtual bool save(::google::protobuf::io::ZeroCopyOutputStream& out, const MoveSequence&) const;
+
+protected:
+   virtual bool save(int fd, const MoveSequence&) const;
+   virtual bool load(std::list< MotionData >* pOut, int fd) const;
 };
 
 #endif

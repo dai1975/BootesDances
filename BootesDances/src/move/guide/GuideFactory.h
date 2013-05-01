@@ -1,3 +1,4 @@
+#error
 #ifndef BOOTESDANCES_GUIDE_FACTORY_H
 #define BOOTESDANCES_GUIDE_FACTORY_H
 
@@ -21,6 +22,7 @@ public:
    virtual int countSubIds() const = 0;
    virtual IGuide* createGuide(int subid) const = 0;
    virtual bool save(::google::protobuf::io::ZeroCopyOutputStream& out, const MoveSequence&) const = 0;
+   virtual bool load(std::list< GuideRealizer ::google::protobuf::io::ZeroCopyOutputStream& out, const MoveSequence&) const = 0;
 };
 
 #endif

@@ -15,11 +15,9 @@ public:
    MotionWiimoteSimple();
    virtual ~MotionWiimoteSimple();
    virtual IMotion* clone() const { return new MotionWiimoteSimple(*this); }
-   static std::string TYPE;
 
-   virtual bool idealize(::pb::Motion* pOut) const;
-   virtual bool realize(const ::pb::Motion& in);
-   virtual bool idealize(::pb::MotionWiimoteSimple2* pOut) const;
+   virtual bool realize(const ::pb::MotionWiimoteSimple& in);
+   virtual bool idealize(::pb::MotionWiimoteSimple* pOut) const;
 
    virtual void teachClear(); //!< モーション定義をクリアする。
    virtual void teachBegin();
@@ -44,6 +42,8 @@ private:
    typedef std::list< Entry > t_sequence;
    t_sequence _tmp_sequence;
    int _stept;
+   std::string _uuid;
+   __int64 _time0, _time1;
 
    t_sequence _test_seq_min, _test_seq_max;
    Entry  _test_lastgiven;

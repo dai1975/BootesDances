@@ -3,7 +3,7 @@
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/io/zero_copy_stream_impl_lite.h>
 
-const std::string GuideRibbonEllipse::TYPE = "GuideRibbonEllipse";
+//const std::string GuideRibbonEllipse::TYPE = "GuideRibbonEllipse";
 
 GuideRibbonEllipse::GuideRibbonEllipse()
    : GuideRibbon(GuideRibbon::SUBID_ELLIPSE)
@@ -41,6 +41,7 @@ GuideRibbonEllipse::~GuideRibbonEllipse()
 {
 }
 
+/*
 bool GuideRibbonEllipse::idealize(::pb::Guide* pOut) const
 {
    ::pb::GuideRibbonEllipse obj;
@@ -86,6 +87,7 @@ bool GuideRibbonEllipse::realize(const ::pb::Guide& in)
 
    return true;
 }
+*/
 
 bool GuideRibbonEllipse::idealize(::pb::GuideRibbon* pOut) const
 {
@@ -101,6 +103,24 @@ bool GuideRibbonEllipse::idealize(::pb::GuideRibbon* pOut) const
    }
    return true;
 }
+bool GuideRibbonEllipse::realize(const ::pb::GuideRibbon& in)
+{
+   if (! in.has_ellipse()) { return false; }
+
+   const ::pb::GuideRibbon::Ellipse& idea = in.ellipse();
+
+   float x  = idea.center().x();
+   float y  = idea.center().y();
+   float rx = idea.radius().x();
+   float ry = idea.radius().y();
+   float a0 = idea.angle0();
+   float a1 = idea.angle1();
+   bool dir = idea.direction();
+   this->init(x,y,rx,ry,a0,a1,dir);
+
+   return true;
+}
+
 
 float GuideRibbonEllipse::getCenterX() const
 {

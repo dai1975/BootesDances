@@ -11,8 +11,8 @@
 class MoveRealizer
 {
 public:
-   static bool Idealize(::pb::Move*, const IMove&);
-   static bool Realize(IMove**, const pb::Move&);
+   //static bool Idealize(::pb::Move*, const IMove&);
+   //static bool Realize(IMove**, const pb::Move&);
 
    struct MotionGuidePair {
       std::basic_string< TCHAR > motion;
@@ -24,7 +24,7 @@ public:
    };
    typedef std::list< MotionGuidePair > MotionGuideList;
    static bool IsExist(MotionGuidePair* pOut, const TCHAR* dir, const TCHAR* name, const MotionGuideList&);
-   static bool Load(MoveSequence* seq, const TCHAR* dir, const TCHAR* name, const MotionGuidePair&);
+   static bool Load(MoveSequence** ppSeq, const TCHAR* dir, const TCHAR* name, const MotionGuidePair&);
    static bool Save(const TCHAR* dir, const TCHAR* name, const MoveSequence& seq);
 };
 

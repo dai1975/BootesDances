@@ -4,7 +4,7 @@
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/io/zero_copy_stream_impl_lite.h>
 
-const std::string GuideRibbonSpline::TYPE = "GuideRibbonSpline";
+//const std::string GuideRibbonSpline::TYPE = "GuideRibbonSpline";
 
 #define SPLIT_NUM 21 //奇数が良い
 
@@ -50,6 +50,7 @@ void GuideRibbonSpline::init(const t_points& points)
    calcPlayPoints(0, _edit_points.size()-1);
 }
 
+/*
 bool GuideRibbonSpline::idealize(::pb::Guide* pOut) const
 {
    ::pb::GuideRibbonSpline obj;
@@ -97,6 +98,7 @@ bool GuideRibbonSpline::realize(const ::pb::Guide& in)
 
    return true;
 }
+*/
 
 bool GuideRibbonSpline::idealize(::pb::GuideRibbon* pOut) const
 {
@@ -109,6 +111,25 @@ bool GuideRibbonSpline::idealize(::pb::GuideRibbon* pOut) const
          p->set_y( points[i].y );
       }
    }
+   return true;
+}
+bool GuideRibbonSpline::realize(const ::pb::GuideRibbon& in)
+{
+   if (! in.has_spline()) { return false; }
+
+   const ::pb::GuideRibbon::Spline& idea = in.spline();
+   if (idea.points_size() < 3) { return false; }
+   if (idea.points_size() % 2 != 1) { return false; }
+
+   IGuide::t_points points;
+   points.resize(idea.points_size());
+   for (size_t i=0; i<points.size(); ++i) {
+      points[i].x = idea.points(i).x();
+      points[i].y = idea.points(i).y();
+      points[i].z = 0;
+   }
+   this->init(points);
+
    return true;
 }
 

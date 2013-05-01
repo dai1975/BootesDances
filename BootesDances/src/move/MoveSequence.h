@@ -10,8 +10,8 @@ MoveSequence は、時系列に沿った一連の Move の順序集合を提供�
 個々の Move は [開始時刻,終了時刻) を持つ。
 MoveSequence は、Move が時間的に重ならないようにしている。 
 */
-class GuideFactory;
-class MotionFactory;
+class GuideRealizer;
+class MotionRealizer;
 class MoveSequence
 {
    struct Entry;
@@ -53,10 +53,12 @@ public:
    MoveSequence();
    virtual ~MoveSequence();
 
-   inline void setGuideFactory(const GuideFactory* f) { _guide_factory = f; }
-   inline void setMotionFactory(const MotionFactory* f) { _motion_factory = f; }
-   inline const GuideFactory*  getGuideFactory() const { return _guide_factory; }
-   inline const MotionFactory* getMotionFactory() const { return _motion_factory; }
+   inline void setGuideRealizer(const GuideRealizer* f) { _guide_realizer = f; }
+   inline void setMotionRealizer(const MotionRealizer* f) { _motion_realizer = f; }
+   inline const GuideRealizer*  getGuideRealizer() const { return _guide_realizer; }
+   inline const MotionRealizer* getMotionRealizer() const { return _motion_realizer; }
+
+   IMove* getMove(const char* uuid);
 
    size_t size() const;
    inline iterator begin();
@@ -116,8 +118,10 @@ private:
       }
    };
    Entry _head, _tail;
-   const GuideFactory* _guide_factory;
-   const MotionFactory* _motion_factory;
+   const GuideRealizer* _guide_realizer;
+   const MotionRealizer* _motion_realizer;
+   typedef std::map< std::string, IMove* > t_uuid2move;
+   t_uuid2move _uuid2move;
 };
 
 inline MoveSequence::iterator::iterator(Entry* e_): e(e_)

@@ -3,7 +3,7 @@
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/io/zero_copy_stream_impl_lite.h>
 
-const std::string GuideRibbonLine::TYPE = "GuideRibbonLine";
+//const std::string GuideRibbonLine::TYPE = "GuideRibbonLine";
 
 GuideRibbonLine::GuideRibbonLine()
    : GuideRibbon(GuideRibbon::SUBID_LINE)
@@ -21,6 +21,7 @@ GuideRibbonLine::~GuideRibbonLine()
 {
 }
 
+/*
 bool GuideRibbonLine::idealize(::pb::Guide* pOut) const
 {
    ::pb::GuideRibbonLine obj;
@@ -44,7 +45,7 @@ bool GuideRibbonLine::idealize(::pb::Guide* pOut) const
    return true;
 }
 
-bool GuideRibbonLine::realize(const ::pb::Guide& in)
+bool GuideRibbonLine::realize(const ::pb::GuideRibbon& in)
 {
    if (in.type().compare(GuideRibbonLine::TYPE) != 0) { return false; }
 
@@ -67,6 +68,7 @@ bool GuideRibbonLine::realize(const ::pb::Guide& in)
 
    return true;
 }
+*/
 
 bool GuideRibbonLine::idealize(::pb::GuideRibbon* pOut) const
 {
@@ -79,6 +81,25 @@ bool GuideRibbonLine::idealize(::pb::GuideRibbon* pOut) const
          p->set_y( points[i].y );
       }
    }
+   return true;
+}
+
+bool GuideRibbonLine::realize(const ::pb::GuideRibbon& in)
+{
+   if (! in.has_line()) { return false; }
+
+   const ::pb::GuideRibbon::Line& idea = in.line();
+   if (idea.points_size() < 1) { return false; }
+
+   IGuide::t_points points;
+   points.resize(idea.points_size());
+   for (size_t i=0; i<points.size(); ++i) {
+      points[i].x = idea.points(i).x();
+      points[i].y = idea.points(i).y();
+      points[i].z = 0;
+   }
+   this->init(points);
+
    return true;
 }
 

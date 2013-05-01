@@ -4,7 +4,7 @@
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/io/zero_copy_stream_impl_lite.h>
 
-std::string MotionWiimoteSimple::TYPE = "MotionWiimoteSimple";
+//std::string MotionWiimoteSimple::TYPE = "MotionWiimoteSimple";
 
 using ::bootes::lib::framework::InputEvent;
 using ::bootes::lib::framework::WiimoteEvent;
@@ -30,6 +30,7 @@ MotionWiimoteSimple::~MotionWiimoteSimple()
 {
 }
 
+/*
 bool MotionWiimoteSimple::idealize(::pb::Motion* pOut) const
 {
    pb::MotionWiimoteSimple idea;
@@ -119,13 +120,14 @@ bool MotionWiimoteSimple::realize(const ::pb::Motion& in)
    }
    return true;
 }
+*/
 
-bool MotionWiimoteSimple::idealize(::pb::MotionWiimoteSimple2* idea) const
+bool MotionWiimoteSimple::idealize(::pb::MotionWiimoteSimple* idea) const
 {
    idea->set_stept(_stept);
    for (t_sequence::const_iterator i = _test_seq_min.begin(); i != _test_seq_min.end(); ++i) {
       const Entry& r = *i;
-      ::pb::MotionWiimoteSimple2::Entry* record = idea->add_minseq();
+      ::pb::MotionWiimoteSimple::Entry* record = idea->add_minseq();
       record->set_t(r.t);
       record->mutable_accel()->set_x(    r.ev._accel.x );
       record->mutable_accel()->set_y(    r.ev._accel.y );
@@ -139,7 +141,7 @@ bool MotionWiimoteSimple::idealize(::pb::MotionWiimoteSimple2* idea) const
    }
    for (t_sequence::const_iterator i = _test_seq_max.begin(); i != _test_seq_max.end(); ++i) {
       const Entry& r = *i;
-      ::pb::MotionWiimoteSimple2::Entry* record = idea->add_maxseq();
+      ::pb::MotionWiimoteSimple::Entry* record = idea->add_maxseq();
       record->set_t(r.t);
       record->mutable_accel()->set_x(    r.ev._accel.x );
       record->mutable_accel()->set_y(    r.ev._accel.y );
@@ -152,6 +154,47 @@ bool MotionWiimoteSimple::idealize(::pb::MotionWiimoteSimple2* idea) const
       record->mutable_orien()->set_roll(  r.ev._orien.roll );
    }
 
+   return true;
+}
+
+bool MotionWiimoteSimple::realize(const ::pb::MotionWiimoteSimple& idea)
+{
+   teachClear();
+
+   _uuid  = idea.uuid();
+   _time0 = idea.time0();
+   _time1 = idea.time1();
+   _stept = idea.stept();
+   for (size_t i=0; i<idea.minseq_size(); ++i) {
+      const ::pb::MotionWiimoteSimple::Entry& r0 = idea.minseq(i);
+      _test_seq_min.push_back( Entry() );
+      Entry& r = _test_seq_min.back();
+      r.t = r0.t();
+      r.ev._accel.x    = r0.accel().x();
+      r.ev._accel.y    = r0.accel().y();
+      r.ev._accel.z    = r0.accel().z();
+      r.ev._gyro.yaw   = r0.gyro().yaw();
+      r.ev._gyro.roll  = r0.gyro().roll();
+      r.ev._gyro.pitch = r0.gyro().pitch();
+      r.ev._orien.yaw   = r0.orien().yaw();
+      r.ev._orien.roll  = r0.orien().roll();
+      r.ev._orien.pitch = r0.orien().pitch();
+   }
+   for (size_t i=0; i<idea.maxseq_size(); ++i) {
+      const ::pb::MotionWiimoteSimple::Entry& r0 = idea.maxseq(i);
+      _test_seq_max.push_back( Entry() );
+      Entry& r = _test_seq_max.back();
+      r.t = r0.t();
+      r.ev._accel.x    = r0.accel().x();
+      r.ev._accel.y    = r0.accel().y();
+      r.ev._accel.z    = r0.accel().z();
+      r.ev._gyro.yaw   = r0.gyro().yaw();
+      r.ev._gyro.roll  = r0.gyro().roll();
+      r.ev._gyro.pitch = r0.gyro().pitch();
+      r.ev._orien.yaw   = r0.orien().yaw();
+      r.ev._orien.roll  = r0.orien().roll();
+      r.ev._orien.pitch = r0.orien().pitch();
+   }
    return true;
 }
 

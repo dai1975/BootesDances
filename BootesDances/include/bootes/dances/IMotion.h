@@ -12,8 +12,6 @@ public:
    virtual IMotion* clone() const = 0;
 
    virtual void setMove(IMove*) = 0;
-   virtual bool idealize(::pb::Motion* pOut) const = 0;
-   virtual bool realize(const ::pb::Motion& in) = 0;
 
    virtual void teachClear() = 0; //!< モーション定義をクリアする。
 

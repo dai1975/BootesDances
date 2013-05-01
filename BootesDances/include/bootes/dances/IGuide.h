@@ -16,8 +16,6 @@ public:
    virtual IGuide* clone() const = 0;
 
    virtual void setMove(IMove*) = 0;
-   virtual bool idealize(::pb::Guide* pOut) const = 0;
-   virtual bool realize(const ::pb::Guide& in) = 0;
 
    virtual bool canInsert(size_t index) const  = 0;
    virtual bool canReplace(size_t index) const = 0;

@@ -17,6 +17,7 @@ public:
    enum { SUBID_LINE, SUBID_ELLIPSE, SUBID_SPLINE,
           NUM_SUBIDS, };
    virtual bool idealize(::pb::GuideRibbon* pOut) const = 0;
+   virtual bool realize(const ::pb::GuideRibbon& pIn) = 0;
 
 public:
    static const std::string TYPE;

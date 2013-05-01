@@ -170,16 +170,15 @@ void protobuf_AddDesc_bootes_2fdances_2fproto_2fTeach_2eproto() {
   ::pb::protobuf_AddDesc_bootes_2fdances_2fproto_2fStage_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\037bootes/dances/proto/Teach.proto\022\002pb\032\037b"
-    "ootes/dances/proto/Stage.proto\"[\n\013TeachR"
-    "ecord\022\014\n\004time\030\001 \002(\005\022\037\n\005accel\030\n \002(\0132\020.pb."
-    "Motion.Accel\022\035\n\004gyro\030\013 \002(\0132\017.pb.Motion.G"
-    "yro\"P\n\rTeachSequence\022\014\n\004uuid\030\001 \002(\t\022\017\n\007su"
-    "cceed\030\002 \002(\010\022 \n\007records\030\003 \003(\0132\017.pb.TeachR"
-    "ecord\"\032\n\nTeachClear\022\014\n\004uuid\030\001 \002(\t\"R\n\014Tea"
-    "chCommand\022#\n\010sequence\030\001 \001(\0132\021.pb.TeachSe"
-    "quence\022\035\n\005clear\030\002 \001(\0132\016.pb.TeachClear\".\n"
-    "\010TeachLog\022\"\n\010commands\030\001 \003(\0132\020.pb.TeachCo"
-    "mmand", 405);
+    "ootes/dances/proto/Stage.proto\"M\n\013TeachR"
+    "ecord\022\014\n\004time\030\001 \002(\005\022\030\n\005accel\030\n \002(\0132\t.pb."
+    "Accel\022\026\n\004gyro\030\013 \002(\0132\010.pb.Gyro\"P\n\rTeachSe"
+    "quence\022\014\n\004uuid\030\001 \002(\t\022\017\n\007succeed\030\002 \002(\010\022 \n"
+    "\007records\030\003 \003(\0132\017.pb.TeachRecord\"\032\n\nTeach"
+    "Clear\022\014\n\004uuid\030\001 \002(\t\"R\n\014TeachCommand\022#\n\010s"
+    "equence\030\001 \001(\0132\021.pb.TeachSequence\022\035\n\005clea"
+    "r\030\002 \001(\0132\016.pb.TeachClear\".\n\010TeachLog\022\"\n\010c"
+    "ommands\030\001 \003(\0132\020.pb.TeachCommand", 391);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "bootes/dances/proto/Teach.proto", &protobuf_RegisterTypes);
   TeachRecord::default_instance_ = new TeachRecord();
@@ -217,8 +216,8 @@ TeachRecord::TeachRecord()
 }
 
 void TeachRecord::InitAsDefaultInstance() {
-  accel_ = const_cast< ::pb::Motion_Accel*>(&::pb::Motion_Accel::default_instance());
-  gyro_ = const_cast< ::pb::Motion_Gyro*>(&::pb::Motion_Gyro::default_instance());
+  accel_ = const_cast< ::pb::Accel*>(&::pb::Accel::default_instance());
+  gyro_ = const_cast< ::pb::Gyro*>(&::pb::Gyro::default_instance());
 }
 
 TeachRecord::TeachRecord(const TeachRecord& from)
@@ -270,10 +269,10 @@ void TeachRecord::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     time_ = 0;
     if (has_accel()) {
-      if (accel_ != NULL) accel_->::pb::Motion_Accel::Clear();
+      if (accel_ != NULL) accel_->::pb::Accel::Clear();
     }
     if (has_gyro()) {
-      if (gyro_ != NULL) gyro_->::pb::Motion_Gyro::Clear();
+      if (gyro_ != NULL) gyro_->::pb::Gyro::Clear();
     }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -301,7 +300,7 @@ bool TeachRecord::MergePartialFromCodedStream(
         break;
       }
       
-      // required .pb.Motion.Accel accel = 10;
+      // required .pb.Accel accel = 10;
       case 10: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -315,7 +314,7 @@ bool TeachRecord::MergePartialFromCodedStream(
         break;
       }
       
-      // required .pb.Motion.Gyro gyro = 11;
+      // required .pb.Gyro gyro = 11;
       case 11: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -352,13 +351,13 @@ void TeachRecord::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->time(), output);
   }
   
-  // required .pb.Motion.Accel accel = 10;
+  // required .pb.Accel accel = 10;
   if (has_accel()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       10, this->accel(), output);
   }
   
-  // required .pb.Motion.Gyro gyro = 11;
+  // required .pb.Gyro gyro = 11;
   if (has_gyro()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       11, this->gyro(), output);
@@ -377,14 +376,14 @@ void TeachRecord::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->time(), target);
   }
   
-  // required .pb.Motion.Accel accel = 10;
+  // required .pb.Accel accel = 10;
   if (has_accel()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         10, this->accel(), target);
   }
   
-  // required .pb.Motion.Gyro gyro = 11;
+  // required .pb.Gyro gyro = 11;
   if (has_gyro()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -409,14 +408,14 @@ int TeachRecord::ByteSize() const {
           this->time());
     }
     
-    // required .pb.Motion.Accel accel = 10;
+    // required .pb.Accel accel = 10;
     if (has_accel()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           this->accel());
     }
     
-    // required .pb.Motion.Gyro gyro = 11;
+    // required .pb.Gyro gyro = 11;
     if (has_gyro()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -454,10 +453,10 @@ void TeachRecord::MergeFrom(const TeachRecord& from) {
       set_time(from.time());
     }
     if (from.has_accel()) {
-      mutable_accel()->::pb::Motion_Accel::MergeFrom(from.accel());
+      mutable_accel()->::pb::Accel::MergeFrom(from.accel());
     }
     if (from.has_gyro()) {
-      mutable_gyro()->::pb::Motion_Gyro::MergeFrom(from.gyro());
+      mutable_gyro()->::pb::Gyro::MergeFrom(from.gyro());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());

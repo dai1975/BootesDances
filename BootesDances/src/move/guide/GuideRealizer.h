@@ -9,12 +9,36 @@
 class GuideRealizer
 {
 public:
-   static bool Idealize(::pb::Guide*, const IGuide&);
-   static bool Realize(IGuide**, const ::pb::Guide&);
+   typedef std::map< std::string, const GuideRealizer* > Registry;
 
+   static const Registry& GetRegistry();
+   static bool Register(GuideRealizer*);
+   static const GuideRealizer* GetRealizer(const char*);
+
+public:
+   GuideRealizer();
+   virtual ~GuideRealizer();
+   virtual const char* getGuideName() const = 0;
+   virtual const TCHAR* getGuideNameT() const = 0;
+   virtual int countSubIds() const = 0;
+   virtual IGuide* createGuide(int subid) const = 0;
+
+public:
+   static std::basic_string< TCHAR > GetFilePath(const TCHAR* dir, const TCHAR* name, const TCHAR* guide);
    static bool IsExist(const TCHAR* dir, const TCHAR* name, const TCHAR* guide);
-   static bool Save(const TCHAR* dir, const TCHAR* name, const MoveSequence& seq);
-   static bool Load(MoveSequence* seq, const TCHAR* dir, const TCHAR* name, const TCHAR* guide);
+
+   struct GuideData {
+      IGuide* pGuide;
+      std::string uuid;
+      __int64 t0,t1;
+      bool chainnext;
+   };
+   bool save(const TCHAR* dir, const TCHAR* name, const MoveSequence&) const;
+   bool load(std::list< GuideData >* pOut, const TCHAR* dir, const TCHAR* name) const;
+
+protected:
+   virtual bool save(int fd, const MoveSequence&) const = 0;
+   virtual bool load(std::list< GuideData >* pOut, int fd) const = 0;
 };
 
 #endif

@@ -23,12 +23,6 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* MotionWiimoteSimple_Entry_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   MotionWiimoteSimple_Entry_reflection_ = NULL;
-const ::google::protobuf::Descriptor* MotionWiimoteSimple2_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  MotionWiimoteSimple2_reflection_ = NULL;
-const ::google::protobuf::Descriptor* MotionWiimoteSimple2_Entry_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  MotionWiimoteSimple2_Entry_reflection_ = NULL;
 const ::google::protobuf::Descriptor* MotionWiimoteSimpleList_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   MotionWiimoteSimpleList_reflection_ = NULL;
@@ -43,7 +37,10 @@ void protobuf_AssignDesc_MotionWiimoteSimple_2eproto() {
       "MotionWiimoteSimple.proto");
   GOOGLE_CHECK(file != NULL);
   MotionWiimoteSimple_descriptor_ = file->message_type(0);
-  static const int MotionWiimoteSimple_offsets_[3] = {
+  static const int MotionWiimoteSimple_offsets_[6] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple, uuid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple, time0_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple, time1_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple, stept_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple, minseq_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple, maxseq_),
@@ -77,45 +74,7 @@ void protobuf_AssignDesc_MotionWiimoteSimple_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(MotionWiimoteSimple_Entry));
-  MotionWiimoteSimple2_descriptor_ = file->message_type(1);
-  static const int MotionWiimoteSimple2_offsets_[6] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple2, uuid_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple2, time0_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple2, time1_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple2, stept_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple2, minseq_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple2, maxseq_),
-  };
-  MotionWiimoteSimple2_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      MotionWiimoteSimple2_descriptor_,
-      MotionWiimoteSimple2::default_instance_,
-      MotionWiimoteSimple2_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple2, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple2, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(MotionWiimoteSimple2));
-  MotionWiimoteSimple2_Entry_descriptor_ = MotionWiimoteSimple2_descriptor_->nested_type(0);
-  static const int MotionWiimoteSimple2_Entry_offsets_[4] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple2_Entry, t_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple2_Entry, accel_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple2_Entry, gyro_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple2_Entry, orien_),
-  };
-  MotionWiimoteSimple2_Entry_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      MotionWiimoteSimple2_Entry_descriptor_,
-      MotionWiimoteSimple2_Entry::default_instance_,
-      MotionWiimoteSimple2_Entry_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple2_Entry, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimple2_Entry, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(MotionWiimoteSimple2_Entry));
-  MotionWiimoteSimpleList_descriptor_ = file->message_type(2);
+  MotionWiimoteSimpleList_descriptor_ = file->message_type(1);
   static const int MotionWiimoteSimpleList_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionWiimoteSimpleList, motions_),
   };
@@ -147,10 +106,6 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     MotionWiimoteSimple_Entry_descriptor_, &MotionWiimoteSimple_Entry::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    MotionWiimoteSimple2_descriptor_, &MotionWiimoteSimple2::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    MotionWiimoteSimple2_Entry_descriptor_, &MotionWiimoteSimple2_Entry::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     MotionWiimoteSimpleList_descriptor_, &MotionWiimoteSimpleList::default_instance());
 }
 
@@ -161,10 +116,6 @@ void protobuf_ShutdownFile_MotionWiimoteSimple_2eproto() {
   delete MotionWiimoteSimple_reflection_;
   delete MotionWiimoteSimple_Entry::default_instance_;
   delete MotionWiimoteSimple_Entry_reflection_;
-  delete MotionWiimoteSimple2::default_instance_;
-  delete MotionWiimoteSimple2_reflection_;
-  delete MotionWiimoteSimple2_Entry::default_instance_;
-  delete MotionWiimoteSimple2_Entry_reflection_;
   delete MotionWiimoteSimpleList::default_instance_;
   delete MotionWiimoteSimpleList_reflection_;
 }
@@ -178,33 +129,23 @@ void protobuf_AddDesc_MotionWiimoteSimple_2eproto() {
   ::pb::protobuf_AddDesc_bootes_2fdances_2fproto_2fStage_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\031MotionWiimoteSimple.proto\022\002pb\032\037bootes/"
-    "dances/proto/Stage.proto\"\366\001\n\023MotionWiimo"
-    "teSimple\022\r\n\005stept\030\001 \002(\005\022-\n\006minseq\030\002 \003(\0132"
-    "\035.pb.MotionWiimoteSimple.Entry\022-\n\006maxseq"
-    "\030\003 \003(\0132\035.pb.MotionWiimoteSimple.Entry\032r\n"
-    "\005Entry\022\t\n\001t\030\001 \002(\005\022\037\n\005accel\030\002 \002(\0132\020.pb.Mo"
-    "tion.Accel\022\035\n\004gyro\030\003 \002(\0132\017.pb.Motion.Gyr"
-    "o\022\036\n\005orien\030\004 \002(\0132\017.pb.Motion.Gyro\"\245\002\n\024Mo"
-    "tionWiimoteSimple2\022\014\n\004uuid\030\001 \002(\t\022\r\n\005time"
-    "0\030\002 \002(\003\022\r\n\005time1\030\003 \002(\003\022\r\n\005stept\030\n \002(\005\022.\n"
-    "\006minseq\030\013 \003(\0132\036.pb.MotionWiimoteSimple2."
-    "Entry\022.\n\006maxseq\030\014 \003(\0132\036.pb.MotionWiimote"
-    "Simple2.Entry\032r\n\005Entry\022\t\n\001t\030\001 \002(\005\022\037\n\005acc"
-    "el\030\002 \002(\0132\020.pb.Motion.Accel\022\035\n\004gyro\030\003 \002(\013"
-    "2\017.pb.Motion.Gyro\022\036\n\005orien\030\004 \002(\0132\017.pb.Mo"
-    "tion.Gyro\"D\n\027MotionWiimoteSimpleList\022)\n\007"
-    "motions\030\n \003(\0132\030.pb.MotionWiimoteSimple2", 679);
+    "dances/proto/Stage.proto\"\215\002\n\023MotionWiimo"
+    "teSimple\022\014\n\004uuid\030\001 \002(\t\022\r\n\005time0\030\002 \002(\003\022\r\n"
+    "\005time1\030\003 \002(\003\022\r\n\005stept\030\n \002(\005\022-\n\006minseq\030\013 "
+    "\003(\0132\035.pb.MotionWiimoteSimple.Entry\022-\n\006ma"
+    "xseq\030\014 \003(\0132\035.pb.MotionWiimoteSimple.Entr"
+    "y\032]\n\005Entry\022\t\n\001t\030\001 \002(\005\022\030\n\005accel\030\002 \002(\0132\t.p"
+    "b.Accel\022\026\n\004gyro\030\003 \002(\0132\010.pb.Gyro\022\027\n\005orien"
+    "\030\004 \002(\0132\010.pb.Gyro\"C\n\027MotionWiimoteSimpleL"
+    "ist\022(\n\007motions\030\n \003(\0132\027.pb.MotionWiimoteS"
+    "imple", 405);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "MotionWiimoteSimple.proto", &protobuf_RegisterTypes);
   MotionWiimoteSimple::default_instance_ = new MotionWiimoteSimple();
   MotionWiimoteSimple_Entry::default_instance_ = new MotionWiimoteSimple_Entry();
-  MotionWiimoteSimple2::default_instance_ = new MotionWiimoteSimple2();
-  MotionWiimoteSimple2_Entry::default_instance_ = new MotionWiimoteSimple2_Entry();
   MotionWiimoteSimpleList::default_instance_ = new MotionWiimoteSimpleList();
   MotionWiimoteSimple::default_instance_->InitAsDefaultInstance();
   MotionWiimoteSimple_Entry::default_instance_->InitAsDefaultInstance();
-  MotionWiimoteSimple2::default_instance_->InitAsDefaultInstance();
-  MotionWiimoteSimple2_Entry::default_instance_->InitAsDefaultInstance();
   MotionWiimoteSimpleList::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_MotionWiimoteSimple_2eproto);
 }
@@ -232,9 +173,9 @@ MotionWiimoteSimple_Entry::MotionWiimoteSimple_Entry()
 }
 
 void MotionWiimoteSimple_Entry::InitAsDefaultInstance() {
-  accel_ = const_cast< ::pb::Motion_Accel*>(&::pb::Motion_Accel::default_instance());
-  gyro_ = const_cast< ::pb::Motion_Gyro*>(&::pb::Motion_Gyro::default_instance());
-  orien_ = const_cast< ::pb::Motion_Gyro*>(&::pb::Motion_Gyro::default_instance());
+  accel_ = const_cast< ::pb::Accel*>(&::pb::Accel::default_instance());
+  gyro_ = const_cast< ::pb::Gyro*>(&::pb::Gyro::default_instance());
+  orien_ = const_cast< ::pb::Gyro*>(&::pb::Gyro::default_instance());
 }
 
 MotionWiimoteSimple_Entry::MotionWiimoteSimple_Entry(const MotionWiimoteSimple_Entry& from)
@@ -288,13 +229,13 @@ void MotionWiimoteSimple_Entry::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     t_ = 0;
     if (has_accel()) {
-      if (accel_ != NULL) accel_->::pb::Motion_Accel::Clear();
+      if (accel_ != NULL) accel_->::pb::Accel::Clear();
     }
     if (has_gyro()) {
-      if (gyro_ != NULL) gyro_->::pb::Motion_Gyro::Clear();
+      if (gyro_ != NULL) gyro_->::pb::Gyro::Clear();
     }
     if (has_orien()) {
-      if (orien_ != NULL) orien_->::pb::Motion_Gyro::Clear();
+      if (orien_ != NULL) orien_->::pb::Gyro::Clear();
     }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -322,7 +263,7 @@ bool MotionWiimoteSimple_Entry::MergePartialFromCodedStream(
         break;
       }
       
-      // required .pb.Motion.Accel accel = 2;
+      // required .pb.Accel accel = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -336,7 +277,7 @@ bool MotionWiimoteSimple_Entry::MergePartialFromCodedStream(
         break;
       }
       
-      // required .pb.Motion.Gyro gyro = 3;
+      // required .pb.Gyro gyro = 3;
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -350,7 +291,7 @@ bool MotionWiimoteSimple_Entry::MergePartialFromCodedStream(
         break;
       }
       
-      // required .pb.Motion.Gyro orien = 4;
+      // required .pb.Gyro orien = 4;
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -387,19 +328,19 @@ void MotionWiimoteSimple_Entry::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->t(), output);
   }
   
-  // required .pb.Motion.Accel accel = 2;
+  // required .pb.Accel accel = 2;
   if (has_accel()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, this->accel(), output);
   }
   
-  // required .pb.Motion.Gyro gyro = 3;
+  // required .pb.Gyro gyro = 3;
   if (has_gyro()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       3, this->gyro(), output);
   }
   
-  // required .pb.Motion.Gyro orien = 4;
+  // required .pb.Gyro orien = 4;
   if (has_orien()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       4, this->orien(), output);
@@ -418,21 +359,21 @@ void MotionWiimoteSimple_Entry::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->t(), target);
   }
   
-  // required .pb.Motion.Accel accel = 2;
+  // required .pb.Accel accel = 2;
   if (has_accel()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         2, this->accel(), target);
   }
   
-  // required .pb.Motion.Gyro gyro = 3;
+  // required .pb.Gyro gyro = 3;
   if (has_gyro()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         3, this->gyro(), target);
   }
   
-  // required .pb.Motion.Gyro orien = 4;
+  // required .pb.Gyro orien = 4;
   if (has_orien()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -457,21 +398,21 @@ int MotionWiimoteSimple_Entry::ByteSize() const {
           this->t());
     }
     
-    // required .pb.Motion.Accel accel = 2;
+    // required .pb.Accel accel = 2;
     if (has_accel()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           this->accel());
     }
     
-    // required .pb.Motion.Gyro gyro = 3;
+    // required .pb.Gyro gyro = 3;
     if (has_gyro()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           this->gyro());
     }
     
-    // required .pb.Motion.Gyro orien = 4;
+    // required .pb.Gyro orien = 4;
     if (has_orien()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -509,13 +450,13 @@ void MotionWiimoteSimple_Entry::MergeFrom(const MotionWiimoteSimple_Entry& from)
       set_t(from.t());
     }
     if (from.has_accel()) {
-      mutable_accel()->::pb::Motion_Accel::MergeFrom(from.accel());
+      mutable_accel()->::pb::Accel::MergeFrom(from.accel());
     }
     if (from.has_gyro()) {
-      mutable_gyro()->::pb::Motion_Gyro::MergeFrom(from.gyro());
+      mutable_gyro()->::pb::Gyro::MergeFrom(from.gyro());
     }
     if (from.has_orien()) {
-      mutable_orien()->::pb::Motion_Gyro::MergeFrom(from.orien());
+      mutable_orien()->::pb::Gyro::MergeFrom(from.orien());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -572,6 +513,9 @@ void MotionWiimoteSimple_Entry::Swap(MotionWiimoteSimple_Entry* other) {
 // -------------------------------------------------------------------
 
 #ifndef _MSC_VER
+const int MotionWiimoteSimple::kUuidFieldNumber;
+const int MotionWiimoteSimple::kTime0FieldNumber;
+const int MotionWiimoteSimple::kTime1FieldNumber;
 const int MotionWiimoteSimple::kSteptFieldNumber;
 const int MotionWiimoteSimple::kMinseqFieldNumber;
 const int MotionWiimoteSimple::kMaxseqFieldNumber;
@@ -593,6 +537,9 @@ MotionWiimoteSimple::MotionWiimoteSimple(const MotionWiimoteSimple& from)
 
 void MotionWiimoteSimple::SharedCtor() {
   _cached_size_ = 0;
+  uuid_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  time0_ = GOOGLE_LONGLONG(0);
+  time1_ = GOOGLE_LONGLONG(0);
   stept_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
@@ -602,6 +549,9 @@ MotionWiimoteSimple::~MotionWiimoteSimple() {
 }
 
 void MotionWiimoteSimple::SharedDtor() {
+  if (uuid_ != &::google::protobuf::internal::kEmptyString) {
+    delete uuid_;
+  }
   if (this != default_instance_) {
   }
 }
@@ -628,661 +578,6 @@ MotionWiimoteSimple* MotionWiimoteSimple::New() const {
 
 void MotionWiimoteSimple::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    stept_ = 0;
-  }
-  minseq_.Clear();
-  maxseq_.Clear();
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool MotionWiimoteSimple::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required int32 stept = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &stept_)));
-          set_has_stept();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(18)) goto parse_minseq;
-        break;
-      }
-      
-      // repeated .pb.MotionWiimoteSimple.Entry minseq = 2;
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_minseq:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_minseq()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(18)) goto parse_minseq;
-        if (input->ExpectTag(26)) goto parse_maxseq;
-        break;
-      }
-      
-      // repeated .pb.MotionWiimoteSimple.Entry maxseq = 3;
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_maxseq:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_maxseq()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(26)) goto parse_maxseq;
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void MotionWiimoteSimple::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // required int32 stept = 1;
-  if (has_stept()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->stept(), output);
-  }
-  
-  // repeated .pb.MotionWiimoteSimple.Entry minseq = 2;
-  for (int i = 0; i < this->minseq_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->minseq(i), output);
-  }
-  
-  // repeated .pb.MotionWiimoteSimple.Entry maxseq = 3;
-  for (int i = 0; i < this->maxseq_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->maxseq(i), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* MotionWiimoteSimple::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // required int32 stept = 1;
-  if (has_stept()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->stept(), target);
-  }
-  
-  // repeated .pb.MotionWiimoteSimple.Entry minseq = 2;
-  for (int i = 0; i < this->minseq_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        2, this->minseq(i), target);
-  }
-  
-  // repeated .pb.MotionWiimoteSimple.Entry maxseq = 3;
-  for (int i = 0; i < this->maxseq_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        3, this->maxseq(i), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int MotionWiimoteSimple::ByteSize() const {
-  int total_size = 0;
-  
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int32 stept = 1;
-    if (has_stept()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->stept());
-    }
-    
-  }
-  // repeated .pb.MotionWiimoteSimple.Entry minseq = 2;
-  total_size += 1 * this->minseq_size();
-  for (int i = 0; i < this->minseq_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->minseq(i));
-  }
-  
-  // repeated .pb.MotionWiimoteSimple.Entry maxseq = 3;
-  total_size += 1 * this->maxseq_size();
-  for (int i = 0; i < this->maxseq_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->maxseq(i));
-  }
-  
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void MotionWiimoteSimple::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const MotionWiimoteSimple* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const MotionWiimoteSimple*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void MotionWiimoteSimple::MergeFrom(const MotionWiimoteSimple& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  minseq_.MergeFrom(from.minseq_);
-  maxseq_.MergeFrom(from.maxseq_);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_stept()) {
-      set_stept(from.stept());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void MotionWiimoteSimple::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void MotionWiimoteSimple::CopyFrom(const MotionWiimoteSimple& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool MotionWiimoteSimple::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
-  
-  for (int i = 0; i < minseq_size(); i++) {
-    if (!this->minseq(i).IsInitialized()) return false;
-  }
-  for (int i = 0; i < maxseq_size(); i++) {
-    if (!this->maxseq(i).IsInitialized()) return false;
-  }
-  return true;
-}
-
-void MotionWiimoteSimple::Swap(MotionWiimoteSimple* other) {
-  if (other != this) {
-    std::swap(stept_, other->stept_);
-    minseq_.Swap(&other->minseq_);
-    maxseq_.Swap(&other->maxseq_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata MotionWiimoteSimple::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = MotionWiimoteSimple_descriptor_;
-  metadata.reflection = MotionWiimoteSimple_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int MotionWiimoteSimple2_Entry::kTFieldNumber;
-const int MotionWiimoteSimple2_Entry::kAccelFieldNumber;
-const int MotionWiimoteSimple2_Entry::kGyroFieldNumber;
-const int MotionWiimoteSimple2_Entry::kOrienFieldNumber;
-#endif  // !_MSC_VER
-
-MotionWiimoteSimple2_Entry::MotionWiimoteSimple2_Entry()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void MotionWiimoteSimple2_Entry::InitAsDefaultInstance() {
-  accel_ = const_cast< ::pb::Motion_Accel*>(&::pb::Motion_Accel::default_instance());
-  gyro_ = const_cast< ::pb::Motion_Gyro*>(&::pb::Motion_Gyro::default_instance());
-  orien_ = const_cast< ::pb::Motion_Gyro*>(&::pb::Motion_Gyro::default_instance());
-}
-
-MotionWiimoteSimple2_Entry::MotionWiimoteSimple2_Entry(const MotionWiimoteSimple2_Entry& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void MotionWiimoteSimple2_Entry::SharedCtor() {
-  _cached_size_ = 0;
-  t_ = 0;
-  accel_ = NULL;
-  gyro_ = NULL;
-  orien_ = NULL;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-MotionWiimoteSimple2_Entry::~MotionWiimoteSimple2_Entry() {
-  SharedDtor();
-}
-
-void MotionWiimoteSimple2_Entry::SharedDtor() {
-  if (this != default_instance_) {
-    delete accel_;
-    delete gyro_;
-    delete orien_;
-  }
-}
-
-void MotionWiimoteSimple2_Entry::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* MotionWiimoteSimple2_Entry::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return MotionWiimoteSimple2_Entry_descriptor_;
-}
-
-const MotionWiimoteSimple2_Entry& MotionWiimoteSimple2_Entry::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_MotionWiimoteSimple_2eproto();  return *default_instance_;
-}
-
-MotionWiimoteSimple2_Entry* MotionWiimoteSimple2_Entry::default_instance_ = NULL;
-
-MotionWiimoteSimple2_Entry* MotionWiimoteSimple2_Entry::New() const {
-  return new MotionWiimoteSimple2_Entry;
-}
-
-void MotionWiimoteSimple2_Entry::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    t_ = 0;
-    if (has_accel()) {
-      if (accel_ != NULL) accel_->::pb::Motion_Accel::Clear();
-    }
-    if (has_gyro()) {
-      if (gyro_ != NULL) gyro_->::pb::Motion_Gyro::Clear();
-    }
-    if (has_orien()) {
-      if (orien_ != NULL) orien_->::pb::Motion_Gyro::Clear();
-    }
-  }
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool MotionWiimoteSimple2_Entry::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required int32 t = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &t_)));
-          set_has_t();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(18)) goto parse_accel;
-        break;
-      }
-      
-      // required .pb.Motion.Accel accel = 2;
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_accel:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_accel()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(26)) goto parse_gyro;
-        break;
-      }
-      
-      // required .pb.Motion.Gyro gyro = 3;
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_gyro:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_gyro()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(34)) goto parse_orien;
-        break;
-      }
-      
-      // required .pb.Motion.Gyro orien = 4;
-      case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_orien:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_orien()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void MotionWiimoteSimple2_Entry::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // required int32 t = 1;
-  if (has_t()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->t(), output);
-  }
-  
-  // required .pb.Motion.Accel accel = 2;
-  if (has_accel()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->accel(), output);
-  }
-  
-  // required .pb.Motion.Gyro gyro = 3;
-  if (has_gyro()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->gyro(), output);
-  }
-  
-  // required .pb.Motion.Gyro orien = 4;
-  if (has_orien()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4, this->orien(), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* MotionWiimoteSimple2_Entry::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // required int32 t = 1;
-  if (has_t()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->t(), target);
-  }
-  
-  // required .pb.Motion.Accel accel = 2;
-  if (has_accel()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        2, this->accel(), target);
-  }
-  
-  // required .pb.Motion.Gyro gyro = 3;
-  if (has_gyro()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        3, this->gyro(), target);
-  }
-  
-  // required .pb.Motion.Gyro orien = 4;
-  if (has_orien()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        4, this->orien(), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int MotionWiimoteSimple2_Entry::ByteSize() const {
-  int total_size = 0;
-  
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int32 t = 1;
-    if (has_t()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->t());
-    }
-    
-    // required .pb.Motion.Accel accel = 2;
-    if (has_accel()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->accel());
-    }
-    
-    // required .pb.Motion.Gyro gyro = 3;
-    if (has_gyro()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->gyro());
-    }
-    
-    // required .pb.Motion.Gyro orien = 4;
-    if (has_orien()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->orien());
-    }
-    
-  }
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void MotionWiimoteSimple2_Entry::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const MotionWiimoteSimple2_Entry* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const MotionWiimoteSimple2_Entry*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void MotionWiimoteSimple2_Entry::MergeFrom(const MotionWiimoteSimple2_Entry& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_t()) {
-      set_t(from.t());
-    }
-    if (from.has_accel()) {
-      mutable_accel()->::pb::Motion_Accel::MergeFrom(from.accel());
-    }
-    if (from.has_gyro()) {
-      mutable_gyro()->::pb::Motion_Gyro::MergeFrom(from.gyro());
-    }
-    if (from.has_orien()) {
-      mutable_orien()->::pb::Motion_Gyro::MergeFrom(from.orien());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void MotionWiimoteSimple2_Entry::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void MotionWiimoteSimple2_Entry::CopyFrom(const MotionWiimoteSimple2_Entry& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool MotionWiimoteSimple2_Entry::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
-  
-  if (has_accel()) {
-    if (!this->accel().IsInitialized()) return false;
-  }
-  if (has_gyro()) {
-    if (!this->gyro().IsInitialized()) return false;
-  }
-  if (has_orien()) {
-    if (!this->orien().IsInitialized()) return false;
-  }
-  return true;
-}
-
-void MotionWiimoteSimple2_Entry::Swap(MotionWiimoteSimple2_Entry* other) {
-  if (other != this) {
-    std::swap(t_, other->t_);
-    std::swap(accel_, other->accel_);
-    std::swap(gyro_, other->gyro_);
-    std::swap(orien_, other->orien_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata MotionWiimoteSimple2_Entry::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = MotionWiimoteSimple2_Entry_descriptor_;
-  metadata.reflection = MotionWiimoteSimple2_Entry_reflection_;
-  return metadata;
-}
-
-
-// -------------------------------------------------------------------
-
-#ifndef _MSC_VER
-const int MotionWiimoteSimple2::kUuidFieldNumber;
-const int MotionWiimoteSimple2::kTime0FieldNumber;
-const int MotionWiimoteSimple2::kTime1FieldNumber;
-const int MotionWiimoteSimple2::kSteptFieldNumber;
-const int MotionWiimoteSimple2::kMinseqFieldNumber;
-const int MotionWiimoteSimple2::kMaxseqFieldNumber;
-#endif  // !_MSC_VER
-
-MotionWiimoteSimple2::MotionWiimoteSimple2()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void MotionWiimoteSimple2::InitAsDefaultInstance() {
-}
-
-MotionWiimoteSimple2::MotionWiimoteSimple2(const MotionWiimoteSimple2& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void MotionWiimoteSimple2::SharedCtor() {
-  _cached_size_ = 0;
-  uuid_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  time0_ = GOOGLE_LONGLONG(0);
-  time1_ = GOOGLE_LONGLONG(0);
-  stept_ = 0;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-MotionWiimoteSimple2::~MotionWiimoteSimple2() {
-  SharedDtor();
-}
-
-void MotionWiimoteSimple2::SharedDtor() {
-  if (uuid_ != &::google::protobuf::internal::kEmptyString) {
-    delete uuid_;
-  }
-  if (this != default_instance_) {
-  }
-}
-
-void MotionWiimoteSimple2::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* MotionWiimoteSimple2::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return MotionWiimoteSimple2_descriptor_;
-}
-
-const MotionWiimoteSimple2& MotionWiimoteSimple2::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_MotionWiimoteSimple_2eproto();  return *default_instance_;
-}
-
-MotionWiimoteSimple2* MotionWiimoteSimple2::default_instance_ = NULL;
-
-MotionWiimoteSimple2* MotionWiimoteSimple2::New() const {
-  return new MotionWiimoteSimple2;
-}
-
-void MotionWiimoteSimple2::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (has_uuid()) {
       if (uuid_ != &::google::protobuf::internal::kEmptyString) {
         uuid_->clear();
@@ -1298,7 +593,7 @@ void MotionWiimoteSimple2::Clear() {
   mutable_unknown_fields()->Clear();
 }
 
-bool MotionWiimoteSimple2::MergePartialFromCodedStream(
+bool MotionWiimoteSimple::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
@@ -1368,7 +663,7 @@ bool MotionWiimoteSimple2::MergePartialFromCodedStream(
         break;
       }
       
-      // repeated .pb.MotionWiimoteSimple2.Entry minseq = 11;
+      // repeated .pb.MotionWiimoteSimple.Entry minseq = 11;
       case 11: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -1383,7 +678,7 @@ bool MotionWiimoteSimple2::MergePartialFromCodedStream(
         break;
       }
       
-      // repeated .pb.MotionWiimoteSimple2.Entry maxseq = 12;
+      // repeated .pb.MotionWiimoteSimple.Entry maxseq = 12;
       case 12: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -1414,7 +709,7 @@ bool MotionWiimoteSimple2::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void MotionWiimoteSimple2::SerializeWithCachedSizes(
+void MotionWiimoteSimple::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required string uuid = 1;
   if (has_uuid()) {
@@ -1440,13 +735,13 @@ void MotionWiimoteSimple2::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(10, this->stept(), output);
   }
   
-  // repeated .pb.MotionWiimoteSimple2.Entry minseq = 11;
+  // repeated .pb.MotionWiimoteSimple.Entry minseq = 11;
   for (int i = 0; i < this->minseq_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       11, this->minseq(i), output);
   }
   
-  // repeated .pb.MotionWiimoteSimple2.Entry maxseq = 12;
+  // repeated .pb.MotionWiimoteSimple.Entry maxseq = 12;
   for (int i = 0; i < this->maxseq_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       12, this->maxseq(i), output);
@@ -1458,7 +753,7 @@ void MotionWiimoteSimple2::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* MotionWiimoteSimple2::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* MotionWiimoteSimple::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required string uuid = 1;
   if (has_uuid()) {
@@ -1485,14 +780,14 @@ void MotionWiimoteSimple2::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(10, this->stept(), target);
   }
   
-  // repeated .pb.MotionWiimoteSimple2.Entry minseq = 11;
+  // repeated .pb.MotionWiimoteSimple.Entry minseq = 11;
   for (int i = 0; i < this->minseq_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         11, this->minseq(i), target);
   }
   
-  // repeated .pb.MotionWiimoteSimple2.Entry maxseq = 12;
+  // repeated .pb.MotionWiimoteSimple.Entry maxseq = 12;
   for (int i = 0; i < this->maxseq_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -1506,7 +801,7 @@ void MotionWiimoteSimple2::SerializeWithCachedSizes(
   return target;
 }
 
-int MotionWiimoteSimple2::ByteSize() const {
+int MotionWiimoteSimple::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
@@ -1539,7 +834,7 @@ int MotionWiimoteSimple2::ByteSize() const {
     }
     
   }
-  // repeated .pb.MotionWiimoteSimple2.Entry minseq = 11;
+  // repeated .pb.MotionWiimoteSimple.Entry minseq = 11;
   total_size += 1 * this->minseq_size();
   for (int i = 0; i < this->minseq_size(); i++) {
     total_size +=
@@ -1547,7 +842,7 @@ int MotionWiimoteSimple2::ByteSize() const {
         this->minseq(i));
   }
   
-  // repeated .pb.MotionWiimoteSimple2.Entry maxseq = 12;
+  // repeated .pb.MotionWiimoteSimple.Entry maxseq = 12;
   total_size += 1 * this->maxseq_size();
   for (int i = 0; i < this->maxseq_size(); i++) {
     total_size +=
@@ -1566,10 +861,10 @@ int MotionWiimoteSimple2::ByteSize() const {
   return total_size;
 }
 
-void MotionWiimoteSimple2::MergeFrom(const ::google::protobuf::Message& from) {
+void MotionWiimoteSimple::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const MotionWiimoteSimple2* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const MotionWiimoteSimple2*>(
+  const MotionWiimoteSimple* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const MotionWiimoteSimple*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -1578,7 +873,7 @@ void MotionWiimoteSimple2::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void MotionWiimoteSimple2::MergeFrom(const MotionWiimoteSimple2& from) {
+void MotionWiimoteSimple::MergeFrom(const MotionWiimoteSimple& from) {
   GOOGLE_CHECK_NE(&from, this);
   minseq_.MergeFrom(from.minseq_);
   maxseq_.MergeFrom(from.maxseq_);
@@ -1599,19 +894,19 @@ void MotionWiimoteSimple2::MergeFrom(const MotionWiimoteSimple2& from) {
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void MotionWiimoteSimple2::CopyFrom(const ::google::protobuf::Message& from) {
+void MotionWiimoteSimple::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void MotionWiimoteSimple2::CopyFrom(const MotionWiimoteSimple2& from) {
+void MotionWiimoteSimple::CopyFrom(const MotionWiimoteSimple& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool MotionWiimoteSimple2::IsInitialized() const {
+bool MotionWiimoteSimple::IsInitialized() const {
   if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
   
   for (int i = 0; i < minseq_size(); i++) {
@@ -1623,7 +918,7 @@ bool MotionWiimoteSimple2::IsInitialized() const {
   return true;
 }
 
-void MotionWiimoteSimple2::Swap(MotionWiimoteSimple2* other) {
+void MotionWiimoteSimple::Swap(MotionWiimoteSimple* other) {
   if (other != this) {
     std::swap(uuid_, other->uuid_);
     std::swap(time0_, other->time0_);
@@ -1637,11 +932,11 @@ void MotionWiimoteSimple2::Swap(MotionWiimoteSimple2* other) {
   }
 }
 
-::google::protobuf::Metadata MotionWiimoteSimple2::GetMetadata() const {
+::google::protobuf::Metadata MotionWiimoteSimple::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = MotionWiimoteSimple2_descriptor_;
-  metadata.reflection = MotionWiimoteSimple2_reflection_;
+  metadata.descriptor = MotionWiimoteSimple_descriptor_;
+  metadata.reflection = MotionWiimoteSimple_reflection_;
   return metadata;
 }
 
@@ -1712,7 +1007,7 @@ bool MotionWiimoteSimpleList::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .pb.MotionWiimoteSimple2 motions = 10;
+      // repeated .pb.MotionWiimoteSimple motions = 10;
       case 10: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -1745,7 +1040,7 @@ bool MotionWiimoteSimpleList::MergePartialFromCodedStream(
 
 void MotionWiimoteSimpleList::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // repeated .pb.MotionWiimoteSimple2 motions = 10;
+  // repeated .pb.MotionWiimoteSimple motions = 10;
   for (int i = 0; i < this->motions_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       10, this->motions(i), output);
@@ -1759,7 +1054,7 @@ void MotionWiimoteSimpleList::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* MotionWiimoteSimpleList::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // repeated .pb.MotionWiimoteSimple2 motions = 10;
+  // repeated .pb.MotionWiimoteSimple motions = 10;
   for (int i = 0; i < this->motions_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -1776,7 +1071,7 @@ void MotionWiimoteSimpleList::SerializeWithCachedSizes(
 int MotionWiimoteSimpleList::ByteSize() const {
   int total_size = 0;
   
-  // repeated .pb.MotionWiimoteSimple2 motions = 10;
+  // repeated .pb.MotionWiimoteSimple motions = 10;
   total_size += 1 * this->motions_size();
   for (int i = 0; i < this->motions_size(); i++) {
     total_size +=

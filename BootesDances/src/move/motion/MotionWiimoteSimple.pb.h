@@ -35,8 +35,6 @@ void protobuf_ShutdownFile_MotionWiimoteSimple_2eproto();
 
 class MotionWiimoteSimple;
 class MotionWiimoteSimple_Entry;
-class MotionWiimoteSimple2;
-class MotionWiimoteSimple2_Entry;
 class MotionWiimoteSimpleList;
 
 // ===================================================================
@@ -102,29 +100,29 @@ class MotionWiimoteSimple_Entry : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 t() const;
   inline void set_t(::google::protobuf::int32 value);
   
-  // required .pb.Motion.Accel accel = 2;
+  // required .pb.Accel accel = 2;
   inline bool has_accel() const;
   inline void clear_accel();
   static const int kAccelFieldNumber = 2;
-  inline const ::pb::Motion_Accel& accel() const;
-  inline ::pb::Motion_Accel* mutable_accel();
-  inline ::pb::Motion_Accel* release_accel();
+  inline const ::pb::Accel& accel() const;
+  inline ::pb::Accel* mutable_accel();
+  inline ::pb::Accel* release_accel();
   
-  // required .pb.Motion.Gyro gyro = 3;
+  // required .pb.Gyro gyro = 3;
   inline bool has_gyro() const;
   inline void clear_gyro();
   static const int kGyroFieldNumber = 3;
-  inline const ::pb::Motion_Gyro& gyro() const;
-  inline ::pb::Motion_Gyro* mutable_gyro();
-  inline ::pb::Motion_Gyro* release_gyro();
+  inline const ::pb::Gyro& gyro() const;
+  inline ::pb::Gyro* mutable_gyro();
+  inline ::pb::Gyro* release_gyro();
   
-  // required .pb.Motion.Gyro orien = 4;
+  // required .pb.Gyro orien = 4;
   inline bool has_orien() const;
   inline void clear_orien();
   static const int kOrienFieldNumber = 4;
-  inline const ::pb::Motion_Gyro& orien() const;
-  inline ::pb::Motion_Gyro* mutable_orien();
-  inline ::pb::Motion_Gyro* release_orien();
+  inline const ::pb::Gyro& orien() const;
+  inline ::pb::Gyro* mutable_orien();
+  inline ::pb::Gyro* release_orien();
   
   // @@protoc_insertion_point(class_scope:pb.MotionWiimoteSimple.Entry)
  private:
@@ -139,9 +137,9 @@ class MotionWiimoteSimple_Entry : public ::google::protobuf::Message {
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::pb::Motion_Accel* accel_;
-  ::pb::Motion_Gyro* gyro_;
-  ::pb::Motion_Gyro* orien_;
+  ::pb::Accel* accel_;
+  ::pb::Gyro* gyro_;
+  ::pb::Gyro* orien_;
   ::google::protobuf::int32 t_;
   
   mutable int _cached_size_;
@@ -212,231 +210,6 @@ class MotionWiimoteSimple : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required int32 stept = 1;
-  inline bool has_stept() const;
-  inline void clear_stept();
-  static const int kSteptFieldNumber = 1;
-  inline ::google::protobuf::int32 stept() const;
-  inline void set_stept(::google::protobuf::int32 value);
-  
-  // repeated .pb.MotionWiimoteSimple.Entry minseq = 2;
-  inline int minseq_size() const;
-  inline void clear_minseq();
-  static const int kMinseqFieldNumber = 2;
-  inline const ::pb::MotionWiimoteSimple_Entry& minseq(int index) const;
-  inline ::pb::MotionWiimoteSimple_Entry* mutable_minseq(int index);
-  inline ::pb::MotionWiimoteSimple_Entry* add_minseq();
-  inline const ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple_Entry >&
-      minseq() const;
-  inline ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple_Entry >*
-      mutable_minseq();
-  
-  // repeated .pb.MotionWiimoteSimple.Entry maxseq = 3;
-  inline int maxseq_size() const;
-  inline void clear_maxseq();
-  static const int kMaxseqFieldNumber = 3;
-  inline const ::pb::MotionWiimoteSimple_Entry& maxseq(int index) const;
-  inline ::pb::MotionWiimoteSimple_Entry* mutable_maxseq(int index);
-  inline ::pb::MotionWiimoteSimple_Entry* add_maxseq();
-  inline const ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple_Entry >&
-      maxseq() const;
-  inline ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple_Entry >*
-      mutable_maxseq();
-  
-  // @@protoc_insertion_point(class_scope:pb.MotionWiimoteSimple)
- private:
-  inline void set_has_stept();
-  inline void clear_has_stept();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple_Entry > minseq_;
-  ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple_Entry > maxseq_;
-  ::google::protobuf::int32 stept_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_MotionWiimoteSimple_2eproto();
-  friend void protobuf_AssignDesc_MotionWiimoteSimple_2eproto();
-  friend void protobuf_ShutdownFile_MotionWiimoteSimple_2eproto();
-  
-  void InitAsDefaultInstance();
-  static MotionWiimoteSimple* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class MotionWiimoteSimple2_Entry : public ::google::protobuf::Message {
- public:
-  MotionWiimoteSimple2_Entry();
-  virtual ~MotionWiimoteSimple2_Entry();
-  
-  MotionWiimoteSimple2_Entry(const MotionWiimoteSimple2_Entry& from);
-  
-  inline MotionWiimoteSimple2_Entry& operator=(const MotionWiimoteSimple2_Entry& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const MotionWiimoteSimple2_Entry& default_instance();
-  
-  void Swap(MotionWiimoteSimple2_Entry* other);
-  
-  // implements Message ----------------------------------------------
-  
-  MotionWiimoteSimple2_Entry* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const MotionWiimoteSimple2_Entry& from);
-  void MergeFrom(const MotionWiimoteSimple2_Entry& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required int32 t = 1;
-  inline bool has_t() const;
-  inline void clear_t();
-  static const int kTFieldNumber = 1;
-  inline ::google::protobuf::int32 t() const;
-  inline void set_t(::google::protobuf::int32 value);
-  
-  // required .pb.Motion.Accel accel = 2;
-  inline bool has_accel() const;
-  inline void clear_accel();
-  static const int kAccelFieldNumber = 2;
-  inline const ::pb::Motion_Accel& accel() const;
-  inline ::pb::Motion_Accel* mutable_accel();
-  inline ::pb::Motion_Accel* release_accel();
-  
-  // required .pb.Motion.Gyro gyro = 3;
-  inline bool has_gyro() const;
-  inline void clear_gyro();
-  static const int kGyroFieldNumber = 3;
-  inline const ::pb::Motion_Gyro& gyro() const;
-  inline ::pb::Motion_Gyro* mutable_gyro();
-  inline ::pb::Motion_Gyro* release_gyro();
-  
-  // required .pb.Motion.Gyro orien = 4;
-  inline bool has_orien() const;
-  inline void clear_orien();
-  static const int kOrienFieldNumber = 4;
-  inline const ::pb::Motion_Gyro& orien() const;
-  inline ::pb::Motion_Gyro* mutable_orien();
-  inline ::pb::Motion_Gyro* release_orien();
-  
-  // @@protoc_insertion_point(class_scope:pb.MotionWiimoteSimple2.Entry)
- private:
-  inline void set_has_t();
-  inline void clear_has_t();
-  inline void set_has_accel();
-  inline void clear_has_accel();
-  inline void set_has_gyro();
-  inline void clear_has_gyro();
-  inline void set_has_orien();
-  inline void clear_has_orien();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::pb::Motion_Accel* accel_;
-  ::pb::Motion_Gyro* gyro_;
-  ::pb::Motion_Gyro* orien_;
-  ::google::protobuf::int32 t_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_MotionWiimoteSimple_2eproto();
-  friend void protobuf_AssignDesc_MotionWiimoteSimple_2eproto();
-  friend void protobuf_ShutdownFile_MotionWiimoteSimple_2eproto();
-  
-  void InitAsDefaultInstance();
-  static MotionWiimoteSimple2_Entry* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class MotionWiimoteSimple2 : public ::google::protobuf::Message {
- public:
-  MotionWiimoteSimple2();
-  virtual ~MotionWiimoteSimple2();
-  
-  MotionWiimoteSimple2(const MotionWiimoteSimple2& from);
-  
-  inline MotionWiimoteSimple2& operator=(const MotionWiimoteSimple2& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const MotionWiimoteSimple2& default_instance();
-  
-  void Swap(MotionWiimoteSimple2* other);
-  
-  // implements Message ----------------------------------------------
-  
-  MotionWiimoteSimple2* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const MotionWiimoteSimple2& from);
-  void MergeFrom(const MotionWiimoteSimple2& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  typedef MotionWiimoteSimple2_Entry Entry;
-  
-  // accessors -------------------------------------------------------
-  
   // required string uuid = 1;
   inline bool has_uuid() const;
   inline void clear_uuid();
@@ -469,31 +242,31 @@ class MotionWiimoteSimple2 : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 stept() const;
   inline void set_stept(::google::protobuf::int32 value);
   
-  // repeated .pb.MotionWiimoteSimple2.Entry minseq = 11;
+  // repeated .pb.MotionWiimoteSimple.Entry minseq = 11;
   inline int minseq_size() const;
   inline void clear_minseq();
   static const int kMinseqFieldNumber = 11;
-  inline const ::pb::MotionWiimoteSimple2_Entry& minseq(int index) const;
-  inline ::pb::MotionWiimoteSimple2_Entry* mutable_minseq(int index);
-  inline ::pb::MotionWiimoteSimple2_Entry* add_minseq();
-  inline const ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple2_Entry >&
+  inline const ::pb::MotionWiimoteSimple_Entry& minseq(int index) const;
+  inline ::pb::MotionWiimoteSimple_Entry* mutable_minseq(int index);
+  inline ::pb::MotionWiimoteSimple_Entry* add_minseq();
+  inline const ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple_Entry >&
       minseq() const;
-  inline ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple2_Entry >*
+  inline ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple_Entry >*
       mutable_minseq();
   
-  // repeated .pb.MotionWiimoteSimple2.Entry maxseq = 12;
+  // repeated .pb.MotionWiimoteSimple.Entry maxseq = 12;
   inline int maxseq_size() const;
   inline void clear_maxseq();
   static const int kMaxseqFieldNumber = 12;
-  inline const ::pb::MotionWiimoteSimple2_Entry& maxseq(int index) const;
-  inline ::pb::MotionWiimoteSimple2_Entry* mutable_maxseq(int index);
-  inline ::pb::MotionWiimoteSimple2_Entry* add_maxseq();
-  inline const ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple2_Entry >&
+  inline const ::pb::MotionWiimoteSimple_Entry& maxseq(int index) const;
+  inline ::pb::MotionWiimoteSimple_Entry* mutable_maxseq(int index);
+  inline ::pb::MotionWiimoteSimple_Entry* add_maxseq();
+  inline const ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple_Entry >&
       maxseq() const;
-  inline ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple2_Entry >*
+  inline ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple_Entry >*
       mutable_maxseq();
   
-  // @@protoc_insertion_point(class_scope:pb.MotionWiimoteSimple2)
+  // @@protoc_insertion_point(class_scope:pb.MotionWiimoteSimple)
  private:
   inline void set_has_uuid();
   inline void clear_has_uuid();
@@ -509,8 +282,8 @@ class MotionWiimoteSimple2 : public ::google::protobuf::Message {
   ::std::string* uuid_;
   ::google::protobuf::int64 time0_;
   ::google::protobuf::int64 time1_;
-  ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple2_Entry > minseq_;
-  ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple2_Entry > maxseq_;
+  ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple_Entry > minseq_;
+  ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple_Entry > maxseq_;
   ::google::protobuf::int32 stept_;
   
   mutable int _cached_size_;
@@ -521,7 +294,7 @@ class MotionWiimoteSimple2 : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_MotionWiimoteSimple_2eproto();
   
   void InitAsDefaultInstance();
-  static MotionWiimoteSimple2* default_instance_;
+  static MotionWiimoteSimple* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -579,16 +352,16 @@ class MotionWiimoteSimpleList : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // repeated .pb.MotionWiimoteSimple2 motions = 10;
+  // repeated .pb.MotionWiimoteSimple motions = 10;
   inline int motions_size() const;
   inline void clear_motions();
   static const int kMotionsFieldNumber = 10;
-  inline const ::pb::MotionWiimoteSimple2& motions(int index) const;
-  inline ::pb::MotionWiimoteSimple2* mutable_motions(int index);
-  inline ::pb::MotionWiimoteSimple2* add_motions();
-  inline const ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple2 >&
+  inline const ::pb::MotionWiimoteSimple& motions(int index) const;
+  inline ::pb::MotionWiimoteSimple* mutable_motions(int index);
+  inline ::pb::MotionWiimoteSimple* add_motions();
+  inline const ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple >&
       motions() const;
-  inline ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple2 >*
+  inline ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple >*
       mutable_motions();
   
   // @@protoc_insertion_point(class_scope:pb.MotionWiimoteSimpleList)
@@ -596,7 +369,7 @@ class MotionWiimoteSimpleList : public ::google::protobuf::Message {
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple2 > motions_;
+  ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple > motions_;
   
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
@@ -637,7 +410,7 @@ inline void MotionWiimoteSimple_Entry::set_t(::google::protobuf::int32 value) {
   t_ = value;
 }
 
-// required .pb.Motion.Accel accel = 2;
+// required .pb.Accel accel = 2;
 inline bool MotionWiimoteSimple_Entry::has_accel() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -648,25 +421,25 @@ inline void MotionWiimoteSimple_Entry::clear_has_accel() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline void MotionWiimoteSimple_Entry::clear_accel() {
-  if (accel_ != NULL) accel_->::pb::Motion_Accel::Clear();
+  if (accel_ != NULL) accel_->::pb::Accel::Clear();
   clear_has_accel();
 }
-inline const ::pb::Motion_Accel& MotionWiimoteSimple_Entry::accel() const {
+inline const ::pb::Accel& MotionWiimoteSimple_Entry::accel() const {
   return accel_ != NULL ? *accel_ : *default_instance_->accel_;
 }
-inline ::pb::Motion_Accel* MotionWiimoteSimple_Entry::mutable_accel() {
+inline ::pb::Accel* MotionWiimoteSimple_Entry::mutable_accel() {
   set_has_accel();
-  if (accel_ == NULL) accel_ = new ::pb::Motion_Accel;
+  if (accel_ == NULL) accel_ = new ::pb::Accel;
   return accel_;
 }
-inline ::pb::Motion_Accel* MotionWiimoteSimple_Entry::release_accel() {
+inline ::pb::Accel* MotionWiimoteSimple_Entry::release_accel() {
   clear_has_accel();
-  ::pb::Motion_Accel* temp = accel_;
+  ::pb::Accel* temp = accel_;
   accel_ = NULL;
   return temp;
 }
 
-// required .pb.Motion.Gyro gyro = 3;
+// required .pb.Gyro gyro = 3;
 inline bool MotionWiimoteSimple_Entry::has_gyro() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -677,25 +450,25 @@ inline void MotionWiimoteSimple_Entry::clear_has_gyro() {
   _has_bits_[0] &= ~0x00000004u;
 }
 inline void MotionWiimoteSimple_Entry::clear_gyro() {
-  if (gyro_ != NULL) gyro_->::pb::Motion_Gyro::Clear();
+  if (gyro_ != NULL) gyro_->::pb::Gyro::Clear();
   clear_has_gyro();
 }
-inline const ::pb::Motion_Gyro& MotionWiimoteSimple_Entry::gyro() const {
+inline const ::pb::Gyro& MotionWiimoteSimple_Entry::gyro() const {
   return gyro_ != NULL ? *gyro_ : *default_instance_->gyro_;
 }
-inline ::pb::Motion_Gyro* MotionWiimoteSimple_Entry::mutable_gyro() {
+inline ::pb::Gyro* MotionWiimoteSimple_Entry::mutable_gyro() {
   set_has_gyro();
-  if (gyro_ == NULL) gyro_ = new ::pb::Motion_Gyro;
+  if (gyro_ == NULL) gyro_ = new ::pb::Gyro;
   return gyro_;
 }
-inline ::pb::Motion_Gyro* MotionWiimoteSimple_Entry::release_gyro() {
+inline ::pb::Gyro* MotionWiimoteSimple_Entry::release_gyro() {
   clear_has_gyro();
-  ::pb::Motion_Gyro* temp = gyro_;
+  ::pb::Gyro* temp = gyro_;
   gyro_ = NULL;
   return temp;
 }
 
-// required .pb.Motion.Gyro orien = 4;
+// required .pb.Gyro orien = 4;
 inline bool MotionWiimoteSimple_Entry::has_orien() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
@@ -706,20 +479,20 @@ inline void MotionWiimoteSimple_Entry::clear_has_orien() {
   _has_bits_[0] &= ~0x00000008u;
 }
 inline void MotionWiimoteSimple_Entry::clear_orien() {
-  if (orien_ != NULL) orien_->::pb::Motion_Gyro::Clear();
+  if (orien_ != NULL) orien_->::pb::Gyro::Clear();
   clear_has_orien();
 }
-inline const ::pb::Motion_Gyro& MotionWiimoteSimple_Entry::orien() const {
+inline const ::pb::Gyro& MotionWiimoteSimple_Entry::orien() const {
   return orien_ != NULL ? *orien_ : *default_instance_->orien_;
 }
-inline ::pb::Motion_Gyro* MotionWiimoteSimple_Entry::mutable_orien() {
+inline ::pb::Gyro* MotionWiimoteSimple_Entry::mutable_orien() {
   set_has_orien();
-  if (orien_ == NULL) orien_ = new ::pb::Motion_Gyro;
+  if (orien_ == NULL) orien_ = new ::pb::Gyro;
   return orien_;
 }
-inline ::pb::Motion_Gyro* MotionWiimoteSimple_Entry::release_orien() {
+inline ::pb::Gyro* MotionWiimoteSimple_Entry::release_orien() {
   clear_has_orien();
-  ::pb::Motion_Gyro* temp = orien_;
+  ::pb::Gyro* temp = orien_;
   orien_ = NULL;
   return temp;
 }
@@ -728,15 +501,117 @@ inline ::pb::Motion_Gyro* MotionWiimoteSimple_Entry::release_orien() {
 
 // MotionWiimoteSimple
 
-// required int32 stept = 1;
-inline bool MotionWiimoteSimple::has_stept() const {
+// required string uuid = 1;
+inline bool MotionWiimoteSimple::has_uuid() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void MotionWiimoteSimple::set_has_stept() {
+inline void MotionWiimoteSimple::set_has_uuid() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void MotionWiimoteSimple::clear_has_stept() {
+inline void MotionWiimoteSimple::clear_has_uuid() {
   _has_bits_[0] &= ~0x00000001u;
+}
+inline void MotionWiimoteSimple::clear_uuid() {
+  if (uuid_ != &::google::protobuf::internal::kEmptyString) {
+    uuid_->clear();
+  }
+  clear_has_uuid();
+}
+inline const ::std::string& MotionWiimoteSimple::uuid() const {
+  return *uuid_;
+}
+inline void MotionWiimoteSimple::set_uuid(const ::std::string& value) {
+  set_has_uuid();
+  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
+    uuid_ = new ::std::string;
+  }
+  uuid_->assign(value);
+}
+inline void MotionWiimoteSimple::set_uuid(const char* value) {
+  set_has_uuid();
+  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
+    uuid_ = new ::std::string;
+  }
+  uuid_->assign(value);
+}
+inline void MotionWiimoteSimple::set_uuid(const char* value, size_t size) {
+  set_has_uuid();
+  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
+    uuid_ = new ::std::string;
+  }
+  uuid_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* MotionWiimoteSimple::mutable_uuid() {
+  set_has_uuid();
+  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
+    uuid_ = new ::std::string;
+  }
+  return uuid_;
+}
+inline ::std::string* MotionWiimoteSimple::release_uuid() {
+  clear_has_uuid();
+  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = uuid_;
+    uuid_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required int64 time0 = 2;
+inline bool MotionWiimoteSimple::has_time0() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void MotionWiimoteSimple::set_has_time0() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void MotionWiimoteSimple::clear_has_time0() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void MotionWiimoteSimple::clear_time0() {
+  time0_ = GOOGLE_LONGLONG(0);
+  clear_has_time0();
+}
+inline ::google::protobuf::int64 MotionWiimoteSimple::time0() const {
+  return time0_;
+}
+inline void MotionWiimoteSimple::set_time0(::google::protobuf::int64 value) {
+  set_has_time0();
+  time0_ = value;
+}
+
+// required int64 time1 = 3;
+inline bool MotionWiimoteSimple::has_time1() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void MotionWiimoteSimple::set_has_time1() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void MotionWiimoteSimple::clear_has_time1() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void MotionWiimoteSimple::clear_time1() {
+  time1_ = GOOGLE_LONGLONG(0);
+  clear_has_time1();
+}
+inline ::google::protobuf::int64 MotionWiimoteSimple::time1() const {
+  return time1_;
+}
+inline void MotionWiimoteSimple::set_time1(::google::protobuf::int64 value) {
+  set_has_time1();
+  time1_ = value;
+}
+
+// required int32 stept = 10;
+inline bool MotionWiimoteSimple::has_stept() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void MotionWiimoteSimple::set_has_stept() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void MotionWiimoteSimple::clear_has_stept() {
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void MotionWiimoteSimple::clear_stept() {
   stept_ = 0;
@@ -750,7 +625,7 @@ inline void MotionWiimoteSimple::set_stept(::google::protobuf::int32 value) {
   stept_ = value;
 }
 
-// repeated .pb.MotionWiimoteSimple.Entry minseq = 2;
+// repeated .pb.MotionWiimoteSimple.Entry minseq = 11;
 inline int MotionWiimoteSimple::minseq_size() const {
   return minseq_.size();
 }
@@ -775,7 +650,7 @@ MotionWiimoteSimple::mutable_minseq() {
   return &minseq_;
 }
 
-// repeated .pb.MotionWiimoteSimple.Entry maxseq = 3;
+// repeated .pb.MotionWiimoteSimple.Entry maxseq = 12;
 inline int MotionWiimoteSimple::maxseq_size() const {
   return maxseq_.size();
 }
@@ -802,320 +677,29 @@ MotionWiimoteSimple::mutable_maxseq() {
 
 // -------------------------------------------------------------------
 
-// MotionWiimoteSimple2_Entry
-
-// required int32 t = 1;
-inline bool MotionWiimoteSimple2_Entry::has_t() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void MotionWiimoteSimple2_Entry::set_has_t() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void MotionWiimoteSimple2_Entry::clear_has_t() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void MotionWiimoteSimple2_Entry::clear_t() {
-  t_ = 0;
-  clear_has_t();
-}
-inline ::google::protobuf::int32 MotionWiimoteSimple2_Entry::t() const {
-  return t_;
-}
-inline void MotionWiimoteSimple2_Entry::set_t(::google::protobuf::int32 value) {
-  set_has_t();
-  t_ = value;
-}
-
-// required .pb.Motion.Accel accel = 2;
-inline bool MotionWiimoteSimple2_Entry::has_accel() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void MotionWiimoteSimple2_Entry::set_has_accel() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void MotionWiimoteSimple2_Entry::clear_has_accel() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void MotionWiimoteSimple2_Entry::clear_accel() {
-  if (accel_ != NULL) accel_->::pb::Motion_Accel::Clear();
-  clear_has_accel();
-}
-inline const ::pb::Motion_Accel& MotionWiimoteSimple2_Entry::accel() const {
-  return accel_ != NULL ? *accel_ : *default_instance_->accel_;
-}
-inline ::pb::Motion_Accel* MotionWiimoteSimple2_Entry::mutable_accel() {
-  set_has_accel();
-  if (accel_ == NULL) accel_ = new ::pb::Motion_Accel;
-  return accel_;
-}
-inline ::pb::Motion_Accel* MotionWiimoteSimple2_Entry::release_accel() {
-  clear_has_accel();
-  ::pb::Motion_Accel* temp = accel_;
-  accel_ = NULL;
-  return temp;
-}
-
-// required .pb.Motion.Gyro gyro = 3;
-inline bool MotionWiimoteSimple2_Entry::has_gyro() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void MotionWiimoteSimple2_Entry::set_has_gyro() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void MotionWiimoteSimple2_Entry::clear_has_gyro() {
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline void MotionWiimoteSimple2_Entry::clear_gyro() {
-  if (gyro_ != NULL) gyro_->::pb::Motion_Gyro::Clear();
-  clear_has_gyro();
-}
-inline const ::pb::Motion_Gyro& MotionWiimoteSimple2_Entry::gyro() const {
-  return gyro_ != NULL ? *gyro_ : *default_instance_->gyro_;
-}
-inline ::pb::Motion_Gyro* MotionWiimoteSimple2_Entry::mutable_gyro() {
-  set_has_gyro();
-  if (gyro_ == NULL) gyro_ = new ::pb::Motion_Gyro;
-  return gyro_;
-}
-inline ::pb::Motion_Gyro* MotionWiimoteSimple2_Entry::release_gyro() {
-  clear_has_gyro();
-  ::pb::Motion_Gyro* temp = gyro_;
-  gyro_ = NULL;
-  return temp;
-}
-
-// required .pb.Motion.Gyro orien = 4;
-inline bool MotionWiimoteSimple2_Entry::has_orien() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void MotionWiimoteSimple2_Entry::set_has_orien() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void MotionWiimoteSimple2_Entry::clear_has_orien() {
-  _has_bits_[0] &= ~0x00000008u;
-}
-inline void MotionWiimoteSimple2_Entry::clear_orien() {
-  if (orien_ != NULL) orien_->::pb::Motion_Gyro::Clear();
-  clear_has_orien();
-}
-inline const ::pb::Motion_Gyro& MotionWiimoteSimple2_Entry::orien() const {
-  return orien_ != NULL ? *orien_ : *default_instance_->orien_;
-}
-inline ::pb::Motion_Gyro* MotionWiimoteSimple2_Entry::mutable_orien() {
-  set_has_orien();
-  if (orien_ == NULL) orien_ = new ::pb::Motion_Gyro;
-  return orien_;
-}
-inline ::pb::Motion_Gyro* MotionWiimoteSimple2_Entry::release_orien() {
-  clear_has_orien();
-  ::pb::Motion_Gyro* temp = orien_;
-  orien_ = NULL;
-  return temp;
-}
-
-// -------------------------------------------------------------------
-
-// MotionWiimoteSimple2
-
-// required string uuid = 1;
-inline bool MotionWiimoteSimple2::has_uuid() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void MotionWiimoteSimple2::set_has_uuid() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void MotionWiimoteSimple2::clear_has_uuid() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void MotionWiimoteSimple2::clear_uuid() {
-  if (uuid_ != &::google::protobuf::internal::kEmptyString) {
-    uuid_->clear();
-  }
-  clear_has_uuid();
-}
-inline const ::std::string& MotionWiimoteSimple2::uuid() const {
-  return *uuid_;
-}
-inline void MotionWiimoteSimple2::set_uuid(const ::std::string& value) {
-  set_has_uuid();
-  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
-    uuid_ = new ::std::string;
-  }
-  uuid_->assign(value);
-}
-inline void MotionWiimoteSimple2::set_uuid(const char* value) {
-  set_has_uuid();
-  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
-    uuid_ = new ::std::string;
-  }
-  uuid_->assign(value);
-}
-inline void MotionWiimoteSimple2::set_uuid(const char* value, size_t size) {
-  set_has_uuid();
-  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
-    uuid_ = new ::std::string;
-  }
-  uuid_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* MotionWiimoteSimple2::mutable_uuid() {
-  set_has_uuid();
-  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
-    uuid_ = new ::std::string;
-  }
-  return uuid_;
-}
-inline ::std::string* MotionWiimoteSimple2::release_uuid() {
-  clear_has_uuid();
-  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = uuid_;
-    uuid_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
-}
-
-// required int64 time0 = 2;
-inline bool MotionWiimoteSimple2::has_time0() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void MotionWiimoteSimple2::set_has_time0() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void MotionWiimoteSimple2::clear_has_time0() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void MotionWiimoteSimple2::clear_time0() {
-  time0_ = GOOGLE_LONGLONG(0);
-  clear_has_time0();
-}
-inline ::google::protobuf::int64 MotionWiimoteSimple2::time0() const {
-  return time0_;
-}
-inline void MotionWiimoteSimple2::set_time0(::google::protobuf::int64 value) {
-  set_has_time0();
-  time0_ = value;
-}
-
-// required int64 time1 = 3;
-inline bool MotionWiimoteSimple2::has_time1() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void MotionWiimoteSimple2::set_has_time1() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void MotionWiimoteSimple2::clear_has_time1() {
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline void MotionWiimoteSimple2::clear_time1() {
-  time1_ = GOOGLE_LONGLONG(0);
-  clear_has_time1();
-}
-inline ::google::protobuf::int64 MotionWiimoteSimple2::time1() const {
-  return time1_;
-}
-inline void MotionWiimoteSimple2::set_time1(::google::protobuf::int64 value) {
-  set_has_time1();
-  time1_ = value;
-}
-
-// required int32 stept = 10;
-inline bool MotionWiimoteSimple2::has_stept() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void MotionWiimoteSimple2::set_has_stept() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void MotionWiimoteSimple2::clear_has_stept() {
-  _has_bits_[0] &= ~0x00000008u;
-}
-inline void MotionWiimoteSimple2::clear_stept() {
-  stept_ = 0;
-  clear_has_stept();
-}
-inline ::google::protobuf::int32 MotionWiimoteSimple2::stept() const {
-  return stept_;
-}
-inline void MotionWiimoteSimple2::set_stept(::google::protobuf::int32 value) {
-  set_has_stept();
-  stept_ = value;
-}
-
-// repeated .pb.MotionWiimoteSimple2.Entry minseq = 11;
-inline int MotionWiimoteSimple2::minseq_size() const {
-  return minseq_.size();
-}
-inline void MotionWiimoteSimple2::clear_minseq() {
-  minseq_.Clear();
-}
-inline const ::pb::MotionWiimoteSimple2_Entry& MotionWiimoteSimple2::minseq(int index) const {
-  return minseq_.Get(index);
-}
-inline ::pb::MotionWiimoteSimple2_Entry* MotionWiimoteSimple2::mutable_minseq(int index) {
-  return minseq_.Mutable(index);
-}
-inline ::pb::MotionWiimoteSimple2_Entry* MotionWiimoteSimple2::add_minseq() {
-  return minseq_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple2_Entry >&
-MotionWiimoteSimple2::minseq() const {
-  return minseq_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple2_Entry >*
-MotionWiimoteSimple2::mutable_minseq() {
-  return &minseq_;
-}
-
-// repeated .pb.MotionWiimoteSimple2.Entry maxseq = 12;
-inline int MotionWiimoteSimple2::maxseq_size() const {
-  return maxseq_.size();
-}
-inline void MotionWiimoteSimple2::clear_maxseq() {
-  maxseq_.Clear();
-}
-inline const ::pb::MotionWiimoteSimple2_Entry& MotionWiimoteSimple2::maxseq(int index) const {
-  return maxseq_.Get(index);
-}
-inline ::pb::MotionWiimoteSimple2_Entry* MotionWiimoteSimple2::mutable_maxseq(int index) {
-  return maxseq_.Mutable(index);
-}
-inline ::pb::MotionWiimoteSimple2_Entry* MotionWiimoteSimple2::add_maxseq() {
-  return maxseq_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple2_Entry >&
-MotionWiimoteSimple2::maxseq() const {
-  return maxseq_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple2_Entry >*
-MotionWiimoteSimple2::mutable_maxseq() {
-  return &maxseq_;
-}
-
-// -------------------------------------------------------------------
-
 // MotionWiimoteSimpleList
 
-// repeated .pb.MotionWiimoteSimple2 motions = 10;
+// repeated .pb.MotionWiimoteSimple motions = 10;
 inline int MotionWiimoteSimpleList::motions_size() const {
   return motions_.size();
 }
 inline void MotionWiimoteSimpleList::clear_motions() {
   motions_.Clear();
 }
-inline const ::pb::MotionWiimoteSimple2& MotionWiimoteSimpleList::motions(int index) const {
+inline const ::pb::MotionWiimoteSimple& MotionWiimoteSimpleList::motions(int index) const {
   return motions_.Get(index);
 }
-inline ::pb::MotionWiimoteSimple2* MotionWiimoteSimpleList::mutable_motions(int index) {
+inline ::pb::MotionWiimoteSimple* MotionWiimoteSimpleList::mutable_motions(int index) {
   return motions_.Mutable(index);
 }
-inline ::pb::MotionWiimoteSimple2* MotionWiimoteSimpleList::add_motions() {
+inline ::pb::MotionWiimoteSimple* MotionWiimoteSimpleList::add_motions() {
   return motions_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple2 >&
+inline const ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple >&
 MotionWiimoteSimpleList::motions() const {
   return motions_;
 }
-inline ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple2 >*
+inline ::google::protobuf::RepeatedPtrField< ::pb::MotionWiimoteSimple >*
 MotionWiimoteSimpleList::mutable_motions() {
   return &motions_;
 }

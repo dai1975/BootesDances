@@ -8,6 +8,7 @@ struct Stage
 {
    int version;
    std::string  name;
+   std::string  basename;
    std::string  moviepath;
    std::basic_string< TCHAR > tc_basename;
    std::basic_string< TCHAR > tc_moviepath;

@@ -19,7 +19,8 @@ EditorView::EditorView()
 {
    _state = S_0;
    _bMouseEnter = false;
-   _pFileDialog = NULL;
+   _pNewDialog = NULL;
+   _pLoadDialog = NULL;
    _pEditWindow = NULL;
    _pCeguiRenderer = NULL;
    _elapse = 0;
@@ -32,7 +33,8 @@ EditorView::EditorView()
 
 EditorView::~EditorView()
 {
-   if (_pFileDialog) { delete _pFileDialog; }
+   if (_pNewDialog) { delete _pNewDialog; }
+   if (_pLoadDialog) { delete _pLoadDialog; }
    if (_pEditWindow) { delete _pEditWindow; }
    if (_pCeguiRenderer) {
       CEGUI::Direct3D9Renderer::destroy(*_pCeguiRenderer);
@@ -115,6 +117,12 @@ void EditorView::createSheet()
          CEGUI::Font* font = ::bootes::cegui::DynamicFont::GetAsciiFont(8);
          CEGUI::System::getSingleton().setDefaultFont(font);
       }
+
+      {
+         CEGUI::String& type = LoadWindow::WidgetTypeName;
+         CEGUI::WindowFactoryManager::addFactory< CEGUI::TplWindowFactory< LoadWindow > >();
+         wfm.addFalagardWindowMapping(type, type, "TaharezLook/FrameWindow", "Falagard/FrameWindow");
+      }
       
       createSheet0();
 
@@ -153,13 +161,22 @@ void EditorView::createSheet0()
    CEGUI::Window *pWMain = _pWRoot->getChild("Root/MainWindow");
    pWMain->addChildWindow(_pEditWindow);
 
-   _pFileDialog = ::bootes::cegui::FileDialog::Create("FileDialog");
-   _pFileDialog->subscribeEvent(::bootes::cegui::FileDialog::EventSubmit,
-                                CEGUI::SubscriberSlot(&EditorView::onDialogSubmit, this));
-   _pFileDialog->subscribeEvent(::bootes::cegui::FileDialog::EventCancel,
-                                CEGUI::SubscriberSlot(&EditorView::onDialogCancel, this));
-   _pWRoot->addChildWindow(_pFileDialog);
-   _pFileDialog->hide();
+   _pNewDialog = ::bootes::cegui::FileDialog::Create("NewDialog");
+   _pNewDialog->subscribeEvent(::bootes::cegui::WindowDialog::EventSubmit,
+                                CEGUI::SubscriberSlot(&EditorView::onNewDialogSubmit, this));
+   _pNewDialog->subscribeEvent(::bootes::cegui::WindowDialog::EventCancel,
+                                CEGUI::SubscriberSlot(&EditorView::onNewDialogCancel, this));
+   _pWRoot->addChildWindow(_pNewDialog);
+   _pNewDialog->hide();
+
+   _pLoadDialog = LoadDialog::Create("LoadDialog");
+   _pLoadDialog->subscribeEvent(::bootes::cegui::WindowDialog::EventSubmit,
+                                CEGUI::SubscriberSlot(&EditorView::onLoadDialogSubmit, this));
+   _pLoadDialog->subscribeEvent(::bootes::cegui::WindowDialog::EventCancel,
+                                CEGUI::SubscriberSlot(&EditorView::onLoadDialogCancel, this));
+   _pWRoot->addChildWindow(_pLoadDialog);
+   _pLoadDialog->hide();
+
 
    {
       wm.getWindow("Root/Menubar/File/New")->setEnabled(true);
@@ -183,29 +200,23 @@ void EditorView::createSheet0()
 
 bool EditorView::onMenuFileNew(const CEGUI::EventArgs& ev)
 {
-   _pFileDialog->setText("Open New Movie");
-   intptr_t mode = DIALOG_NEW;
-   _pFileDialog->setUserData(reinterpret_cast< void* >(mode));
-   _pFileDialog->setAlwaysOnTop(true);
+   _pNewDialog->setText("Open New Movie");
+   _pNewDialog->setAlwaysOnTop(true);
    const TCHAR* exts[] = { _T(".mp4"),_T(".avi"),_T("mpeg"),_T("mov"),_T("mkv"), 0 };
-   //_pFileDialog->dialog( g_pGame->getUserDir(), exts);
-   _pFileDialog->window()->setup( g_pGame->getUserDir(), exts);
-   _pFileDialog->open();
+   _pNewDialog->window()->setup( g_pGame->getUserDir(), exts);
+   _pNewDialog->open();
    return true;
 }
 
-bool EditorView::onMenuFileLoad(const CEGUI::EventArgs& ev)
+bool EditorView::onMenuFileLoad(const CEGUI::EventArgs& ev_)
 {
-/*
-   _pFileDialog->setText("Open Stage File");
-   intptr_t mode = DIALOG_LOAD;
-   _pFileDialog->setUserData(reinterpret_cast< void* >(mode));
-   _pFileDialog->setAlwaysOnTop(true);
-   const TCHAR* exts[] = { _T(".boo"), 0, };
-   _pFileDialog->dialog( g_pGame->getUserDir(), exts);
+   EvSearchStage ev;
+   g_pFnd->queue(&ev);
+
+   _pNewDialog->setText("Load stage file");
+   _pLoadDialog->window()->setup();
+   _pLoadDialog->open();
    return true;
-*/
-   return false;
 }
 
 bool EditorView::onMenuFileSave(const CEGUI::EventArgs& ceguiev)
@@ -217,52 +228,41 @@ bool EditorView::onMenuFileSave(const CEGUI::EventArgs& ceguiev)
    return true;
 }
 
-bool EditorView::onDialogSubmit(const CEGUI::EventArgs& ev)
+bool EditorView::onNewDialogSubmit(const CEGUI::EventArgs& ev_)
 {
-   const CEGUI::WindowEventArgs& wev = static_cast< const CEGUI::WindowEventArgs& >(ev);
-   intptr_t mode = reinterpret_cast< intptr_t >( wev.window->getUserData() );
-
-   const TCHAR* tc_dir  = _pFileDialog->window()->getDir();
-   const TCHAR* tc_file = _pFileDialog->window()->getFile();
+   const TCHAR* tc_dir  = _pNewDialog->window()->getDir();
+   const TCHAR* tc_file = _pNewDialog->window()->getFile();
    if (tc_dir == NULL || tc_dir[0] == _T('\0')) { return true; }
    if (tc_file == NULL || tc_file[0] == _T('\0')) { return true; }
 
-   switch (mode) {
-   case DIALOG_NEW:  doDialogNew(tc_dir, tc_file); break;
-   case DIALOG_LOAD: doDialogLoad(tc_dir, tc_file); break;
-
-      //   case DIALOG_SAVE: doSave(tc_dir, tc_file); break;
-   default:
-      return true;
-   }
-   return true;
-}
-
-bool EditorView::onDialogCancel(const CEGUI::EventArgs& ev)
-{
-   return true;
-}
-
-void EditorView::doDialogNew(const TCHAR* tc_dir, const TCHAR* tc_file)
-{
    EvNewStage ev;
    ev._moviepath.append(tc_dir).append(_T("\\")).append(tc_file);
    g_pFnd->getEventManager()->queue(&ev);
+
+   return true;
 }
 
-void EditorView::doDialogLoad(const TCHAR* dir, const TCHAR* file)
+bool EditorView::onNewDialogCancel(const CEGUI::EventArgs& ev_)
 {
-   const TCHAR *pc;
-   for (pc = dir; pc != _T('\0'); ++pc) {
-      if (*pc == _T('\\')) { break; }
-   }
-   if (*pc == _T('\0')) { pc = dir; }
+   return true;
+}
+
+bool EditorView::onLoadDialogSubmit(const CEGUI::EventArgs& ev_)
+{
+   const TCHAR* tc_name  = _pLoadDialog->window()->getSelectedName();
+   if (tc_name == NULL || tc_name[0] == _T('\0')) { return true; }
 
    EvLoadStage ev;
-   ev._basename = pc;
+   ev._basename = tc_name;
    g_pFnd->getEventManager()->queue(&ev);
+
+   return true;
 }
 
+bool EditorView::onLoadDialogCancel(const CEGUI::EventArgs& ev_)
+{
+   return true;
+}
 
 void EditorView::onUpdate(double currentTime, int elapsedTime)
 {
