@@ -18,11 +18,23 @@ GameView::GameView(StageManagerProxy* mng, D3DPOOL pool)
    _pWiimoteHandler = mng->getWiimoteHandler();
    _pStageManager   = mng;
    _enabled = true;
+
+   g_pFnd->getEventManager()->subscribe< EvLoadStageResult >(this);
 }
 
 GameView::~GameView()
 {
 //   clearBuffer();
+}
+
+void GameView::onEvent(const ::bootes::lib::framework::Event* ev)
+{
+   int eid = ev->getEventId();
+   if (false) {
+      ;
+   } else if (eid == EvLoadStageResult::GetEventId()) {
+      _texView.reset();
+   }
 }
 
 Scene GameView::getScene(bool requireTexture) const
@@ -45,6 +57,7 @@ VideoInfo  GameView::getVideoInfo() const
    return _pMoviePlayer->getVideoInfo();
 }
 
+// 外から貰う各種オブジェクトの onResetDevice をここで呼ぶのは分かりにくいな
 void GameView::onResetDevice()
 {
    IDirect3DDevice9* pDev = g_pFnd->getD3D9Device();

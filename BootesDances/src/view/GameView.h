@@ -4,9 +4,11 @@
 #include "../include.h"
 #include "stage/StageManagerProxy.h"
 #include <bootes/lib/d3dx9/Label.h>
+#include <bootes/dances/EvStage.h>
 #include "TextureView.h"
 
 class GameView: public ISceneSequencer
+              , public ::bootes::lib::framework::EventListener
 {
 public:
    GameView(StageManagerProxy*, D3DPOOL);
@@ -22,6 +24,7 @@ public:
    void onRender(double currentTime, int elapsedTime);
    void onLostDevice();
    void onResetDevice();
+   void onEvent(const ::bootes::lib::framework::Event* ev);
 
 private:
    void onRender0(IDirect3DDevice9* pDev, const Scene* scene, double currentTime, int elapsedTime);

@@ -10,6 +10,7 @@ public:
    ~TextureView();
 
    inline bool isInit() const { return _init; }
+   void reset();
    void init(D3DPOOL pool, DWORD width, DWORD height, D3DFORMAT format);
    IDirect3DTexture9* refTexture() const;
 

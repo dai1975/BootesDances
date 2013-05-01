@@ -19,6 +19,11 @@ TextureView::~TextureView()
    clearBuffer();
 }
 
+void TextureView::reset()
+{
+   _init = false;
+}
+
 void TextureView::init(D3DPOOL pool, DWORD width, DWORD height, D3DFORMAT format)
 {
    if (_init) { return; }
@@ -27,6 +32,7 @@ void TextureView::init(D3DPOOL pool, DWORD width, DWORD height, D3DFORMAT format
    _width = width;
    _height = height;
    _format = format;
+   clearBuffer();
 }
 
 IDirect3DTexture9* TextureView::refTexture() const
