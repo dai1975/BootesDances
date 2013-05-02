@@ -20,7 +20,7 @@ public:
    virtual bool realize(const ::pb::GuideRibbon& pIn) = 0;
 
 public:
-   static const std::string TYPE;
+//   static const std::string TYPE;
    //! 編集用の点を得る
    virtual inline const t_points& getEditPoints() const
    { return _edit_points; }

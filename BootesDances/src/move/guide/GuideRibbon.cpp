@@ -4,7 +4,7 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <sstream>
 
-const std::string GuideRibbon::TYPE = "GuideRibbon";
+//const std::string GuideRibbon::TYPE = "GuideRibbon";
 
 GuideRibbon::GuideRibbon(int subid)
    : Guide(subid)

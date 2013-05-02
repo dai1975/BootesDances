@@ -11,8 +11,9 @@ TeachSequence::TeachSequence(const TeachSequence& r)
 
 TeachSequence& TeachSequence::operator=(const TeachSequence& r)
 {
-   succeed = r.succeed;
+   records.clear();
    ::std::copy(r.records.begin(), r.records.end(), ::std::back_inserter(records));
+   succeed = r.succeed;
    return *this;
 }
 
