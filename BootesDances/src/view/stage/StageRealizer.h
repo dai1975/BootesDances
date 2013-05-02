@@ -26,7 +26,7 @@ public:
    static bool New(Stage**, MoveSequence**, const MotionGuidePair& mg);
 
 private:
-   static bool Search(void(*cb)(bool,Stage*,void*), void* data, const TCHAR* pdir, const TCHAR* name, const MotionGuideList&);
+   static bool Search0(void(*cb)(bool,Stage*,void*), void* data, const TCHAR* basepath, const TCHAR* subdir, const MotionGuideList&);
 };
 
 #endif

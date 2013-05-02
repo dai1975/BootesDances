@@ -135,20 +135,22 @@ bool StageRealizer::IsExist(const TCHAR* dir, const TCHAR* name)
    return true;
 }
 
-bool StageRealizer::Load(Stage** ppStage, MoveSequence** ppSeq, const TCHAR* dir, const TCHAR* name, const MotionGuideList& mgl)
+bool StageRealizer::Load(Stage** ppStage, MoveSequence** ppSeq, const TCHAR* basepath, const TCHAR* subdir, const MotionGuideList& mgl)
 {
    if (ppStage == NULL) { return false; }
-   if (! IsExist(dir, name)) { return false; }
+   if (basepath == NULL || basepath[0] == _T('\0')) { return false; }
+   if (subdir == NULL || subdir[0] == _T('\0')) { return false; }
+   if (! IsExist(basepath, subdir)) { return false; }
 
    MotionGuidePair mg;
-   if (! MoveRealizer::IsExist(&mg, dir, name, mgl)) { return false; }
+   if (! MoveRealizer::IsExist(&mg, basepath, subdir, mgl)) { return false; }
 
    Stage* pStage = NULL;
    MoveSequence* pSeq = NULL;
 
    {
       int fd;
-      std::basic_string< TCHAR > path = GetFilePath(dir, name);
+      std::basic_string< TCHAR > path = GetFilePath(basepath, subdir);
       errno_t err = _tsopen_s(&fd, path.c_str(),
                               _O_RDONLY|_O_BINARY, _SH_DENYWR, _S_IREAD|_S_IWRITE);
       if (err != 0) {
@@ -163,13 +165,13 @@ bool StageRealizer::Load(Stage** ppStage, MoveSequence** ppSeq, const TCHAR* dir
          return false;
       }
 
-      if (! StageRealizer::Realize(&pStage, idea, name)) {
+      if (! StageRealizer::Realize(&pStage, idea, subdir)) {
          return false;
       }
    }
 
    if (ppSeq) {
-      if (! MoveRealizer::Load(&pSeq, dir, name, mg)) {
+      if (! MoveRealizer::Load(&pSeq, basepath, subdir, mg)) {
          goto fail;
       }
    }
@@ -269,13 +271,13 @@ fail:
    return false;
 }
 
-bool StageRealizer::Search(void(*cb)(bool,Stage*,void*), void* data, const TCHAR* dir, const MotionGuideList& mgl)
+bool StageRealizer::Search(void(*cb)(bool,Stage*,void*), void* data, const TCHAR* basepath, const MotionGuideList& mgl)
 {
    WIN32_FIND_DATA find;
    HANDLE hFind;
    {
       tc_string query;
-      query.append(dir).append(_T("\\*"));
+      query.append(basepath).append(_T("\\*"));
       hFind = FindFirstFile(query.c_str(), &find);
       if (hFind == INVALID_HANDLE_VALUE) {
          (*cb)(false, 0, NULL);
@@ -283,34 +285,38 @@ bool StageRealizer::Search(void(*cb)(bool,Stage*,void*), void* data, const TCHAR
       }
    }
 
-   std::list< std::basic_string< TCHAR > > dirs;
+   std::list< std::basic_string< TCHAR > > subdirs;
    for (BOOL found = TRUE; found; found=FindNextFile(hFind, &find)) {
       if ((find.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) {
          if (find.cFileName[0] != _T('.')) {
-            dirs.push_back( std::basic_string< TCHAR >(find.cFileName) );
+            subdirs.push_back( std::basic_string< TCHAR >(find.cFileName) );
          }
       }
    } //for found
    FindClose(hFind);
 
-   for (std::list< std::basic_string< TCHAR > >::iterator i = dirs.begin(); i != dirs.end(); ++i) {
-      Search(cb, data, dir, i->c_str(), mgl);
+   for (std::list< std::basic_string< TCHAR > >::iterator i = subdirs.begin(); i != subdirs.end(); ++i) {
+      Search0(cb, data, basepath, i->c_str(), mgl);
    }
 
    (*cb)(true, NULL, data);
    return true;
 }
 
-bool StageRealizer::Search(void(*cb)(bool,Stage*,void*), void* data, const TCHAR* parentdir, const TCHAR* name, const MotionGuideList& mgl)
+bool StageRealizer::Search0(void(*cb)(bool,Stage*,void*), void* data,
+                            const TCHAR* basepath, const TCHAR* subdir, const MotionGuideList& mgl)
 {
-   std::basic_string< TCHAR > dir;
-   dir.append(parentdir).append(_T("\\")).append(name);
-
    WIN32_FIND_DATA find;
    HANDLE hFind;
    {
       std::basic_string< TCHAR > query;
-      query.append(dir).append(_T("\\*"));
+      if (subdir[0] != _T('\0')) {
+         query.append(basepath).append(_T("\\")).append(subdir);
+      } else {
+         query.append(basepath);
+      }
+      query.append(_T("\\*"));
+
       hFind = FindFirstFile(query.c_str(), &find);
       if (hFind == INVALID_HANDLE_VALUE) {
          (*cb)(false, 0, NULL);
@@ -336,11 +342,17 @@ bool StageRealizer::Search(void(*cb)(bool,Stage*,void*), void* data, const TCHAR
    FindClose(hFind);
 
    for (std::list< std::basic_string< TCHAR > >::iterator i = dirs.begin(); i != dirs.end(); ++i) {
-      Search(cb, data, dir.c_str(), i->c_str(), mgl);
+      std::basic_string< TCHAR > sd;
+      if (subdir[0] != _T('\0')) {
+         sd.append(subdir).append(_T("\\")).append(i->c_str());
+      } else {
+         sd.append(i->c_str());
+      }
+      Search0(cb, data, basepath, sd.c_str(), mgl);
    }
    if (has_stagefile) {
       Stage* pStage = NULL;
-      if (StageRealizer::Load(&pStage, NULL, parentdir, name, mgl)) {
+      if (StageRealizer::Load(&pStage, NULL, basepath, subdir, mgl)) {
          (*cb)(true, pStage, data);
       }
    }
