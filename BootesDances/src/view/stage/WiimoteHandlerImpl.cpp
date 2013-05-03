@@ -12,7 +12,7 @@ WiimoteHandlerImpl::WiimoteHandlerImpl(bool editable, const TCHAR* dir)
       _teachLogger.start(dir);
    }
 
-//   g_pFnd->getEventManager()->subscribe< EvLoadStageResult >(this);
+   g_pFnd->getEventManager()->subscribe< EvLoadStageResult >(this);
    g_pFnd->getEventManager()->subscribe< EvMoviePlay >(this);
    g_pFnd->getEventManager()->subscribe< EvMoviePause >(this);
    g_pFnd->getEventManager()->subscribe< EvMovieSeek >(this);
@@ -38,30 +38,16 @@ bool WiimoteHandlerImpl::initStage(MoveSequence* moves, const TCHAR* name)
 
    return true;
 }
-/*
-void WiimoteHandlerImpl::clear()
-{
-   _pTestMove = NULL;
-   _pTeachMove = NULL;
-}
-*/
+
 void WiimoteHandlerImpl::onSubscribe(::bootes::lib::framework::EventManager*) { }
 void WiimoteHandlerImpl::onUnsubscribe(::bootes::lib::framework::EventManager*) { }
 void WiimoteHandlerImpl::onEvent(const ::bootes::lib::framework::Event* ev)
 {
    if (false) { ; }
-   //if (tryDispatch(ev, &WiimoteHandlerImpl::onLoad)) { return; }
    else if (tryDispatch(ev, &WiimoteHandlerImpl::onPlay)) { return; }
    else if (tryDispatch(ev, &WiimoteHandlerImpl::onPause)) { return; }
    else if (tryDispatch(ev, &WiimoteHandlerImpl::onSeek)) { return; }
 }
-/*
-void WiimoteHandlerImpl::onLoad(const EvLoadStageResult* ev)
-{
-   clear();
-   _pTestMove = NULL;
-}
-*/
 
 void WiimoteHandlerImpl::onPlay(const EvMoviePlay* ev)
 {

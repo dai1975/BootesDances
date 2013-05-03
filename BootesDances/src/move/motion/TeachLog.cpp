@@ -11,16 +11,14 @@
 
 namespace {
 
-bool GetFilepathes(std::map< int, std::basic_string< TCHAR > >* pOut, const TCHAR* dir, const TCHAR* name)
+bool SearchLogs(std::map< std::basic_string< TCHAR >, DWORD >* pOut, const TCHAR* basepath, const TCHAR* subdir)
 {
    WIN32_FIND_DATA find;
    HANDLE hFind;
 
    {
-      std::basic_string< TCHAR > query = dir;
-      query += _T("\\");
-      query += name;
-      query += _T("-*.teach");
+      std::basic_string< TCHAR > query;
+      query.append(basepath).append(_T("\\")).append(subdir).append(_T("\\teach.log.*"));
       hFind = FindFirstFile(query.c_str(), &find);
       if (hFind == INVALID_HANDLE_VALUE) {
          return true;
@@ -28,45 +26,58 @@ bool GetFilepathes(std::map< int, std::basic_string< TCHAR > >* pOut, const TCHA
    }
 
    for (BOOL found = TRUE; found; found=FindNextFile(hFind, &find)) {
-      if ((find.dwFileAttributes & FILE_ATTRIBUTE_NORMAL) != 0) { continue; }
-      int n = 0;
-      for (size_t i=0; find.cFileName[i] != _T('.'); ++i) {
-         if (_T('0') <= find.cFileName[i] && find.cFileName[i] <= _T('9')) {
-            n *= 10;
-            n += find.cFileName[i] - _T('0');
-         } else {
-            n = -1;
-            break;
-         }
-      }
-      if (0 <= n) {
-         std::basic_string< TCHAR >& s = pOut->operator[](n);
-         s = dir;
-         s += _T("\\");
-         s += find.cFileName;
-      }
+      pOut->operator[]( std::basic_string< TCHAR >(find.cFileName) ) = find.dwFileAttributes;
    }
    FindClose(hFind);
 
    return true;
 }
 
-bool GetNewFilepath(std::basic_string< TCHAR >* pOut, const TCHAR* dir, const TCHAR* name)
+bool SearchRegularLogs(std::map< int, std::basic_string< TCHAR > >* pOut, const TCHAR* basepath, const TCHAR* subdir)
 {
-   std::map< int, std::basic_string< TCHAR > > map;
-   if (! GetFilepathes(&map, dir, name)) { return false; }
+   std::map< std::basic_string< TCHAR >, DWORD > map;
+   if (! SearchLogs(&map, basepath, subdir)) { return false; }
+
+   for (std::map< std::basic_string< TCHAR >, DWORD >::iterator i = map.begin(); i != map.end(); ++i) {
+      DWORD attr = i->second;
+      if ((attr & FILE_ATTRIBUTE_NORMAL) != 0) { continue; }
+      if ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0) { continue; }
+
+      const std::basic_string< TCHAR >& s = i->first;
+      if (s.size() < 11) { continue; }
+      int n = 0;
+      for (int i=10; i<s.size(); ++i) {
+         if (s[i] < _T('0') || _T('9') < s[i]) { break; }
+         n *= 10;
+         n += (s[i] - _T('0'));
+      }
+      pOut->operator[](n) = s;
+   }
+   return true;
+}
+
+bool GetNewFilepath(std::basic_string< TCHAR >* pOut, const TCHAR* basepath, const TCHAR* subdir)
+{
+   std::map< std::basic_string< TCHAR >, DWORD > map;
+   if (! SearchLogs(&map, basepath, subdir)) { return false; }
 
    int max = 0;
-   if (! map.empty()) {
-      std::map< int, std::basic_string< TCHAR > >::iterator i;
-      i = map.end();
-      --i;
-      max = i->first;
+   for (std::map< std::basic_string< TCHAR >, DWORD >::iterator i = map.begin(); i != map.end(); ++i) {
+      const std::basic_string< TCHAR >& s = i->first;
+      if (s.size() < 11) { continue; }
+
+      int n = 0;
+      for (int i=10; i<s.size(); ++i) {
+         if (s[i] < _T('0') || _T('9') < s[i]) { break; }
+         n *= 10;
+         n += (s[i] - _T('0'));
+      }
+      if (max < n) { max = n; }
    }
 
    {
       std::basic_ostringstream< TCHAR > o;
-      o << dir << _T("\\") << name << _T("-") << (max+1) << _T(".teach");
+      o << basepath << _T("\\") << subdir << _T("\\teach.log.") << (max+1);
       *pOut = o.str();
    }
    return true;
@@ -74,14 +85,15 @@ bool GetNewFilepath(std::basic_string< TCHAR >* pOut, const TCHAR* dir, const TC
 
 }
 
-bool TeachLogLoader::Load(t_motions* pOut, const IMotion* prototype, const TCHAR* dir, const TCHAR* name)
+bool TeachLogLoader::LoadAll(t_motions* pOut, const IMotion* prototype, const TCHAR* basepath, const TCHAR* subdir)
 {
-   std::map< int, std::basic_string< TCHAR > > pathes;
-   if (! GetFilepathes(&pathes, dir, name)) { return false; }
+   std::map< int, std::basic_string< TCHAR > > files;
+   if (! SearchRegularLogs(&files, basepath, subdir)) { return false; }
    
-   for (std::map< int, std::basic_string< TCHAR > >::iterator i = pathes.begin(); i != pathes.end(); ++i) {
-      int num = i->first;
-      std::basic_string< TCHAR >& path = i->second;
+   // map はキー順、つまりログファイルの番号順にソート済み
+   for (std::map< int, std::basic_string< TCHAR > >::iterator i = files.begin(); i != files.end(); ++i) {
+      std::basic_string< TCHAR > path;
+      path.append(basepath).append(_T("\\")).append(subdir).append(_T("\\")).append(i->second);
 
       ::pb::TeachLog idea;
       {
@@ -221,7 +233,7 @@ DWORD TeachLogger::run()
 {
    _run = true;
 
-   std::basic_string< TCHAR > path, name;
+   std::basic_string< TCHAR > path, subdir;
    int fd = -1;
    errno_t err = 0;
    std::list< Entry* > queue;
@@ -243,18 +255,18 @@ DWORD TeachLogger::run()
                _close(fd);
             }
             fd = -1;
-            name = e->name;
+            subdir = e->name;
 
          } else {
-            if (fd < 0 && 0 < name.size()) {
-               if (GetNewFilepath(&path, _dir.c_str(), name.c_str())) {
+            if (fd < 0 && 0 < subdir.size()) {
+               if (GetNewFilepath(&path, _dir.c_str(), subdir.c_str())) {
                   err = _tsopen_s(&fd, path.c_str(), 
                                   _O_WRONLY|_O_BINARY|_O_CREAT|_O_EXCL, _SH_DENYWR, _S_IREAD|_S_IWRITE);
                   if (0 < err) {
                      fd = -1;
                   }
                }
-               name = _T("");
+               subdir = _T("");
             }
             if (0 < fd) {
                google::protobuf::io::FileOutputStream out(fd);
@@ -302,14 +314,14 @@ DWORD TeachLogger::run()
    return 0;
 }
 
-bool TeachLogger::open(const TCHAR* name)
+bool TeachLogger::open(const TCHAR* subdir)
 {
    bool ret = false;
    if (!_run) { return false; }
    WaitForSingleObject(_mutex, INFINITE);
    {
       if (_run) {
-         _queue.push_back( new Entry(NULL, name) );
+         _queue.push_back( new Entry(NULL, subdir) );
          ret = true;
       }
    }

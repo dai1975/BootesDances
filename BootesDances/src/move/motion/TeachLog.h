@@ -46,7 +46,7 @@ class TeachLogLoader
 {
 public:
    typedef std::map< std::string, IMotion* > t_motions;
-   static bool Load(t_motions* pOut, const IMotion* prototype, const TCHAR* dir, const TCHAR* name);
+   static bool LoadAll(t_motions* pOut, const IMotion* prototype, const TCHAR* dir, const TCHAR* name);
    static bool Realize(t_motions* pOut, const IMotion* prototype, const ::pb::TeachLog& idea);
 };
 
