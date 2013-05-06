@@ -64,35 +64,6 @@ MotionRealizer::MotionRealizer()
 MotionRealizer::~MotionRealizer()
 { }
 
-/*
-bool MotionRealizer::Idealize(::pb::Motion* pOut, const IMotion& in)
-{
-   return in.idealize(pOut);
-}
-
-bool MotionRealizer::Realize(IMotion** ppOut, const ::pb::Motion& in)
-{
-   IMotion* p = NULL;
-   const std::string& type = in.type();
-
-   if (false) {
-      ;
-   } else if (type.compare("MotionWiimoteSimple") == 0) {
-      p = new MotionWiimoteSimple();
-   } else {
-      return false;
-   }
-
-   if (! p->realize(in)) {
-      delete p;
-      return false;
-   }
-   
-   *ppOut = p;
-   return true;
-}
-*/
-
 std::basic_string< TCHAR > MotionRealizer::GetFilePath(const TCHAR* dir, const TCHAR* name, const TCHAR* motion)
 {
    std::basic_ostringstream< TCHAR > o;

@@ -4,48 +4,6 @@
 #include "motion/MotionRealizer.h"
 #include <bootes/lib/util/TChar.h>
 
-/*
-bool MoveRealizer::Realize(IMove** ppOut, const pb::Move& in)
-{
-   IGuide* pGuide = NULL;
-   IMotion* pMotion = NULL;
-   if (! GuideRealizer::Realize(&pGuide, in.guide())) { return false; }
-   if (in.has_motion()) {
-      if (! MotionRealizer::Realize(&pMotion, in.motion())) { return false; }
-   }
-
-   Move* move = new Move();
-   move->setGuide(pGuide);
-   move->setMotion(pMotion);
-
-   move->setTime(in.time0(), in.time1());
-   move->setUuid(in.uuid().c_str());
-
-   *ppOut = move;
-   return true;
-}
-
-bool MoveRealizer::Idealize(::pb::Move* pOut, const IMove& in)
-{
-   if (in.getGuide()) {
-      if (! GuideRealizer::Idealize(pOut->mutable_guide(), *in.getGuide())) {
-         return false;
-      }
-   }
-   if (in.getMotion()) {
-      if (! MotionRealizer::Idealize(pOut->mutable_motion(), *in.getMotion())) {
-         return false;
-      }
-   }
-
-   pOut->set_uuid(in.getUuid());
-   pOut->set_time0(in.getBeginTime());
-   pOut->set_time1(in.getEndTime());
-
-   return true;
-}
-*/
-
 bool MoveRealizer::IsExist(MotionGuidePair* pOut, const TCHAR* dir, const TCHAR* name, const MotionGuideList& mgl)
 {
    for (MotionGuideList::const_iterator i = mgl.begin(); i != mgl.end(); ++i) {

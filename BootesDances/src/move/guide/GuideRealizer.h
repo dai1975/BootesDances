@@ -24,8 +24,8 @@ public:
    virtual IGuide* createGuide(int subid) const = 0;
 
 public:
-   static std::basic_string< TCHAR > GetFilePath(const TCHAR* dir, const TCHAR* name, const TCHAR* guide);
-   static bool IsExist(const TCHAR* dir, const TCHAR* name, const TCHAR* guide);
+   static std::basic_string< TCHAR > GetFilePath(const TCHAR* basepath, const TCHAR* subdir, const TCHAR* guide);
+   static bool IsExist(const TCHAR* basepath, const TCHAR* subdir, const TCHAR* guide);
 
    struct GuideData {
       IGuide* pGuide;
@@ -33,8 +33,8 @@ public:
       __int64 t0,t1;
       bool chainnext;
    };
-   bool save(const TCHAR* dir, const TCHAR* name, const MoveSequence&) const;
-   bool load(std::list< GuideData >* pOut, const TCHAR* dir, const TCHAR* name) const;
+   bool save(const TCHAR* basepath, const TCHAR* subdir, const MoveSequence&) const;
+   bool load(std::list< GuideData >* pOut, const TCHAR* basepath, const TCHAR* subdir) const;
 
 protected:
    virtual bool save(int fd, const MoveSequence&) const = 0;
