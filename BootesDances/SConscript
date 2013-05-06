@@ -66,6 +66,15 @@ sources = [
 ]
 
 motionapp_sources = [
+    'src/move/Move.cpp',
+    'src/move/MoveSequence.cpp',
+    'src/move/guide/Guide.cpp',
+    'src/move/guide/GuideRealizer.cpp',
+    'src/move/guide/GuideRibbon.cpp',
+    'src/move/guide/GuideRibbonRealizer.cpp',
+    'src/move/guide/GuideRibbonLine.cpp',
+    'src/move/guide/GuideRibbonSpline.cpp',
+    'src/move/guide/GuideRibbonEllipse.cpp',
     'src/move/motion/MotionApp.cpp',
     'src/move/motion/Motion.cpp',
     'src/move/motion/MotionRealizer.cpp',

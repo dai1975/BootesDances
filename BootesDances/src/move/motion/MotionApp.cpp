@@ -5,6 +5,8 @@
 #include <wchar.h>
 #include <locale.h>
 #include <errno.h>
+#include <windows.h>
+#include <d3dx9.h>
 
 int main(int argc, char** argv)
 {
@@ -14,6 +16,12 @@ int main(int argc, char** argv)
 
    return app.main(opt);
 }
+
+D3DXVECTOR4* WINAPI D3DXVec3TransformArray(D3DXVECTOR4*, UINT, const D3DXVECTOR3*, UINT, const D3DXMATRIX*, UINT)
+{ return NULL; }
+D3DXMATRIX* WINAPI D3DXMatrixTranslation(D3DXMATRIX*, FLOAT, FLOAT, FLOAT)
+{ return NULL; }
+
 
 namespace {
 
@@ -136,6 +144,15 @@ void MotionAppOption::parse(int& argc, char**& argv)
       }
    }
 
+   {
+      const char* gname = _pMotionRealizer->getGuideName();
+      const GuideRealizer* pGR = GuideRealizer::GetRealizer(gname);
+      if (pGR == NULL) {
+         help("no guide specified by motion algorithm: \"%s\" by \"%s\"", gname, algorithm.c_str());
+      }
+      _pGuideRealizer = pGR;
+   }
+
    if (argc == 0) { help("no directory"); }
    --argc;
    _dir = std::string(*argv++);
@@ -148,16 +165,28 @@ MotionApp::MotionApp()
 
 MotionApp::~MotionApp()
 {
-   for (t_motions::iterator i = _motions.begin(); i != _motions.end(); ++i) {
+   for (t_moves::iterator i = _moves.begin(); i != _moves.end(); ++i) {
       delete i->second;
    }
-   _motions.clear();
+   _moves.clear();
 }
 
 int MotionApp::main(const MotionAppOption& opt)
 {
-   if (! load(opt._dir.c_str())) {
+   std::basic_string< TCHAR > dir;
+   {
+      TCHAR* p = C2T(opt._dir.c_str());
+      dir.append(p);
+      delete[] p;
+   }
+
+   if (! loadTeachLog(dir.c_str())) {
       printf("fail to load logfile in dir of \"%s\"\n", opt._dir.c_str());
+      return 1;
+   }
+
+   if (! loadGuide(opt._pGuideRealizer, dir.c_str())) {
+      printf("fail to load guidefile in dir of \"%s\"\n", opt._dir.c_str());
       return 1;
    }
 
@@ -174,17 +203,10 @@ int MotionApp::main(const MotionAppOption& opt)
    return 0;
 }
 
-bool MotionApp::load(const char* cdir)
+bool MotionApp::loadTeachLog(const TCHAR* dir)
 {
-   std::basic_string< TCHAR > dir;
-   {
-      TCHAR* p = C2T(cdir);
-      dir.append(p);
-      delete[] p;
-   }
-
    std::list< ::pb::TeachLog > logs;
-   if (! TeachLogLoader::LoadAll(&logs, dir.c_str(), NULL)) {
+   if (! TeachLogLoader::LoadAll(&logs, dir, NULL)) {
       return false;
    }
    if (logs.empty()) {
@@ -197,25 +219,49 @@ bool MotionApp::load(const char* cdir)
    return true;
 }
 
+bool MotionApp::loadGuide(const GuideRealizer* pGuideRealizer, const TCHAR* dir)
+{
+   std::list< GuideRealizer::GuideData > guides;
+   if (! pGuideRealizer->load(&guides, dir, NULL)) {
+      return false;
+   }
+   for (std::list< GuideRealizer::GuideData >::iterator i = guides.begin(); i != guides.end(); ++i) {
+      GuideRealizer::GuideData& d = *i;
+      t_moves::iterator mi = _moves.find(d.uuid);
+      if (mi == _moves.end()) {
+         Move* pMove = new Move();
+         pMove->setGuide(d.pGuide);
+         pMove->setTime(d.t0, d.t1);
+         pMove->setUuid(d.uuid.c_str());
+         _moves[d.uuid] = pMove;
+      }
+   }
+   return true;
+}
+
 bool MotionApp::teach(const MotionRealizer* pRealizer, int subid)
 {
    for (int i=0; i<_log.commands_size(); ++i) {
       const ::pb::TeachCommand& inCmd = _log.commands(i);
       const std::string& uuid = inCmd.uuid();
-      IMotion* pMotion = NULL;
+      Move* pMove = NULL;
       {
-         t_motions::iterator ite = _motions.find(uuid);
-         if (ite == _motions.end()) {
-            pMotion = pRealizer->createMotion(subid);
-            if (pMotion == NULL) {
-               printf("fail to realizer Motion");
-               return false;
-            }
-            _motions[uuid] = pMotion;
-         } else {
-            pMotion = ite->second;
+         t_moves::iterator ite = _moves.find(uuid);
+         if (ite == _moves.end()) {
+            continue;
          }
+         pMove = ite->second;
       }
+
+      if (pMove->getMotion() == NULL) {
+         IMotion* pMotion = pRealizer->createMotion(subid);
+         if (pMotion == NULL) {
+            printf("fail to realizer Motion");
+            return false;
+         }
+         pMove->setMotion(pMotion);
+      }
+      IMotion* pMotion = pMove->getMotion();
 
       if (inCmd.has_clear()) {
          pMotion->teachClear();
@@ -245,9 +291,9 @@ bool MotionApp::teach(const MotionRealizer* pRealizer, int subid)
 
 bool MotionApp::test()
 {
-   for (t_motions::iterator mi = _motions.begin(); mi != _motions.end(); ++mi) {
+   for (t_moves::iterator mi = _moves.begin(); mi != _moves.end(); ++mi) {
       const std::string& uuid = mi->first;
-      IMotion* pMotion = mi->second;
+      IMotion* pMotion = mi->second->getMotion();
 
       int total   = 0;
       int succeed = 0;
@@ -289,7 +335,7 @@ bool MotionApp::test()
       } //log
 
       if (total == 0) {
-         printf("%s: -/0\n", uuid.c_str());
+         //printf("%s: -/0\n", uuid.c_str());
       } else {
          printf("%s: %d/%d(%.2f%%)\n", uuid.c_str(), succeed, total, ((100.f * succeed)/total));
       }

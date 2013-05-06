@@ -3,6 +3,8 @@
 
 #include "TeachLog.h"
 #include "MotionRealizer.h"
+#include "../Move.h"
+#include "../guide/GuideRealizer.h"
 #include <list>
 #include <string>
 
@@ -15,6 +17,7 @@ public:
    
    const char* _arg0;
    const MotionRealizer* _pMotionRealizer;
+   const GuideRealizer* _pGuideRealizer;
    int _motion_subid;
    std::string _dir;
 };
@@ -26,14 +29,16 @@ public:
    ~MotionApp();
 
    int main(const MotionAppOption& opt);
-   bool load(const char* dir);
+   bool loadTeachLog(const TCHAR* dir);
+   bool loadGuide(const GuideRealizer* pGuideRealizer, const TCHAR* dir);
    bool teach(const MotionRealizer* pRealizer, int subid);
    bool test();
 
 private:
    ::pb::TeachLog _log;
-   typedef std::map< std::string, IMotion* > t_motions;
-   t_motions _motions;
+
+   typedef std::map< std::string, Move* > t_moves;
+   t_moves _moves;
 };
 
 #endif
