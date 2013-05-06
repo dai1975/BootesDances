@@ -92,7 +92,8 @@ void protobuf_AssignDesc_bootes_2fdances_2fproto_2fTeach_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(TeachClear));
   TeachCommand_descriptor_ = file->message_type(3);
-  static const int TeachCommand_offsets_[2] = {
+  static const int TeachCommand_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TeachCommand, uuid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TeachCommand, sequence_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TeachCommand, clear_),
   };
@@ -175,10 +176,11 @@ void protobuf_AddDesc_bootes_2fdances_2fproto_2fTeach_2eproto() {
     "Accel\022\026\n\004gyro\030\013 \002(\0132\010.pb.Gyro\"P\n\rTeachSe"
     "quence\022\014\n\004uuid\030\001 \002(\t\022\017\n\007succeed\030\002 \002(\010\022 \n"
     "\007records\030\003 \003(\0132\017.pb.TeachRecord\"\032\n\nTeach"
-    "Clear\022\014\n\004uuid\030\001 \002(\t\"R\n\014TeachCommand\022#\n\010s"
-    "equence\030\001 \001(\0132\021.pb.TeachSequence\022\035\n\005clea"
-    "r\030\002 \001(\0132\016.pb.TeachClear\".\n\010TeachLog\022\"\n\010c"
-    "ommands\030\001 \003(\0132\020.pb.TeachCommand", 391);
+    "Clear\022\014\n\004uuid\030\001 \002(\t\"`\n\014TeachCommand\022\014\n\004u"
+    "uid\030\001 \002(\t\022#\n\010sequence\030\n \001(\0132\021.pb.TeachSe"
+    "quence\022\035\n\005clear\030\013 \001(\0132\016.pb.TeachClear\".\n"
+    "\010TeachLog\022\"\n\010commands\030\001 \003(\0132\020.pb.TeachCo"
+    "mmand", 405);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "bootes/dances/proto/Teach.proto", &protobuf_RegisterTypes);
   TeachRecord::default_instance_ = new TeachRecord();
@@ -1040,6 +1042,7 @@ void TeachClear::Swap(TeachClear* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
+const int TeachCommand::kUuidFieldNumber;
 const int TeachCommand::kSequenceFieldNumber;
 const int TeachCommand::kClearFieldNumber;
 #endif  // !_MSC_VER
@@ -1062,6 +1065,7 @@ TeachCommand::TeachCommand(const TeachCommand& from)
 
 void TeachCommand::SharedCtor() {
   _cached_size_ = 0;
+  uuid_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   sequence_ = NULL;
   clear_ = NULL;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -1072,6 +1076,9 @@ TeachCommand::~TeachCommand() {
 }
 
 void TeachCommand::SharedDtor() {
+  if (uuid_ != &::google::protobuf::internal::kEmptyString) {
+    delete uuid_;
+  }
   if (this != default_instance_) {
     delete sequence_;
     delete clear_;
@@ -1100,6 +1107,11 @@ TeachCommand* TeachCommand::New() const {
 
 void TeachCommand::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_uuid()) {
+      if (uuid_ != &::google::protobuf::internal::kEmptyString) {
+        uuid_->clear();
+      }
+    }
     if (has_sequence()) {
       if (sequence_ != NULL) sequence_->::pb::TeachSequence::Clear();
     }
@@ -1117,21 +1129,38 @@ bool TeachCommand::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional .pb.TeachSequence sequence = 1;
+      // required string uuid = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_uuid()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->uuid().data(), this->uuid().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(82)) goto parse_sequence;
+        break;
+      }
+      
+      // optional .pb.TeachSequence sequence = 10;
+      case 10: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_sequence:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_sequence()));
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(18)) goto parse_clear;
+        if (input->ExpectTag(90)) goto parse_clear;
         break;
       }
       
-      // optional .pb.TeachClear clear = 2;
-      case 2: {
+      // optional .pb.TeachClear clear = 11;
+      case 11: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_clear:
@@ -1162,16 +1191,25 @@ bool TeachCommand::MergePartialFromCodedStream(
 
 void TeachCommand::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // optional .pb.TeachSequence sequence = 1;
-  if (has_sequence()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, this->sequence(), output);
+  // required string uuid = 1;
+  if (has_uuid()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->uuid().data(), this->uuid().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      1, this->uuid(), output);
   }
   
-  // optional .pb.TeachClear clear = 2;
+  // optional .pb.TeachSequence sequence = 10;
+  if (has_sequence()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      10, this->sequence(), output);
+  }
+  
+  // optional .pb.TeachClear clear = 11;
   if (has_clear()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->clear(), output);
+      11, this->clear(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -1182,18 +1220,28 @@ void TeachCommand::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* TeachCommand::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // optional .pb.TeachSequence sequence = 1;
+  // required string uuid = 1;
+  if (has_uuid()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->uuid().data(), this->uuid().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->uuid(), target);
+  }
+  
+  // optional .pb.TeachSequence sequence = 10;
   if (has_sequence()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        1, this->sequence(), target);
+        10, this->sequence(), target);
   }
   
-  // optional .pb.TeachClear clear = 2;
+  // optional .pb.TeachClear clear = 11;
   if (has_clear()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        2, this->clear(), target);
+        11, this->clear(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -1207,14 +1255,21 @@ int TeachCommand::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // optional .pb.TeachSequence sequence = 1;
+    // required string uuid = 1;
+    if (has_uuid()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->uuid());
+    }
+    
+    // optional .pb.TeachSequence sequence = 10;
     if (has_sequence()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           this->sequence());
     }
     
-    // optional .pb.TeachClear clear = 2;
+    // optional .pb.TeachClear clear = 11;
     if (has_clear()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -1248,6 +1303,9 @@ void TeachCommand::MergeFrom(const ::google::protobuf::Message& from) {
 void TeachCommand::MergeFrom(const TeachCommand& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_uuid()) {
+      set_uuid(from.uuid());
+    }
     if (from.has_sequence()) {
       mutable_sequence()->::pb::TeachSequence::MergeFrom(from.sequence());
     }
@@ -1271,6 +1329,7 @@ void TeachCommand::CopyFrom(const TeachCommand& from) {
 }
 
 bool TeachCommand::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
   
   if (has_sequence()) {
     if (!this->sequence().IsInitialized()) return false;
@@ -1283,6 +1342,7 @@ bool TeachCommand::IsInitialized() const {
 
 void TeachCommand::Swap(TeachCommand* other) {
   if (other != this) {
+    std::swap(uuid_, other->uuid_);
     std::swap(sequence_, other->sequence_);
     std::swap(clear_, other->clear_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);

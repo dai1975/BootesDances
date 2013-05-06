@@ -18,10 +18,10 @@ message TeachClear {
 }
 
 message TeachCommand {
-  optional TeachSequence sequence = 1;
-  optional TeachClear    clear    = 2;
+  required string        uuid     = 1;
+  optional TeachSequence sequence = 10;
+  optional TeachClear    clear    = 11;
 }
-
 message TeachLog {
   repeated TeachCommand commands = 1;
 }

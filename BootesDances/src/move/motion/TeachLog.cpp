@@ -11,14 +11,14 @@
 
 namespace {
 
-bool SearchLogs(std::map< std::basic_string< TCHAR >, DWORD >* pOut, const TCHAR* basepath, const TCHAR* subdir)
+bool SearchLogs(std::map< std::basic_string< TCHAR >, DWORD >* pOut, const TCHAR* dirpath)
 {
    WIN32_FIND_DATA find;
    HANDLE hFind;
 
    {
       std::basic_string< TCHAR > query;
-      query.append(basepath).append(_T("\\")).append(subdir).append(_T("\\teach.log.*"));
+      query.append(dirpath).append(_T("\\teach.log.*"));
       hFind = FindFirstFile(query.c_str(), &find);
       if (hFind == INVALID_HANDLE_VALUE) {
          return true;
@@ -26,17 +26,39 @@ bool SearchLogs(std::map< std::basic_string< TCHAR >, DWORD >* pOut, const TCHAR
    }
 
    for (BOOL found = TRUE; found; found=FindNextFile(hFind, &find)) {
-      pOut->operator[]( std::basic_string< TCHAR >(find.cFileName) ) = find.dwFileAttributes;
+      std::basic_string< TCHAR > s;
+      s.append(dirpath).append(_T("\\")).append(find.cFileName);
+      pOut->operator[](s) = find.dwFileAttributes;
    }
    FindClose(hFind);
 
    return true;
 }
 
-bool SearchRegularLogs(std::map< int, std::basic_string< TCHAR > >* pOut, const TCHAR* basepath, const TCHAR* subdir)
+int ParseLogIndex(const std::basic_string<TCHAR> filename)
+{
+   if (filename.empty()) { return -1; }
+
+   int i;
+   for (i = filename.size()-1; 0 <= i && filename[i] != _T('.'); --i) {
+      if (filename[i] < _T('0') || _T('9') < filename[i]) {
+         return -1;
+      }
+   }
+   if (i < 0 || filename[i] != _T('.')) { return -1; }
+
+   int n = 0;
+   for (++i; i<filename.size(); ++i) {
+      n *= 10;
+      n += (filename[i] - _T('0'));
+   }
+   return n;
+}
+
+bool SearchRegularLogs(std::map< int, std::basic_string< TCHAR > >* pOut, const TCHAR* dirpath)
 {
    std::map< std::basic_string< TCHAR >, DWORD > map;
-   if (! SearchLogs(&map, basepath, subdir)) { return false; }
+   if (! SearchLogs(&map, dirpath)) { return false; }
 
    for (std::map< std::basic_string< TCHAR >, DWORD >::iterator i = map.begin(); i != map.end(); ++i) {
       DWORD attr = i->second;
@@ -44,40 +66,29 @@ bool SearchRegularLogs(std::map< int, std::basic_string< TCHAR > >* pOut, const 
       if ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0) { continue; }
 
       const std::basic_string< TCHAR >& s = i->first;
-      if (s.size() < 11) { continue; }
-      int n = 0;
-      for (int i=10; i<s.size(); ++i) {
-         if (s[i] < _T('0') || _T('9') < s[i]) { break; }
-         n *= 10;
-         n += (s[i] - _T('0'));
+      int n = ParseLogIndex(s);
+      if (0 <= n) {
+         pOut->operator[](n) = s;
       }
-      pOut->operator[](n) = s;
    }
    return true;
 }
 
-bool GetNewFilepath(std::basic_string< TCHAR >* pOut, const TCHAR* basepath, const TCHAR* subdir)
+bool GetNewFilepath(std::basic_string< TCHAR >* pOut, const TCHAR* dirpath)
 {
    std::map< std::basic_string< TCHAR >, DWORD > map;
-   if (! SearchLogs(&map, basepath, subdir)) { return false; }
+   if (! SearchLogs(&map, dirpath)) { return false; }
 
    int max = 0;
    for (std::map< std::basic_string< TCHAR >, DWORD >::iterator i = map.begin(); i != map.end(); ++i) {
       const std::basic_string< TCHAR >& s = i->first;
-      if (s.size() < 11) { continue; }
-
-      int n = 0;
-      for (int i=10; i<s.size(); ++i) {
-         if (s[i] < _T('0') || _T('9') < s[i]) { break; }
-         n *= 10;
-         n += (s[i] - _T('0'));
-      }
+      int n = ParseLogIndex(s);
       if (max < n) { max = n; }
    }
 
    {
       std::basic_ostringstream< TCHAR > o;
-      o << basepath << _T("\\") << subdir << _T("\\teach.log.") << (max+1);
+      o << dirpath << _T("\\teach.log.") << (max+1);
       *pOut = o.str();
    }
    return true;
@@ -85,84 +96,88 @@ bool GetNewFilepath(std::basic_string< TCHAR >* pOut, const TCHAR* basepath, con
 
 }
 
-bool TeachLogLoader::LoadAll(t_motions* pOut, const IMotion* prototype, const TCHAR* basepath, const TCHAR* subdir)
+bool TeachLogLoader::LoadAll(std::list< ::pb::TeachLog >* pOut, const TCHAR* basepath, const TCHAR* subdir)
 {
+   std::basic_string< TCHAR > dirpath;
+   if (subdir && *subdir != _T('\0')) {
+      dirpath.append(basepath).append(_T("\\")).append(subdir);
+   } else {
+      dirpath.append(basepath);
+   }
+
    std::map< int, std::basic_string< TCHAR > > files;
-   if (! SearchRegularLogs(&files, basepath, subdir)) { return false; }
+   if (! SearchRegularLogs(&files, dirpath.c_str())) { return false; }
    
    // map はキー順、つまりログファイルの番号順にソート済み
    for (std::map< int, std::basic_string< TCHAR > >::iterator i = files.begin(); i != files.end(); ++i) {
-      std::basic_string< TCHAR > path;
-      path.append(basepath).append(_T("\\")).append(subdir).append(_T("\\")).append(i->second);
+      std::basic_string< TCHAR >& filepath = i->second;
 
-      ::pb::TeachLog idea;
+      ::pb::TeachLog iLog;
       {
          int fd;
-         errno_t err = _tsopen_s(&fd, path.c_str(),
+         errno_t err = _tsopen_s(&fd, filepath.c_str(),
                                  _O_RDONLY|_O_BINARY, _SH_DENYWR, _S_IREAD|_S_IWRITE);
          if (err != 0) {
             return false;
          }
+
          google::protobuf::io::FileInputStream in(fd);
-         bool parsed = google::protobuf::TextFormat::Parse(&in, &idea);
-         in.Close();
-         if (! parsed) {
+         bool parsed = google::protobuf::TextFormat::Parse(&in, &iLog);
+         if (!parsed) {
+            in.Close();
             return false;
          }
+         in.Close();
       }
-      if (! Realize(pOut, prototype, idea)) {
-         return false;
-      }
+      pOut->push_back(iLog);
    }
    return true;
 }
 
-bool TeachLogLoader::Realize(t_motions* pOut, const IMotion* prototype, const ::pb::TeachLog& in)
+void TeachLogLoader::Merge(::pb::TeachLog* pOut, const std::list< ::pb::TeachLog >& ins, bool strip)
 {
-   for (int i=0; i<in.commands_size(); ++i) {
-      const ::pb::TeachCommand& inCmd = in.commands(i);
-      if (inCmd.has_clear()) {
-         const std::string& uuid = inCmd.clear().uuid();
-         t_motions::iterator ite = pOut->find(uuid);
-         if (ite != pOut->end()) {
-            IMotion* pMotion = ite->second;
-            pMotion->teachClear();
+   std::map< std::string, std::pair<int,int> > uuid2lastindex;
+   int insidx = 0;
+   if (strip) {
+      for (std::list< ::pb::TeachLog >::const_iterator insite = ins.begin(); insite != ins.end(); ++insite, ++insidx) {
+         const ::pb::TeachLog& in = *insite;
+         for (int i=0; i<in.commands_size(); ++i) {
+            const ::pb::TeachCommand& inCmd = in.commands(i);
+            const std::string& uuid = inCmd.uuid();
+            if (inCmd.has_clear()) {
+               uuid2lastindex[uuid] = std::pair<int,int>(insidx, i);
+            }
          }
-         continue;
-
-      } else if (inCmd.has_sequence()) {
-         const ::pb::TeachSequence& inSeq = inCmd.sequence();
-         const std::string& uuid = inSeq.uuid();
-         t_motions::iterator ite = pOut->find(uuid);
-         IMotion* pMotion = NULL;
-         if (ite != pOut->end()) {
-            pMotion = ite->second;
-         } else {
-            pMotion = prototype->clone();
-            pOut->insert( t_motions::value_type(uuid,pMotion) );
-         }
-         
-         pMotion->teachBegin();
-         for (int j=0; j<inSeq.records_size(); ++j) {
-            const ::pb::TeachRecord& inRecord = inSeq.records(j);
-
-            ::bootes::lib::framework::WiimoteEvent wev;
-            wev._accel.t    = inRecord.time();
-            wev._accel.x    = inRecord.accel().x();
-            wev._accel.y    = inRecord.accel().y();
-            wev._accel.z    = inRecord.accel().z();
-            wev._gyro.t     = inRecord.time();
-            wev._gyro.yaw   = inRecord.gyro().yaw();
-            wev._gyro.pitch = inRecord.gyro().pitch();
-            wev._gyro.roll  = inRecord.gyro().roll();
-            pMotion->teach(inRecord.time(), &wev);
-         }
-         pMotion->teachCommit(inSeq.succeed());
       }
    }
-   return true;
-}
 
+   insidx = 0;
+   for (std::list< ::pb::TeachLog >::const_iterator insite = ins.begin(); insite != ins.end(); ++insite, ++insidx) {
+      const ::pb::TeachLog& in = *insite;
+      for (int i=0; i<in.commands_size(); ++i) {
+         const ::pb::TeachCommand& inCmd = in.commands(i);
+         bool skip = false;
+         if (strip) {
+            const std::string& uuid = inCmd.uuid();
+            if (inCmd.has_clear()) {
+               skip = true;
+            } else {
+               std::map< std::string, std::pair<int,int> >::iterator j = uuid2lastindex.find(uuid);
+               if (j != uuid2lastindex.end()) {
+                  if (insidx < j->second.first) {
+                     skip = true;
+                  } else if (insidx == j->second.first && i <= j->second.second) {
+                     skip = true;
+                  }
+               }
+            }
+         }
+         if (! skip) {
+            pOut->add_commands()->operator=(inCmd);
+         }
+      }
+   }
+}
 
 TeachLogger::TeachLogger()
 {
@@ -233,7 +248,7 @@ DWORD TeachLogger::run()
 {
    _run = true;
 
-   std::basic_string< TCHAR > path, subdir;
+   std::basic_string< TCHAR > filepath, subdir;
    int fd = -1;
    errno_t err = 0;
    std::list< Entry* > queue;
@@ -259,8 +274,10 @@ DWORD TeachLogger::run()
 
          } else {
             if (fd < 0 && 0 < subdir.size()) {
-               if (GetNewFilepath(&path, _dir.c_str(), subdir.c_str())) {
-                  err = _tsopen_s(&fd, path.c_str(), 
+               std::basic_string<TCHAR> dirpath;
+               dirpath.append(_dir).append(_T("\\")).append(subdir);
+               if (GetNewFilepath(&filepath, dirpath.c_str())) {
+                  err = _tsopen_s(&fd, filepath.c_str(), 
                                   _O_WRONLY|_O_BINARY|_O_CREAT|_O_EXCL, _SH_DENYWR, _S_IREAD|_S_IWRITE);
                   if (0 < err) {
                      fd = -1;
@@ -270,12 +287,15 @@ DWORD TeachLogger::run()
             }
             if (0 < fd) {
                google::protobuf::io::FileOutputStream out(fd);
-               ::pb::TeachCommand* p = e->command;
-               bool b = google::protobuf::TextFormat::Print(*p, &out);
+               //::pb::TeachCommandHolder holder;
+               //holder.mutable_command()->operator=(*e->command);
+               ::pb::TeachLog tmp;
+               tmp.add_commands()->operator=(*e->command);
+               bool b = google::protobuf::TextFormat::Print(tmp, &out);
                out.Flush();
                if (!b) {
                   _close(fd);
-                  DeleteFile(path.c_str());
+                  DeleteFile(filepath.c_str());
                   fd = -1;
                }
             }
@@ -351,6 +371,7 @@ fail:
 bool TeachLogger::add_sequence(const std::string& uuid, const TeachSequence& seq)
 {
    ::pb::TeachCommand* p = new ::pb::TeachCommand();
+   p->set_uuid(uuid);
    ::pb::TeachSequence* pSeq = p->mutable_sequence();
    pSeq->set_uuid(uuid);
    pSeq->set_succeed(seq.succeed);
@@ -371,11 +392,11 @@ bool TeachLogger::add_sequence(const std::string& uuid, const TeachSequence& seq
 bool TeachLogger::add_clear(const std::string& uuid)
 {
    ::pb::TeachCommand* p = new ::pb::TeachCommand();
+   p->set_uuid(uuid);
    ::pb::TeachClear* pClear = p->mutable_clear();
    pClear->set_uuid(uuid);
    return add(p);
 }
-
 
 /**
  * Local Variables:

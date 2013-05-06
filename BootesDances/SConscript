@@ -65,6 +65,16 @@ sources = [
     'src/app/main.cpp',
 ]
 
+motionapp_sources = [
+    'src/move/motion/MotionApp.cpp',
+    'src/move/motion/Motion.cpp',
+    'src/move/motion/MotionRealizer.cpp',
+    'src/move/motion/Teach.cpp',
+    'src/move/motion/TeachLog.cpp',
+    'src/move/motion/MotionWiimoteSimple.cpp',
+    'src/move/motion/MotionWiimoteSimpleRealizer.cpp',
+]
+
 datafiles = [
     'fonts/DejaVuSans-10.font',
     'fonts/DejaVuSans.ttf',
@@ -98,8 +108,7 @@ Import('env','config')
 env['CPPDEFINES'] += ['_CRT_SECURE_NO_DEPRECATE',
                       'WIN32', '_WINDOWS', '_UNICODE', 'UNICODE',
                       'CEGUI_STATIC']
-env['LINKFLAGS'] += ['/SUBSYSTEM:WINDOWS', '/DYNAMICBASE', '/NXCOMPAT',
-                     '/MACHINE:X86', '/ERRORREPORT:PROMPT']
+env['LINKFLAGS'] += ['/DYNAMICBASE', '/NXCOMPAT', '/MACHINE:X86', '/ERRORREPORT:PROMPT']
 
 env['CPPPATH'] += [
     '#BootesDances/include',
@@ -121,19 +130,10 @@ env['LIBPATH'] += [
     '%s/lib/wnet/i386'%config.WindowsDdkDir,
     ]
 
-env['LIBS'] += [ 'kernel32', 'user32', 'gdi32', 'winspool', 'comdlg32', 'advapi32', 'shell32',
-                 'ole32', 'oleaut32', 'uuid', 'odbc32', 'odbccp32' ]
-env['LIBS'] += ['d3d9', 'd3dx9', 'dxguid', 'winmm', 'hid', 'setupapi',
-                'libprotobuf', 'libprotoc' ]
-env['LIBS'] += config.CeguiLibs[ config.Build ]
-env['LIBS'] += [ 'BootesLib','DirectShowTexture','wiiyourself-tr-bootes' ]
 if config.Build == 'release':
     config.ProtoBinDir = '%s/vsprojects/Release' % config.ProtoDir
-    env['LIBS']    += ['strmbas']
 else:
     config.ProtoBinDir = '%s/vsprojects/Debug' % config.ProtoDir
-    env['LIBS']    += ['strmbasd']
-pass
 env['LIBPATH'] += [config.ProtoBinDir]
 
 def genprotoc(source, target, env, for_signature):
@@ -150,15 +150,47 @@ env.Append(BUILDERS = {
         })
 
 r = []
-objs = []
+proto_objs = []
 for f in proto_sources:
     cpp = env.ProtoBuf(f)
     outpath = os.path.join(config.WorkDir, '%s.o'%f)
-    objs += [ env.Object(outpath, cpp) ]
-for f in sources:
-    outpath = os.path.join(config.WorkDir, '%s.o'%f)
-    objs += [ env.Object(outpath, f) ]
-r += [ env.Program('%s/BootesDances'%config.OutDir, objs) ]
+    proto_objs += [ env.Object(outpath, cpp) ]
+
+if True:
+    objs = []
+    for f in sources:
+        outpath = os.path.join(config.WorkDir, '%s.o'%f)
+        objs += [ env.Object(outpath, f) ]
+    h = { }
+    h['LINKFLAGS'] = ['/SUBSYSTEM:WINDOWS'],
+    h['LIBS'] = []
+    h['LIBS'] += [ 'kernel32', 'user32', 'gdi32', 'winspool', 'comdlg32', 'advapi32', 'shell32',
+                   'ole32', 'oleaut32', 'uuid', 'odbc32', 'odbccp32' ]
+    h['LIBS'] += [ 'd3d9', 'd3dx9', 'dxguid', 'winmm', 'hid', 'setupapi', 'libprotobuf', 'libprotoc' ]
+    h['LIBS'] += config.CeguiLibs[ config.Build ]
+    h['LIBS'] += [ 'BootesLib','DirectShowTexture','wiiyourself-tr-bootes' ]
+    if config.Build == 'release':
+        h['LIBS'] += ['strmbas']
+    else:
+        h['LIBS'] += ['strmbasd']
+    r += [ env.Program('%s/BootesDances'%config.OutDir, proto_objs + objs
+                       , LINKFLAGS = h['LINKFLAGS']
+                       , LIBS = h['LIBS']
+                       ) ]
+
+if True:
+    motionapp_objs = []
+    for f in motionapp_sources:
+        outpath = os.path.join(config.WorkDir, '%s.o'%f)
+        motionapp_objs += [ env.Object(outpath, f) ]
+    h = { }
+    h['LINKFLAGS'] = ['/SUBSYSTEM:CONSOLE'],
+    h['LIBS'] = []
+    h['LIBS'] += [ 'winmm', 'libprotobuf', 'libprotoc' ]
+    r += [ env.Program('%s/BootesDancesMotion'%config.OutDir, proto_objs + motionapp_objs
+                       , LINKFLAGS = h['LINKFLAGS']
+                       , LIBS = h['LIBS']
+                       )]
 
 for f in datafiles:
     f = 'datafiles/%s'%f

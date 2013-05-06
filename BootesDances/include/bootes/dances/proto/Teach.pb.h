@@ -394,24 +394,37 @@ class TeachCommand : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // optional .pb.TeachSequence sequence = 1;
+  // required string uuid = 1;
+  inline bool has_uuid() const;
+  inline void clear_uuid();
+  static const int kUuidFieldNumber = 1;
+  inline const ::std::string& uuid() const;
+  inline void set_uuid(const ::std::string& value);
+  inline void set_uuid(const char* value);
+  inline void set_uuid(const char* value, size_t size);
+  inline ::std::string* mutable_uuid();
+  inline ::std::string* release_uuid();
+  
+  // optional .pb.TeachSequence sequence = 10;
   inline bool has_sequence() const;
   inline void clear_sequence();
-  static const int kSequenceFieldNumber = 1;
+  static const int kSequenceFieldNumber = 10;
   inline const ::pb::TeachSequence& sequence() const;
   inline ::pb::TeachSequence* mutable_sequence();
   inline ::pb::TeachSequence* release_sequence();
   
-  // optional .pb.TeachClear clear = 2;
+  // optional .pb.TeachClear clear = 11;
   inline bool has_clear() const;
   inline void clear_clear();
-  static const int kClearFieldNumber = 2;
+  static const int kClearFieldNumber = 11;
   inline const ::pb::TeachClear& clear() const;
   inline ::pb::TeachClear* mutable_clear();
   inline ::pb::TeachClear* release_clear();
   
   // @@protoc_insertion_point(class_scope:pb.TeachCommand)
  private:
+  inline void set_has_uuid();
+  inline void clear_has_uuid();
   inline void set_has_sequence();
   inline void clear_has_sequence();
   inline void set_has_clear();
@@ -419,11 +432,12 @@ class TeachCommand : public ::google::protobuf::Message {
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
+  ::std::string* uuid_;
   ::pb::TeachSequence* sequence_;
   ::pb::TeachClear* clear_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   friend void  protobuf_AddDesc_bootes_2fdances_2fproto_2fTeach_2eproto();
   friend void protobuf_AssignDesc_bootes_2fdances_2fproto_2fTeach_2eproto();
@@ -779,15 +793,73 @@ inline ::std::string* TeachClear::release_uuid() {
 
 // TeachCommand
 
-// optional .pb.TeachSequence sequence = 1;
-inline bool TeachCommand::has_sequence() const {
+// required string uuid = 1;
+inline bool TeachCommand::has_uuid() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void TeachCommand::set_has_sequence() {
+inline void TeachCommand::set_has_uuid() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void TeachCommand::clear_has_sequence() {
+inline void TeachCommand::clear_has_uuid() {
   _has_bits_[0] &= ~0x00000001u;
+}
+inline void TeachCommand::clear_uuid() {
+  if (uuid_ != &::google::protobuf::internal::kEmptyString) {
+    uuid_->clear();
+  }
+  clear_has_uuid();
+}
+inline const ::std::string& TeachCommand::uuid() const {
+  return *uuid_;
+}
+inline void TeachCommand::set_uuid(const ::std::string& value) {
+  set_has_uuid();
+  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
+    uuid_ = new ::std::string;
+  }
+  uuid_->assign(value);
+}
+inline void TeachCommand::set_uuid(const char* value) {
+  set_has_uuid();
+  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
+    uuid_ = new ::std::string;
+  }
+  uuid_->assign(value);
+}
+inline void TeachCommand::set_uuid(const char* value, size_t size) {
+  set_has_uuid();
+  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
+    uuid_ = new ::std::string;
+  }
+  uuid_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* TeachCommand::mutable_uuid() {
+  set_has_uuid();
+  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
+    uuid_ = new ::std::string;
+  }
+  return uuid_;
+}
+inline ::std::string* TeachCommand::release_uuid() {
+  clear_has_uuid();
+  if (uuid_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = uuid_;
+    uuid_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional .pb.TeachSequence sequence = 10;
+inline bool TeachCommand::has_sequence() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void TeachCommand::set_has_sequence() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void TeachCommand::clear_has_sequence() {
+  _has_bits_[0] &= ~0x00000002u;
 }
 inline void TeachCommand::clear_sequence() {
   if (sequence_ != NULL) sequence_->::pb::TeachSequence::Clear();
@@ -808,15 +880,15 @@ inline ::pb::TeachSequence* TeachCommand::release_sequence() {
   return temp;
 }
 
-// optional .pb.TeachClear clear = 2;
+// optional .pb.TeachClear clear = 11;
 inline bool TeachCommand::has_clear() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
 inline void TeachCommand::set_has_clear() {
-  _has_bits_[0] |= 0x00000002u;
+  _has_bits_[0] |= 0x00000004u;
 }
 inline void TeachCommand::clear_has_clear() {
-  _has_bits_[0] &= ~0x00000002u;
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void TeachCommand::clear_clear() {
   if (clear_ != NULL) clear_->::pb::TeachClear::Clear();

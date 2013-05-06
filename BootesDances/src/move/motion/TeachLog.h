@@ -45,9 +45,9 @@ private:
 class TeachLogLoader
 {
 public:
-   typedef std::map< std::string, IMotion* > t_motions;
-   static bool LoadAll(t_motions* pOut, const IMotion* prototype, const TCHAR* dir, const TCHAR* name);
-   static bool Realize(t_motions* pOut, const IMotion* prototype, const ::pb::TeachLog& idea);
+   static bool LoadAll(std::list< ::pb::TeachLog >* pOut, const TCHAR* basepath, const TCHAR* subdir);
+   static void Merge(::pb::TeachLog* pOut, const std::list< ::pb::TeachLog >& in, bool strip);
+//   static bool Realize(t_motions* pOut, const IMotion* prototype, const ::pb::TeachLog& idea);
 };
 
 #endif
