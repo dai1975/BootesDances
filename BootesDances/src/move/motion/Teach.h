@@ -23,7 +23,7 @@ public:
       ::bootes::lib::framework::WiimoteEvent wiimote;
 
       inline Record(): time(0) { }
-      inline Record(int t, const ::bootes::lib::framework::WiimoteEvent& wev): time(0), wiimote(wev) { }
+      inline Record(int t, const ::bootes::lib::framework::WiimoteEvent& wev): time(t), wiimote(wev) { }
       inline Record(const Record& r) { operator=(r); }
       inline Record& operator=(const Record& r) {
          time = r.time;
