@@ -2,22 +2,6 @@ import "bootes/dances/proto/Stage.proto";
 
 package pb;
 
-/*
-message MotionWiimoteSimple {
-  required int32 stept = 1;
-
-  message Entry {
-    required int32 t     = 1;
-    required pb.Accel accel = 2;
-    required pb.Gyro  gyro  = 3;
-    required pb.Gyro  orien = 4;
-  }
-
-  repeated Entry minseq = 2;
-  repeated Entry maxseq = 3;
-}
-*/
-
 message MotionWiimoteSimple {
   required string uuid  = 1;
   required int64  time0 = 2; //100ns
