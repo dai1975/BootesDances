@@ -237,11 +237,17 @@ reconnect:
 	while(!remote.Button.Home())// && !GetAsyncKeyState(VK_ESCAPE))
 		{
 		// IMPORTANT: the wiimote state needs to be refreshed each pass
+                DWORD t0 = timeGetTime();
 		while(remote.RefreshState() == NO_CHANGE)
 			Sleep(1); // // don't hog the CPU if nothing changed
+                DWORD t1 = timeGetTime();
+                DWORD dt = (t0 <= t1)? (t1-t0): (0xFFFFFFFFUL - (t0-t1));
 
 		cursor_pos.Y = 8;
 		SetConsoleCursorPosition(console, cursor_pos);
+
+		CYAN; _tprintf(_T("dt: ")); WHITE;
+                _tprintf(_T("%u                                                 \n"), dt);
 
 		// did we loose the connection?
 		if(remote.ConnectionLost())
