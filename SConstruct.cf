@@ -16,8 +16,8 @@ def create_config():
        cfg.CeguiDepDir    = 'd:/_opt/CEGUI/dependencies-0.7.x-r2-vc9'
        #cfg.CeguiDepDir    = 'd:/_opt/CEGUI/dependencies-0.7.x-r3-vc10'
        cfg.SdlDir         = 'd:/_opt/SDL-1.2.15'
-       cfg.GlutDir        = 'd:/_opt/GLUT'
        cfg.ProtoDir       = 'd:/_opt/protobuf-2.4.1'
+       cfg.OpenCvDir      = 'd:/_opt/opencv'
        cfg.WorkDir        = 'd:/tmp/scons/work'
        cfg.OutDir         = 'd:/tmp/scons/out'
    elif host == 's5':
@@ -29,6 +29,7 @@ def create_config():
        cfg.CeguiDir       = 'c:/_opt/CEGUI/CEGUI-0.7.5'
        cfg.CeguiDepDir    = 'c:/_opt/CEGUI/CEGUI-DEPS-0.7.x-r3-vc10/dependencies'
        cfg.ProtoDir       = 'c:/_opt/protobuf-2.4.1'
+       cfg.OpenCvDir      = 'c:/_opt/opencv'
        cfg.WorkDir        = 'c:/tmp/scons/work'
        cfg.OutDir         = 'c:/tmp/scons/out'
    else:

@@ -8,6 +8,8 @@ proto_sources = [
     'src/move/guide/GuideRibbonEllipse.proto',
     'src/move/guide/GuideRibbonSpline.proto',
     'src/move/motion/MotionWiimoteSimple.proto',
+#    'src/move/motion/MotionWiimoteSfa.proto',
+#    'src/move/motion/MotionWiimoteRandomForest.proto',
 ]
 
 sources = [
@@ -30,6 +32,8 @@ sources = [
     'src/move/motion/TeachLog.cpp',
     'src/move/motion/MotionWiimoteSimple.cpp',
     'src/move/motion/MotionWiimoteSimpleRealizer.cpp',
+#    'src/move/motion/MotionWiimoteRandomForest.cpp',
+#    'src/move/motion/MotionWiimoteRandomForestRealizer.cpp',
     'src/move/Move.cpp',
     'src/move/MoveRealizer.cpp',
     'src/move/MoveSequence.cpp',
@@ -82,6 +86,10 @@ motionapp_sources = [
     'src/move/motion/TeachLog.cpp',
     'src/move/motion/MotionWiimoteSimple.cpp',
     'src/move/motion/MotionWiimoteSimpleRealizer.cpp',
+#    'src/move/motion/MotionWiimoteSfa.cpp',
+#    'src/move/motion/MotionWiimoteSfaRealizer.cpp',
+#    'src/move/motion/MotionWiimoteRandomForest.cpp',
+#    'src/move/motion/MotionWiimoteRandomForestRealizer.cpp',
 ]
 
 datafiles = [
@@ -129,6 +137,7 @@ env['CPPPATH'] += [
     '%s/Include'%config.WindowsSdkDir,
     '%s/Include'%config.DirectXSdkDir,
     '%s/src'%config.ProtoDir,
+#    '%s/build/include'%config.OpenCvDir,
     ]
 env['LIBPATH'] += [
     '%s'%config.OutDir,
@@ -137,6 +146,7 @@ env['LIBPATH'] += [
     '%s/Lib'%config.WindowsSdkDir,
     '%s/Lib/x86'%config.DirectXSdkDir,
     '%s/lib/wnet/i386'%config.WindowsDdkDir,
+#    '%s/build/x86/vc9/staticlib'%config.OpenCvDir,
     ]
 
 if config.Build == 'release':
@@ -155,7 +165,7 @@ def genprotoc(source, target, env, for_signature):
         return '%s/protoc.exe -I=%s -I=%s --cpp_out=%s %s' % (config.ProtoBinDir, incdir, srcdir, srcdir, source[0])
 
 env.Append(BUILDERS = {
-        'ProtoBuf': Builder(generator=genprotoc, suffix='.pb.cc', src_suffix='.proto')
+        'ProtoBuf':  Builder(generator=genprotoc, suffix='.pb.cc', src_suffix='.proto')
         })
 
 r = []
@@ -177,6 +187,7 @@ if True:
                    'ole32', 'oleaut32', 'uuid', 'odbc32', 'odbccp32' ]
     h['LIBS'] += [ 'd3d9', 'd3dx9', 'dxguid', 'winmm', 'hid', 'setupapi', 'libprotobuf', 'libprotoc' ]
     h['LIBS'] += config.CeguiLibs[ config.Build ]
+#    h['LIBS'] += [ 'opencv_core246d', 'opencv_ml246d', 'zlibd' ]
     h['LIBS'] += [ 'BootesLib','DirectShowTexture','wiiyourself-tr-bootes' ]
     if config.Build == 'release':
         h['LIBS'] += ['strmbas']
@@ -196,6 +207,8 @@ if True:
     h['LINKFLAGS'] = ['/SUBSYSTEM:CONSOLE'],
     h['LIBS'] = []
     h['LIBS'] += [ 'winmm', 'libprotobuf', 'libprotoc' ]
+#    h['LIBS'] += [ 'python27.lib', 'advapi32', 'shell32', 'user32' ]
+#    h['LIBS'] += [ 'opencv_core246d', 'opencv_ml246d', 'zlibd' ]
     r += [ env.Program('%s/BootesDancesMotion'%config.OutDir, proto_objs + motionapp_objs
                        , LINKFLAGS = h['LINKFLAGS']
                        , LIBS = h['LIBS']
