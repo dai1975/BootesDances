@@ -70,7 +70,6 @@ void Wiimote::poll(double currentTime, int elapsedTime)
 
    int ei1 = _ei ^ 1;
    _ev[ei1] = proxy->getEvent();
-   _ev[ei1] = proxy->getEvent();
    if (! calcData(&_ev[ei1], &_ev[_ei])) { return; }
    _ei ^= 1;
 }

@@ -133,16 +133,15 @@ void EventManagerImpl::queue(const Event* ev)
    unlock();
 }
 
-void EventManagerImpl::clock(int limitMsec)
+void EventManagerImpl::clock(double t1)
 {
-   double current;
-   int elapsed;
+   double t;
    _timer.reset();
    _timer.start();
 
    processSubscribeLater();
-   _timer.get(&current, &elapsed);
-   if (limitMsec < elapsed) { return; }
+   _timer.get(&t, NULL);
+   if (t1 <= t) { return; }
 
    // _tmp_queue はコンストラクタの負荷を省くためメンバにしているだけ
    // 関数を越えて状態は持たない
@@ -151,8 +150,8 @@ void EventManagerImpl::clock(int limitMsec)
       _tmp_queue.swap(_queue);
    }; unlock();
    while (! _tmp_queue.empty()) {
-      _timer.get(&current, &elapsed);
-      if (limitMsec < elapsed) { break; }
+      _timer.get(&t, NULL);
+      if (t1 <= t) { return; }
 
       Event* ev = _tmp_queue.front();
       _tmp_queue.pop_front();

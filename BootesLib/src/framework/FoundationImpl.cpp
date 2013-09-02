@@ -333,6 +333,7 @@ int FoundationImpl::mainLoop_()
    _timer.start();
 
    MSG  msg;
+/*
    while (true) {
       if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE)) {
          TranslateMessage( &msg );
@@ -355,6 +356,84 @@ int FoundationImpl::mainLoop_()
          render(totalTime, elapsedTime);
       }
    }
+*/
+   struct {
+      double wiimote, game, render;
+      double min;
+
+      inline void calc_min() {
+         this->min = this->wiimote;
+         if (this->game < this->min) this->min = this->game;
+         if (this->render < this->min) this->min = this->render;
+      }
+   } t0,t1;
+   t0.wiimote = t0.game = t0.render = 0;
+   t1.wiimote = t1.game = t1.render = 0;
+
+   double frame_msec = 1000.0 / 60;
+   bool quit = false;
+
+   double rec[2][6];
+   int ri = 1;
+   while (!quit) {
+      double t;
+      t1.calc_min();
+
+      ri ^= 1;
+      for (int i=0; i<6; ++i) { rec[ri][i] = 0; }
+      _timer.get(&rec[ri][0], NULL); //msec
+
+      while (true) {
+         int cnt = 0;
+         while (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE)) {
+            TranslateMessage( &msg );
+            DispatchMessage( &msg );
+            if (msg.message == WM_QUIT) { quit = true; }
+            if (10 < ++cnt) { break; }
+         }
+         _timer.get(&rec[ri][1], NULL); //msec
+         _pEventManager->clock(t1.min);
+         _timer.get(&rec[ri][2], NULL); //msec
+
+         _timer.get(&t, NULL); //msec
+         if (t1.min <= t) { break; }
+      }
+
+      if (t1.wiimote <= t) {
+         if (_pWiimote && _pWiimote->isConnected()) {
+            int elapsed = static_cast< int >(t - t0.wiimote);
+            _pWiimote->poll(t, elapsed);
+            WiimoteEvent ev = *_pWiimote->getEvent(); //copy
+            ev._event_timestamp = static_cast< __int64 >(t);
+            _parent->notifyInputEvent(&ev);
+         }
+         _timer.get(&t, NULL); //msec
+         t0.wiimote = t;
+         t1.wiimote = t + 3;
+         _timer.get(&rec[ri][3], NULL); //msec
+      }
+
+      if (t1.game <= t) {
+         int elapsed = static_cast< int >(t - t0.game);
+         update(t, elapsed);
+         _timer.get(&t, NULL); //msec
+         t0.game = t;
+         //t1.game = t + (frame_msec / 2);
+         t1.game = t + 3;
+         _timer.get(&rec[ri][4], NULL); //msec
+      }
+
+      if (t1.render <= t) {
+         restore();
+         _timer.get(&t, NULL); //msec
+         int elapsed = static_cast< int >(t - t0.render);
+         render(t, elapsed);
+         _timer.get(&t, NULL); //msec
+         t0.render = t;
+         t1.render = t + frame_msec;
+         _timer.get(&rec[ri][5], NULL); //msec
+      }
+   }
    
    _timer.pause();
    _timer.reset();
@@ -363,15 +442,14 @@ int FoundationImpl::mainLoop_()
 
 void FoundationImpl::restore()
 {
+   if (! _bLost) { return; }
+
    HRESULT hr;
    Game::t_views::const_iterator i;
    const Game::t_views& views = _pGame->getViews();
 
-   if (_bLost) {
-      Sleep( 50 );
-   }
-
-   if (_bLost) {
+   Sleep( 50 );
+   {
       if( FAILED(hr = _pD3DDev->TestCooperativeLevel()) ) {
          if( D3DERR_DEVICELOST == hr ) {
             return;
@@ -403,14 +481,14 @@ void FoundationImpl::update(double totalTime, int elapsedTime)
    ::bootes::lib::util::Timer timer;
    int dt[10];
    int ti = 0;
-
+/*
    if (_pWiimote && _pWiimote->isConnected()) {
       _pWiimote->poll(totalTime, elapsedTime);
       WiimoteEvent ev = *_pWiimote->getEvent(); //copy
       _parent->notifyInputEvent(&ev);
    }
    _pEventManager->clock(20);
-
+*/
    timer.start();
    {
       _pGame->onUpdate(totalTime, elapsedTime);

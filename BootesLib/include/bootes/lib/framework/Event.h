@@ -92,7 +92,7 @@ public:
       return unsubscribe(T::GetEventId(), p);
    }
 
-   virtual void clock(int limitMsec) = 0;
+   virtual void clock(double t1) = 0;
    virtual void queue(const Event* ev) = 0;
    virtual void deliver(const Event* ev) = 0;
    

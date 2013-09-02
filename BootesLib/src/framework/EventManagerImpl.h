@@ -19,7 +19,7 @@ public:
 
    virtual bool subscribe(intptr_t eventId, EventListener*);
    virtual bool unsubscribe(intptr_t eventId, EventListener*);
-   virtual void clock(int limitMsec);
+   virtual void clock(double t1);
 
    virtual void queue(const Event*);
    virtual void deliver(const Event*);
