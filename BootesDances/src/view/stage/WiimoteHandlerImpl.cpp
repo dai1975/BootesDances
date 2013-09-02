@@ -96,6 +96,7 @@ void WiimoteHandlerImpl::teachBegin(const IMove* pMove)
       _teachSequence.clear();
    }
    _pTeachMove = *i;
+   _teach_evtime_to_scenetime = 0;
 }
 void WiimoteHandlerImpl::teachCommit(bool succeed)
 {
@@ -131,9 +132,22 @@ void WiimoteHandlerImpl::handleWiimote(const Scene* scene, const ::bootes::lib::
       __int64 t0,t1;
       _pTeachMove->getTime(&t0, &t1);
       if (t0 <= t && t < t1) {
-         __int64 rt = t - t0;
-         _pTeachMove->getMotion()->teach(rt, ev);
-         _teachSequence.add(rt,*ev);
+//         static std::list< __int64 > lst0;
+//         static std::list< __int64 > lst1;
+//         static std::list< __int64 > lst2;
+
+         __int64 evtime = ev->_event_timestamp * 10000; // [ms] to [100ns]
+         if (_teach_evtime_to_scenetime == 0) { //scene 時刻は飛び飛びなので evtime を使う。一時停止に注意。
+            __int64 rt = t - t0;
+            _teach_evtime_to_scenetime = evtime - rt;
+         }
+         __int64 evrt = evtime - _teach_evtime_to_scenetime;
+//         lst0.push_back(t);
+//         lst1.push_back(evtime);
+//         lst2.push_back(evrt);
+
+         _pTeachMove->getMotion()->teach(evrt, ev);
+         _teachSequence.add(evrt, *ev);
       }
    }
    handleWiimoteTest(t, ev);
@@ -172,6 +186,7 @@ void WiimoteHandlerImpl::handleWiimoteTest(__int64 t, const ::bootes::lib::frame
    if (pMove == NULL) { return; }
 
    IMotion* pMotion = pMove->getMotion();
+   __int64 evtime = ev->_event_timestamp * 10000; // [ms] to [100ns]
    __int64 t0,t1,rt;
    pMove->getTime(&t0, &t1);
    rt = t - t0;
@@ -181,6 +196,7 @@ void WiimoteHandlerImpl::handleWiimoteTest(__int64 t, const ::bootes::lib::frame
          _test_mode = M_READY;
       } else {
          if (pMotion) {
+            _test_evtime_to_scenetime = evtime - rt;
             pMotion->testBegin();
             pMotion->test(rt, ev);
          }
@@ -195,13 +211,15 @@ void WiimoteHandlerImpl::handleWiimoteTest(__int64 t, const ::bootes::lib::frame
          switch (_test_mode) {
          case M_READY:
             if (pMotion) {
+               _test_evtime_to_scenetime = evtime - rt;
                pMotion->testBegin();
             }
             _test_mode = M_TEST;
             break;
          case M_TEST:
             if (pMotion) {
-               pMotion->test(rt, ev);
+               __int64 evrt = evtime - _test_evtime_to_scenetime;
+               pMotion->test(evrt, ev);
             }
             break;
          case M_BREAK:

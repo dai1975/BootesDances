@@ -105,6 +105,7 @@ public:
    inline bool isHeld1secRight() const { return isHeld1sec(WiimoteEvent::BTN_RIGHT); }
 
 public:
+   __int64 _event_timestamp;
    bool _bConnect, _bMplus;
    int _pressed, _held1;
    Accel _accel; //[g]. [-3.0, 3.0]
@@ -114,6 +115,7 @@ public:
 
 inline void WiimoteEvent::clear()
 {
+   _event_timestamp = 0;
    _bConnect   = false;
    _bMplus     = false;
    _pressed    = 0;
@@ -135,6 +137,7 @@ inline void WiimoteEvent::clear()
 }
 inline const WiimoteEvent& WiimoteEvent::operator=(const WiimoteEvent& r)
 {
+   _event_timestamp = r._event_timestamp;
    _bConnect   = r._bConnect;
    _bMplus     = r._bMplus;
    _pressed    = r._pressed;

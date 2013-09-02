@@ -10,6 +10,9 @@ Motion::Motion()
 Motion::Motion(const Motion& r)
 {
    std::copy(r._teaches.begin(), r._teaches.end(), std::back_inserter(_teaches));
+   _teach_state = r._teach_state;
+   _test_state  = r._test_state;
+   // _pMove は Move#clone() で変更している
 }
 
 Motion::~Motion()

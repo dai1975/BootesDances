@@ -125,6 +125,7 @@ WiimoteEvent CalcPoint(int t0, const WiimoteEvent& ev0, int t1, const WiimoteEve
    WiimoteEvent ev;
    float f = ((float)(t - t0)) / (t1 - t0);
    // 回転は線形補完できないが
+   ev._event_timestamp = ev0._event_timestamp + f * (ev1._event_timestamp - ev0._event_timestamp);
    ev._accel.x     = ev0._accel.x     + f * (ev1._accel.x     - ev0._accel.x);
    ev._accel.y     = ev0._accel.y     + f * (ev1._accel.y     - ev0._accel.y);
    ev._accel.z     = ev0._accel.z     + f * (ev1._accel.z     - ev0._accel.z);

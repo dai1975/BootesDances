@@ -47,6 +47,9 @@ private:
    TEST_MODE _test_mode;
    //MODE _ready_mode;
    IMove* _pTeachMove;
+   _int64 _teach_evtime_to_scenetime;
+   _int64 _test_evtime_to_scenetime;
+
    bool _play;
    bool _editable;
    TeachLogger _teachLogger;
