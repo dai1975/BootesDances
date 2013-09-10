@@ -214,6 +214,12 @@ void MotionWiimoteSimple::teachCommit(bool succeed)
    t_sequence::iterator i0 = _test_seq_min.begin();
    t_sequence::iterator i1 = _test_seq_max.begin();
    while (i != out.end()) {
+      if (i0 == _test_seq_min.end()) {
+         _test_seq_min.push_back(*i);
+         _test_seq_max.push_back(*i);
+         ++i;
+         continue;
+      }
       //if ((*i).ev._accel.x < (*i0).ev._accel.x) { (*i0).ev._accel.x = (*i).ev._accel.x; }
 #define SETMIN(PROP)  if ((*i).ev.PROP < (*i0).ev.PROP) { (*i0).ev.PROP = (*i).ev.PROP; }
 #define SETMAX(PROP)  if ((*i).ev.PROP > (*i1).ev.PROP) { (*i1).ev.PROP = (*i).ev.PROP; }

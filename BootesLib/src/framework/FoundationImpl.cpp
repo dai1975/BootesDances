@@ -373,6 +373,7 @@ int FoundationImpl::mainLoop_()
    double frame_msec = 1000.0 / 60;
    bool quit = false;
 
+   std::list< WiimoteEvent > lWiimoteEvent;
    double rec[2][6];
    int ri = 1;
    while (!quit) {
@@ -402,10 +403,11 @@ int FoundationImpl::mainLoop_()
       if (t1.wiimote <= t) {
          if (_pWiimote && _pWiimote->isConnected()) {
             int elapsed = static_cast< int >(t - t0.wiimote);
-            _pWiimote->poll(t, elapsed);
-            WiimoteEvent ev = *_pWiimote->getEvent(); //copy
-            ev._event_timestamp = static_cast< __int64 >(t);
-            _parent->notifyInputEvent(&ev);
+            lWiimoteEvent.clear();
+            _pWiimote->consumeEvents(&lWiimoteEvent);
+            for (std::list< WiimoteEvent >::iterator i = lWiimoteEvent.begin(); i != lWiimoteEvent.end(); ++i) {
+               _parent->notifyInputEvent(&(*i));
+            }
          }
          _timer.get(&t, NULL); //msec
          t0.wiimote = t;

@@ -1,4 +1,5 @@
 #include "WiimoteProxy.h"
+#include <mmsystem.h>
 
 namespace bootes { namespace lib { namespace framework {
 
@@ -42,16 +43,20 @@ void WiimoteHandler(wiimote &remote, state_change_flags changed, const wiimote_s
 }
 
 WiimoteProxy::WiimoteProxy()
+   : _buffer(200), _buffer_swap(200)
 {
    _proxy_thread = INVALID_HANDLE_VALUE;
    _proxy_thread_id = 0;
    _remote.CallbackTriggerFlags = (state_change_flags)
       (CONNECTED | EXTENSION_CHANGED | MOTIONPLUS_CHANGED);
    _remote.ChangedCallback = WiimoteHandler;
+   _hMutex = CreateMutex(NULL, FALSE, NULL);
+   _last_event_timestamp = 0;
 }
 
 WiimoteProxy::~WiimoteProxy()
 {
+   CloseHandle(_hMutex);
    if (_proxy_thread != INVALID_HANDLE_VALUE) {
       HANDLE h = _proxy_thread;
       proxyStop();
@@ -87,7 +92,6 @@ void WiimoteProxy::proxyRun()
    _proxy_run = true;
    while (_proxy_run) {
       if (! _remote.IsConnected()) {
-         memset(_heldtime, 0, sizeof(_heldtime));
          if (! _remote.Connect(wiimote::FIRST_AVAILABLE)) {
             Sleep(1000);
          }
@@ -96,7 +100,21 @@ void WiimoteProxy::proxyRun()
          Sleep(1000);
          
       } else {
-         Sleep(1000);
+         if (_buffer.full()) {
+            Sleep(1);
+         } else {
+            WiimoteEvent ev;
+            if (! poll(&ev)) {
+               Sleep(1);
+            } else if (_last_event_timestamp == ev._event_timestamp) {
+               Sleep(1);
+            } else {
+               WaitForSingleObject(_hMutex, INFINITE);
+               _buffer.push_back(ev);
+               ReleaseMutex(_hMutex);
+               _last_event_timestamp = ev._event_timestamp;
+            }
+         }
       }
    }
    if (_remote.IsConnected()) {
@@ -105,26 +123,50 @@ void WiimoteProxy::proxyRun()
    _proxy_thread = INVALID_HANDLE_VALUE;
 }
 
-bool WiimoteProxy::poll(double currentTime, int elapsedTime)
+size_t WiimoteProxy::consumeEvents(std::list< WiimoteEvent >* pOut)
 {
-   WiimoteEvent tmp;
-   tmp.clear();
-   tmp._bConnect = _remote.IsConnected();
-   tmp._bMplus   = _remote.MotionPlusEnabled();
+   if (_buffer.empty()) { return 0; }
 
-   if (! tmp._bMplus) { return false; }
+   size_t r = 0;
+   WiimoteEvent ev;
+   WaitForSingleObject(_hMutex, INFINITE);
+   {
+      _buffer_swap.clear();
+      _buffer.swap(_buffer_swap);
+      while (! _buffer_swap.empty()) {
+         _buffer_swap.pop_front(ev);
+         pOut->push_back(ev);
+         ++r;
+      }
+   }
+   ReleaseMutex(_hMutex);
+   return r;
+}
+
+bool WiimoteProxy::poll(WiimoteEvent* pEv)
+{
+   pEv->clear();
+   pEv->_bConnect = _remote.IsConnected();
+   pEv->_bMplus   = _remote.MotionPlusEnabled();
+
+   if (! pEv->_bMplus) { return false; }
 
    if (_remote.RefreshState() == 0) { return false; }
+   DWORD t = timeGetTime();
+   pEv->_event_timestamp = t;
 
 #define IMPL_BUTTON(YOUR_NAME, MY_NAME)\
    if (_remote.Button. YOUR_NAME ()) {                       \
-      tmp._pressed |= WiimoteEvent::BTN_ ## MY_NAME;         \
-      _heldtime[ BTN_IDX_ ## MY_NAME ] += elapsedTime;      \
-      if (1000 <= _heldtime[ BTN_IDX_ ## MY_NAME ]) {\
-         tmp._held1 |= WiimoteEvent::BTN_ ## MY_NAME; \
+      pEv->_pressed |= WiimoteEvent::BTN_ ## MY_NAME;         \
+      if (_heldstarttime[ BTN_IDX_ ## MY_NAME ] == 0) {\
+         _heldstarttime[ BTN_IDX_ ## MY_NAME ] = t;\
+      } else {\
+         int t0 = _heldstarttime[ BTN_IDX_ ## MY_NAME ];                \
+         int heldtime = (t0 < t)? (t-t0): (0xffffffffUL - (t0 - t));    \
+         if (1000 <= heldtime) {                                        \
+            pEv->_held1 |= WiimoteEvent::BTN_ ## MY_NAME;                \
+         }\
       }\
-   } else {\
-      _heldtime[ BTN_IDX_ ## MY_NAME ] = 0;\
    }
    IMPL_BUTTON(A, A);
    IMPL_BUTTON(B, B);
@@ -139,16 +181,15 @@ bool WiimoteProxy::poll(double currentTime, int elapsedTime)
    IMPL_BUTTON(Right, RIGHT);
 #undef IMPL_BUTTON
 
-   tmp._accel.t    = _remote.Acceleration.Time;
-   tmp._accel.x    = _remote.Acceleration.X;
-   tmp._accel.y    = _remote.Acceleration.Y;
-   tmp._accel.z    = _remote.Acceleration.Z;
-   tmp._gyro.t     = _remote.MotionPlus.Time;
-   tmp._gyro.yaw   = _remote.MotionPlus.Speed.Yaw;
-   tmp._gyro.pitch = _remote.MotionPlus.Speed.Pitch;
-   tmp._gyro.roll  = _remote.MotionPlus.Speed.Roll;
+   pEv->_accel.t    = _remote.Acceleration.Time;
+   pEv->_accel.x    = _remote.Acceleration.X;
+   pEv->_accel.y    = _remote.Acceleration.Y;
+   pEv->_accel.z    = _remote.Acceleration.Z;
+   pEv->_gyro.t     = _remote.MotionPlus.Time;
+   pEv->_gyro.yaw   = _remote.MotionPlus.Speed.Yaw;
+   pEv->_gyro.pitch = _remote.MotionPlus.Speed.Pitch;
+   pEv->_gyro.roll  = _remote.MotionPlus.Speed.Roll;
 
-   _ev = tmp;
    return true;
 }
 

@@ -3,6 +3,7 @@
 
 #include "macros.h"
 #include "InputEvent.h"
+#include <list>
 
 namespace bootes { namespace lib { namespace framework {
 
@@ -14,7 +15,7 @@ public:
 
    bool start();
    void stop();
-   void poll(double currentTime, int elapsedTime); //値を読み取り、必要に応じて記憶や計算をする。
+   size_t consumeEvents(std::list< WiimoteEvent >* pOut);
 
    bool isConnected() const;
    bool isMotionPlusEnabled() const;
@@ -54,9 +55,6 @@ public:
    inline bool isHeld1secDown()  const { return isHeld1sec(WiimoteEvent::BTN_DOWN); }
    inline bool isHeld1secLeft()  const { return isHeld1sec(WiimoteEvent::BTN_LEFT); }
    inline bool isHeld1secRight() const { return isHeld1sec(WiimoteEvent::BTN_RIGHT); }
-
-protected:
-   virtual bool calcData(WiimoteEvent* newev, const WiimoteEvent* oldev);
 
 private:
    void* _proxy;

@@ -3,6 +3,7 @@
 
 #include "../include.h"
 #include <bootes/lib/framework/Wiimote.h>
+#include <bootes/lib/util/RingBuffer.h>
 #include <wiimote-bootes.h> //WiiYourself!
 
 namespace bootes { namespace lib { namespace framework {
@@ -18,18 +19,20 @@ public:
    void proxyStop();
    static DWORD WINAPI ProxyThreadFunc(LPVOID p);
 
-   bool poll(double currentTime, int elapsedTime);
-   inline const WiimoteEvent& getEvent() const { return _ev; }
+   size_t consumeEvents(std::list< WiimoteEvent >* pOut);
    inline bool isConnected() const { return _remote.IsConnected(); }
    inline bool isMotionPlusEnabled() const { return _remote.MotionPlusEnabled(); }
 
 private:
+   bool poll(WiimoteEvent* pEv);
    wiimote _remote;
-   WiimoteEvent _ev;
    bool _proxy_run;
    HANDLE _proxy_thread;
    DWORD  _proxy_thread_id;
-   DWORD _time0;
+   HANDLE _hMutex;
+   ::bootes::lib::util::RingBuffer< WiimoteEvent > _buffer;
+   ::bootes::lib::util::RingBuffer< WiimoteEvent > _buffer_swap;
+   __int64 _last_event_timestamp;
 
    enum BUTTON_INDEX {
       BTN_IDX_A     = 0,
@@ -45,7 +48,7 @@ private:
       BTN_IDX_RIGHT = 10,
       NUM_BUTTONS,
    };
-   int _heldtime[NUM_BUTTONS];
+   DWORD _heldstarttime[NUM_BUTTONS];
 };
 
 } } }

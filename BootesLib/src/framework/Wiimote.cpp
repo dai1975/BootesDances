@@ -6,8 +6,8 @@ namespace bootes { namespace lib { namespace framework {
 
 Wiimote::Wiimote()
 {
-   _ei = 0;
    _proxy = new WiimoteProxy();
+   _ei = 0;
 }
 
 Wiimote::~Wiimote()
@@ -54,24 +54,19 @@ bool Wiimote::isMotionPlusEnabled() const
    }
 }
 
-bool Wiimote::calcData(WiimoteEvent* newev, const WiimoteEvent* oldev)
+size_t Wiimote::consumeEvents(std::list< WiimoteEvent >* pOut)
 {
-   return true;
-}
-
-void Wiimote::poll(double currentTime, int elapsedTime)
-{
-   if (! _proxy) { return; }
+   if (! _proxy) { return 0; }
    WiimoteProxy* proxy = static_cast< WiimoteProxy* >(_proxy);
 
-   if (! proxy->isMotionPlusEnabled()) { return; }
-   if (! proxy->poll(currentTime, elapsedTime)) { return; }
-   if (! proxy->isMotionPlusEnabled()) { return; }
+   if (! proxy->isMotionPlusEnabled()) { return 0; }
+   size_t r = proxy->consumeEvents(pOut);
+   if (r == 0) { return 0; }
 
-   int ei1 = _ei ^ 1;
-   _ev[ei1] = proxy->getEvent();
-   if (! calcData(&_ev[ei1], &_ev[_ei])) { return; }
-   _ei ^= 1;
+   int ei = _ei ^ 1;
+   _ev[ei] = pOut->back();
+   _ei = ei;
+   return r;
 }
 
 } } }
