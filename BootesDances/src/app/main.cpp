@@ -8,9 +8,35 @@
 #include <sstream>
 #include <Shlobj.h>
 #include <locale.h>
+#include <tchar.h>
+#include <string.h>
+#include <shellapi.h>
 
 ::bootes::lib::framework::Foundation* g_pFnd = NULL;
 IBootesGame* g_pGame = NULL;
+
+namespace {
+
+bool parseArgs(BootesGameOption* opt)
+{
+   int argc    = __argc;
+   TCHAR** argv = __wargv;
+   while (--argc) {
+      ++argv;
+      if (**argv == _T('-')) {
+         if (_tcscmp(_T("-d"), *argv) == 0) {
+            if (--argc == 0) return false;
+            ++argv;
+            opt->datadir = *argv;
+         } else if (_tcscmp(_T("-e"), *argv) == 0) {
+            opt->editable = true;
+         }
+      }
+   }
+   return true;
+}
+
+}
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -21,8 +47,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
    setlocale(LC_ALL, ".ACP");
 
-   std::basic_string< TCHAR > datadir;
-   {
+   BootesGameOption opt;
+   if (! parseArgs(&opt)) {
+      return -1;
+   }
+
+   if (opt.datadir.empty()) {
       TCHAR basedir[MAX_PATH];
       //int cs = CSIDL_APPDATA; //appdata
       int cs = CSIDL_PERSONAL; //mydocuments
@@ -33,8 +63,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
       }
       std::basic_ostringstream< TCHAR > o;
       o << basedir << _T("\\BootesDances");
-      datadir = o.str();
-      if (CreateDirectory(datadir.c_str(), NULL) == 0) {
+      opt.datadir = o.str();
+      if (CreateDirectory(opt.datadir.c_str(), NULL) == 0) {
          DWORD e = GetLastError();
          if (e != ERROR_ALREADY_EXISTS) {
             return -1;
@@ -52,7 +82,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
    }
    ::bootes::lib::framework::Foundation* pFnd = bootes::lib::GetFoundation();
 
-   BootesGame* pGame = new BootesGame(datadir.c_str(), true);
+   BootesGame* pGame = new BootesGame(opt);
    if (! pFnd->initialize(hInstance, nCmdShow, pGame)) {
       goto fin;
    }

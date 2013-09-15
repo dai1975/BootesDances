@@ -13,7 +13,7 @@ class StageRealizer
 {
 public:
    static bool Idealize(::pb::Stage*, const Stage&);
-   static bool Realize(Stage**, const pb::Stage&, const TCHAR* filename);
+   static bool Realize(Stage**, const pb::Stage&, const TCHAR* name, const TCHAR* dirpath);
 
    typedef MoveRealizer::MotionGuidePair MotionGuidePair;
    typedef MoveRealizer::MotionGuideList MotionGuideList;

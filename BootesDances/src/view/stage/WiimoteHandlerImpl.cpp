@@ -31,8 +31,9 @@ bool WiimoteHandlerImpl::initStage(MoveSequence* moves, const TCHAR* name)
    _pTestMove = NULL;
    _pTeachMove = NULL;
    _play = false;
+   _teachLogger.join();
 
-   if (_editable) {
+   if (_editable && name) {
       _teachLogger.open(name);
    }
 

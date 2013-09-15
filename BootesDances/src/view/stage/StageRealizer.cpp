@@ -22,7 +22,7 @@ bool StageRealizer::Idealize(::pb::Stage* pOut, const Stage& in)
    return true;
 }
 
-bool StageRealizer::Realize(Stage** ppOut, const pb::Stage& in, const TCHAR* name)
+bool StageRealizer::Realize(Stage** ppOut, const pb::Stage& in, const TCHAR* name, const TCHAR* dirpath)
 {
    Stage* pStage = new Stage();
 
@@ -43,6 +43,23 @@ bool StageRealizer::Realize(Stage** ppOut, const pb::Stage& in, const TCHAR* nam
       tmp = ::bootes::lib::util::TChar::T2C(pStage->tc_basename.c_str());
       if (tmp == NULL) { goto fail; }
       pStage->basename = tmp;
+      delete[] tmp;
+   }
+
+   if (pStage->tc_moviepath[0] == _T('\0') ||
+       pStage->tc_moviepath[0] == _T('\\') ||
+       (pStage->tc_moviepath[0] != _T('\0') && pStage->tc_moviepath[1] == _T(':'))
+   ) {
+      ;
+   } else {
+      std::basic_ostringstream< TCHAR > o;
+      o << dirpath << _T("\\") << pStage->tc_moviepath;
+      pStage->tc_moviepath = o.str();
+
+      char* tmp;
+      tmp = ::bootes::lib::util::TChar::T2C(pStage->tc_moviepath.c_str());
+      if (tmp == NULL) { goto fail; }
+      pStage->moviepath = tmp;
       delete[] tmp;
    }
 
@@ -79,25 +96,11 @@ std::basic_string< TCHAR > GetDirPath(const TCHAR* dir, const TCHAR* name)
 std::basic_string< TCHAR > GetFilePath(const TCHAR* dir, const TCHAR* name)
 {
    std::basic_ostringstream< TCHAR > o;
-   o << dir << _T("\\") << name << _T("\\stage.txt");
+   o << GetDirPath(dir, name) << _T("\\stage.txt");
    return o.str();
 }
 }
 
-/*
-bool StageRealizer::SetFactory(MoveSequence* pSeq, const MotionGuidePair& mg)
-{
-   char* c;
-   c = ::bootes::lib::util::TChar::T2C(mg.guide.c_str());
-   pSeq->setGuideFactory(GuideFactory::GetFactory(c));
-   delete[] c;
-
-   c = ::bootes::lib::util::TChar::T2C(mg.motion.c_str());
-   pSeq->setMotionFactory(MotionFactory::GetFactory(c));
-   delete[] c;
-   return true;
-}
-*/
 bool StageRealizer::New(Stage** ppStage, MoveSequence** ppSeq, const MotionGuidePair& mg)
 {
    const GuideRealizer*  pGuideRealizer = NULL;
@@ -165,7 +168,9 @@ bool StageRealizer::Load(Stage** ppStage, MoveSequence** ppSeq, const TCHAR* bas
          return false;
       }
 
-      if (! StageRealizer::Realize(&pStage, idea, subdir)) {
+      
+      std::basic_string< TCHAR > dirpath = GetDirPath(basepath, subdir);
+      if (! StageRealizer::Realize(&pStage, idea, subdir, dirpath.c_str())) {
          return false;
       }
    }
