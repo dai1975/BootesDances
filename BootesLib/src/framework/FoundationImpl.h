@@ -32,6 +32,8 @@ public:
 private:
    bool initWindow(HINSTANCE hInstance, int nCmdShow);
    bool initDirectX();
+   void finWindow();
+   void finDirectX();
    friend LRESULT CALLBACK gWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
    LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 

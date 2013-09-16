@@ -76,6 +76,9 @@ void FoundationImpl::finalize_()
       delete _pEventManager;
       _pEventManager = NULL;
    }
+
+   finDirectX();
+   finWindow();
 }
 
 HWND FoundationImpl::getHwnd()
@@ -176,6 +179,13 @@ bool FoundationImpl::initWindow(HINSTANCE hInstance, int nCmdShow)
 
    return true;
 }
+void FoundationImpl::finWindow()
+{
+   if (_hWnd) {
+      DestroyWindow(_hWnd);
+   }
+   _hWnd = NULL;
+}
 
 bool FoundationImpl::initDirectX()
 {
@@ -240,6 +250,17 @@ bool FoundationImpl::initDirectX()
       }
    }
    return true;
+}
+void FoundationImpl::finDirectX()
+{
+   if (_pD3DDev) {
+      _pD3DDev->Release();
+      _pD3DDev = NULL;
+   }
+   if (_pD3D) {
+      _pD3D->Release();
+      _pD3D = NULL;
+   }
 }
 
 
