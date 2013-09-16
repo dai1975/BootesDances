@@ -238,10 +238,12 @@ void StageManagerProxy::doSave(const TCHAR* basename, bool neu)
       return;
    }
 
-   if (StageRealizer::Save(&res._basename, _dir.c_str(), basename, neu, *_pStage, *_pSeq)) {
-      res._result = true;
-      _pStage->tc_basename = res._basename;
+   if (neu) {
+      res._result = StageRealizer::SaveNew(_dir.c_str(), basename, *_pStage, *_pSeq);
+   } else {
+      res._result = StageRealizer::Save(_dir.c_str(), basename, *_pStage, *_pSeq);
    }
+   res._basename = _pStage->tc_basename;
    g_pFnd->queue(&res);
    return;
 }
@@ -334,6 +336,8 @@ void StageManagerProxy::doLoad(const TCHAR* name)
 
 bool StageManagerProxy::doLoadMovie(const TCHAR* path, Stage* pStage, MoveSequence* pSeq)
 {
+   {
+   }
    _enabled = false;
    if (! _pMoviePlayer->load(path)) { goto fail; }
 

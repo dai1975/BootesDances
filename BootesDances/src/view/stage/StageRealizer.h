@@ -21,7 +21,8 @@ public:
    //static bool SetFactory(MoveSequence* pSeq, const MotionGuidePair& mg);
 
    static bool Search(void(*cb)(bool,Stage*,void*), void* data, const TCHAR* dir, const MotionGuideList&);
-   static bool Save(std::basic_string<TCHAR>*, const TCHAR* dir, const TCHAR* name, bool neu, const Stage&, const MoveSequence&);
+   static bool Save(const TCHAR* dir, const TCHAR* name, const Stage&, const MoveSequence&);
+   static bool SaveNew(const TCHAR* dir, const TCHAR* name, Stage&, const MoveSequence&);
    static bool Load(Stage**, MoveSequence**, const TCHAR* dir, const TCHAR* name, const MotionGuideList&);
    static bool New(Stage**, MoveSequence**, const MotionGuidePair& mg);
 
