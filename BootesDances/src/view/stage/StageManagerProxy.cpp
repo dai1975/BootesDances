@@ -154,7 +154,7 @@ DWORD StageManagerProxy::run()
 void StageManagerProxy::onSubscribe(::bootes::lib::framework::EventManager*) { }
 void StageManagerProxy::onUnsubscribe(::bootes::lib::framework::EventManager*) { }
 
-void StageManagerProxy::onEvent(const ::bootes::lib::framework::Event* ev)
+void StageManagerProxy::onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* ev)
 {
    bool locked = false;
    if (_command != NULL) { goto fail; }

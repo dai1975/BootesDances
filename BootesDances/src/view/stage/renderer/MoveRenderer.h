@@ -18,7 +18,7 @@ public:
 public:
    virtual void onLostDevice() = 0;
    virtual void onResetDevice()= 0;
-   virtual void onRender(const Scene* scene, const MoveSequence* moves, double currentTime, int elapsedTime) = 0;
+   virtual void onRender(const ::bootes::lib::framework::GameTime* gt, const Scene* scene, const MoveSequence* moves) = 0;
 
 public:
    static const DWORD TRIANGLE_FVF =

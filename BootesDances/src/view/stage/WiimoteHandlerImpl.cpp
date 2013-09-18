@@ -42,7 +42,7 @@ bool WiimoteHandlerImpl::initStage(MoveSequence* moves, const TCHAR* name)
 
 void WiimoteHandlerImpl::onSubscribe(::bootes::lib::framework::EventManager*) { }
 void WiimoteHandlerImpl::onUnsubscribe(::bootes::lib::framework::EventManager*) { }
-void WiimoteHandlerImpl::onEvent(const ::bootes::lib::framework::Event* ev)
+void WiimoteHandlerImpl::onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* ev)
 {
    if (false) { ; }
    else if (tryDispatch(ev, &WiimoteHandlerImpl::onPlay)) { return; }
@@ -123,7 +123,7 @@ void WiimoteHandlerImpl::teachRollback()
    _pTeachMove = NULL;
 }
 
-void WiimoteHandlerImpl::handleWiimote(const Scene* scene, const ::bootes::lib::framework::WiimoteEvent* ev)
+void WiimoteHandlerImpl::handleWiimote(const GameTime* gt, const Scene* scene, const WiimoteEvent* wev)
 {
    if (!_play) { return; }
 
@@ -137,7 +137,7 @@ void WiimoteHandlerImpl::handleWiimote(const Scene* scene, const ::bootes::lib::
 //         static std::list< __int64 > lst1;
 //         static std::list< __int64 > lst2;
 
-         __int64 evtime = ev->_event_timestamp * 10000; // [ms] to [100ns]
+         __int64 evtime = wev->_event_timestamp * 10000; // [ms] to [100ns]
          if (_teach_evtime_to_scenetime == 0) { //scene 時刻は飛び飛びなので evtime を使う。一時停止に注意。
             __int64 rt = t - t0;
             _teach_evtime_to_scenetime = evtime - rt;
@@ -147,11 +147,11 @@ void WiimoteHandlerImpl::handleWiimote(const Scene* scene, const ::bootes::lib::
 //         lst1.push_back(evtime);
 //         lst2.push_back(evrt);
 
-         _pTeachMove->getMotion()->teach(evrt, ev);
-         _teachSequence.add(evrt, *ev);
+         _pTeachMove->getMotion()->teach(evrt, wev);
+         _teachSequence.add(evrt, *wev);
       }
    }
-   handleWiimoteTest(t, ev);
+   handleWiimoteTest(t, wev);
 }
 
 void WiimoteHandlerImpl::testClear()

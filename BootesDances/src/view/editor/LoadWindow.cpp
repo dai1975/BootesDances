@@ -166,7 +166,7 @@ bool LoadWindow::onSelect(const CEGUI::EventArgs& e)
 
 void LoadWindow::onSubscribe(::bootes::lib::framework::EventManager*) { }
 void LoadWindow::onUnsubscribe(::bootes::lib::framework::EventManager*) { }
-void LoadWindow::onEvent(const ::bootes::lib::framework::Event* ev)
+void LoadWindow::onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* ev)
 {
    if (ev->getEventId() == EvSearchStageResult::GetEventId()) {
       const EvSearchStageResult* e = static_cast< const EvSearchStageResult* >(ev);

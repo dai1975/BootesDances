@@ -66,7 +66,7 @@ bool sIsInSquare(float x, float y, const MoveRenderer::TriangleVertex* vtx)
 
 };
 
-void MoveRendererEdit::onRender(const Scene* scene, const MoveSequence* pSeq, double currentTime, int elapsedTime)
+void MoveRendererEdit::onRender(const ::bootes::lib::framework::GameTime* gt, const Scene* scene, const MoveSequence* pSeq)
 {
    IDirect3DDevice9* pDev = g_pFnd->getD3D9Device();
    __int64 t0 = scene->clock().clock;

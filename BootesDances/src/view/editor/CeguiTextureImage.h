@@ -17,7 +17,7 @@ namespace bootes { namespace dances { namespace editor {
  1. あらかじめ使用するイメージを登録しておく。
     obj.addLook(name);
  2. テクスチャが更新されたら update してもらう。
-    obj.onRender(int, int);
+    obj.onRender(GameTime*);
  3. 与えられたウィンドウに指定されたルックを描画する
     obj.renderWindow(name, win);
 */
@@ -33,7 +33,7 @@ public:
    bool renderImage(const std::string& id, CEGUI::DefaultWindow* pWindow);
 
 public:
-   void onRender(double currentTime, int elapsedTime);
+   void onRender(const ::bootes::lib::framework::GameTime* gt);
    void onLostDevice();
    void onInitDevice();
    void onResetDevice();

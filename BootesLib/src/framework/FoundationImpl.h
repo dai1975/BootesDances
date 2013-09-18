@@ -25,9 +25,11 @@ public:
    ::bootes::lib::d3dx9::ResourceView* getDxResource();
    EventManager* getEventManager();
    Wiimote* getWiimote();
+   const GameTime* getGameTime() const;
 
    void queue_(const Event* e);
-   bool notifyInputEvent_(const InputEvent*);
+   bool notifySensorEvent_(const GameTime* gt, const InputEvent* ev);
+   bool notifyInputEvent_(const GameTime* gt, const InputEvent* ev);
 
 private:
    bool initWindow(HINSTANCE hInstance, int nCmdShow);
@@ -38,8 +40,8 @@ private:
    LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
    void restore();
-   void update(double totalTime, int elapsedTime);
-   void render(double totalTime, int elapsedTime);
+   void update(const GameTime* gt);
+   void render(const GameTime* gt);
 
 private:
    Foundation* _parent;
@@ -49,6 +51,7 @@ private:
    IDirect3DDevice9* _pD3DDev;
    EventManager* _pEventManager;
    Wiimote* _pWiimote;
+   GameTime _gt;
 
    ::bootes::lib::util::Timer _timer;
    Game* _pGame;

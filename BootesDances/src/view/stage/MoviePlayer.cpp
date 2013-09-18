@@ -156,7 +156,7 @@ void MoviePlayer::onResetDevice()
    _scene_valid = (_scene_pTex != NULL);
 }
 
-void MoviePlayer::onRender(double currentTime, int elapsedTime)
+void MoviePlayer::onRender(const ::bootes::lib::framework::GameTime* gt)
 {
    if ( !_scene_valid || _scene_pTex == NULL || _pPlayer == NULL) {
       _scene_videoInfo.width  = 0;

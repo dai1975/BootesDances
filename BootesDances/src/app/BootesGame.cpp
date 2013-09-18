@@ -20,8 +20,11 @@ IStageManager* BootesGame::getStageManager()
    return _pStageManager;
 }
 
-void BootesGame::onUpdate(double currentTime, int elapsedTime)
+void BootesGame::onUpdate(const ::bootes::lib::framework::GameTime* gt)
 {
+   typedef ::bootes::lib::framework::Game super;
+   super::onUpdate(gt);
+
    switch (m_state) {
    case S_0:
       {

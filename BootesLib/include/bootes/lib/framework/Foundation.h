@@ -3,6 +3,7 @@
 
 #include "macros.h"
 #include <string>
+#include "GameTime.h"
 #include "Event.h"
 #include "Game.h"
 #include "View.h"
@@ -28,11 +29,13 @@ public:
    ::bootes::lib::d3dx9::ResourceView* getDxResource();
    EventManager* getEventManager();
    Wiimote* getWiimote();
+   const GameTime* getGameTime() const;
 
    virtual void queue(const Event* e);
    std::string toString(void* p) const;
 
-   virtual bool notifyInputEvent(const InputEvent* ev);
+   virtual bool notifySensorEvent(const GameTime* gt, const InputEvent* ev);
+   virtual bool notifyInputEvent(const GameTime* gt, const InputEvent* ev);
 
 protected:
    virtual Wiimote* createWiimote() const;

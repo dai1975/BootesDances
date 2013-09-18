@@ -17,9 +17,10 @@ public:
    bool getFontTexture(unsigned int ch, Font* out);
 
 public:
-   virtual void onUpdate(double currentTime, int elapsedTime);
-   virtual void onRender(double currentTime, int elapsedTime);
-   virtual bool onInput(const ::bootes::lib::framework::InputEvent*);
+   virtual void onUpdate(const ::bootes::lib::framework::GameTime* gt);
+   virtual void onRender(const ::bootes::lib::framework::GameTime* gt);
+   virtual bool onSensorInput(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::InputEvent*);
+   virtual bool onInput(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::InputEvent*);
    virtual void onLostDevice();
    virtual void onResetDevice();
 

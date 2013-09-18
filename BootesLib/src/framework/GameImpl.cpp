@@ -23,7 +23,7 @@ void GameImpl::addView(View* v)
    v->onResetDevice();
 }
 
-void GameImpl::onUpdate(double currentTime, int elapsedTime)
+void GameImpl::onUpdate(const GameTime* gt)
 {
 }
 

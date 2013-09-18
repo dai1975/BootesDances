@@ -3,6 +3,7 @@
 
 #include "../../include.h"
 #include <bootes/dances/ISceneSequencer.h>
+#include <bootes/lib/framework/GameTime.h>
 #include <DirectShowTextureExport.h>
 
 class MoviePlayer: public ISceneSequencer
@@ -12,7 +13,7 @@ public:
    virtual ~MoviePlayer();
 
    inline D3DPOOL getPool() const { return _pool; }
-   void onRender(double currentTime, int elapsedTime);
+   void onRender(const ::bootes::lib::framework::GameTime* gt);
    void onLostDevice();
    void onResetDevice();
 

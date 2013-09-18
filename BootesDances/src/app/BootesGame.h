@@ -32,7 +32,7 @@ public:
    inline virtual const TCHAR* getUserDir() const { return _opt.datadir.c_str(); }
 
 public:
-   virtual void onUpdate(double currentTime, int elapsedTime);
+   virtual void onUpdate(const ::bootes::lib::framework::GameTime*);
 
 private:
    const ::bootes::lib::framework::WiimoteEvent* filter(const ::bootes::lib::framework::WiimoteEvent*);

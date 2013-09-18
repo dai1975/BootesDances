@@ -44,7 +44,7 @@ class StageManagerProxy: public ::bootes::lib::framework::EventListener
  public:
    void onSubscribe(::bootes::lib::framework::EventManager*);
    void onUnsubscribe(::bootes::lib::framework::EventManager*);
-   void onEvent(const ::bootes::lib::framework::Event* ev); //!< receive interesting events and queues it.
+   void onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* ev); //!< receive interesting events and queues it.
 
  protected:
    bool onEvent0(const ::bootes::lib::framework::Event* ev); //!< receive interesting events and queues it.

@@ -19,18 +19,19 @@ public:
    virtual VideoInfo  getVideoInfo() const;
 
 public:
-   bool onInput(const ::bootes::lib::framework::InputEvent*);
-   void onUpdate(double currentTime, int elapsedTime);
-   void onRender(double currentTime, int elapsedTime);
+   bool onSensorInput(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::InputEvent*);
+   bool onInput(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::InputEvent*);
+   void onUpdate(const ::bootes::lib::framework::GameTime* gt);
+   void onRender(const ::bootes::lib::framework::GameTime* gt);
    void onLostDevice();
    void onResetDevice();
-   void onEvent(const ::bootes::lib::framework::Event* ev);
+   void onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* ev);
 
 private:
-   void onRender0(IDirect3DDevice9* pDev, const Scene* scene, double currentTime, int elapsedTime);
+   void onRender0(IDirect3DDevice9* pDev, const ::bootes::lib::framework::GameTime* gt, const Scene* scene);
 //   void clearBuffer();
 //   HRESULT createBuffer(IDirect3DTexture9*);
-   void drawFps(IDirect3DDevice9*, const Scene*, int currentTime, int elapsedTime);
+   void drawFps(IDirect3DDevice9*, const ::bootes::lib::framework::GameTime* gt, const Scene*);
    
    enum STATE {
       S_0, S_RUN,

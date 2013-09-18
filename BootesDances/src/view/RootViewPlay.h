@@ -16,9 +16,10 @@ public:
    inline virtual IStageManager* getStageManager() { return this; }
 
 public:
-   virtual void onUpdate(double currentTime, int elapsedTime);
-   virtual void onRender(double currentTime, int elapsedTime);
-   virtual bool onInput(const ::bootes::lib::framework::InputEvent*);
+   virtual void onUpdate(const GameTime* gt);
+   virtual void onRender(const GameTime* gt);
+   virtual bool onInput(const GameTime* gt, const ::bootes::lib::framework::InputEvent*);
+   virtual bool onSensorInput(const GameTime* gt, const ::bootes::lib::framework::InputEvent*);
    virtual void onLostDevice();
    virtual void onResetDevice();
 
@@ -33,7 +34,7 @@ public:
 public:
    virtual void onSubscribe(::bootes::lib::framework::EventManager*);
    virtual void onUnsubscribe(::bootes::lib::framework::EventManager*);
-   virtual void onEvent(const ::bootes::lib::framework::Event* ev);
+   virtual void onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* ev);
 
 private:
    StageManagerProxy* _pProxy;

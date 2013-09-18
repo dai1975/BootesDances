@@ -29,7 +29,7 @@ private:
 public:
    void onSubscribe(::bootes::lib::framework::EventManager*);
    void onUnsubscribe(::bootes::lib::framework::EventManager*);
-   void onEvent(const ::bootes::lib::framework::Event* ev);
+   void onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* ev);
 private:
    void onSearchFailed();
    void onSearchSucceed();

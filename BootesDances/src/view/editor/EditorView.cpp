@@ -264,7 +264,7 @@ bool EditorView::onLoadDialogCancel(const CEGUI::EventArgs& ev_)
    return true;
 }
 
-void EditorView::onUpdate(double currentTime, int elapsedTime)
+void EditorView::onUpdate(const GameTime* gt)
 {
    switch (_state) {
    case S_0:
@@ -275,15 +275,14 @@ void EditorView::onUpdate(double currentTime, int elapsedTime)
    case S_RUN:
       break;
    }
-   _pEditWindow->onUpdate(currentTime, elapsedTime);
-   float ms = ((float)elapsedTime) / (float)1000;
-   CEGUI::System::getSingleton().injectTimePulse(ms);
+   _pEditWindow->onUpdate(gt);
+   CEGUI::System::getSingleton().injectTimePulse(gt->elapsed); //ms
 }
 
-void EditorView::onRender(double currentTime, int elapsedTime)
+void EditorView::onRender(const GameTime* gt)
 {
-   _image.onRender(currentTime, elapsedTime);
-   _pEditWindow->onRender(currentTime, elapsedTime);
+   _image.onRender(gt);
+   _pEditWindow->onRender(gt);
    CEGUI::System::getSingleton().renderGUI();
 }
 
@@ -302,7 +301,12 @@ void EditorView::onMouseLeave()
    }
 }
 
-bool EditorView::onInput(const ::bootes::lib::framework::InputEvent* ev)
+bool EditorView::onSensorInput(const GameTime* gt, const InputEvent* ev)
+{
+   return false;
+}
+
+bool EditorView::onInput(const GameTime* gt, const InputEvent* ev)
 {
    switch (ev->_type) {
    case ::bootes::lib::framework::InputEvent::T_WNDMSG:
@@ -348,7 +352,7 @@ bool EditorView::onInput(const ::bootes::lib::framework::InputEvent* ev)
    case ::bootes::lib::framework::InputEvent::T_WIIMOTE:
       {
          const ::bootes::lib::framework::WiimoteEvent* we = static_cast< const ::bootes::lib::framework::WiimoteEvent* >(ev);
-         _pEditWindow->onInput(we);
+         _pEditWindow->onInput(gt, we);
       }
    }
    return false;
@@ -356,7 +360,7 @@ bool EditorView::onInput(const ::bootes::lib::framework::InputEvent* ev)
 
 void EditorView::onSubscribe(::bootes::lib::framework::EventManager*) { }
 void EditorView::onUnsubscribe(::bootes::lib::framework::EventManager*) { }
-void EditorView::onEvent(const ::bootes::lib::framework::Event* ev)
+void EditorView::onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* ev)
 {
    if (ev->getEventId() == EvLoadStageResult::GetEventId()) {
       const EvLoadStageResult* e = static_cast< const EvLoadStageResult* >(ev);

@@ -21,7 +21,7 @@ public:
  public:
    void onLostDevice();
    void onResetDevice();
-   void onRender(const Scene* scene, double currentTime, int elapsedTime);
+   void onRender(const ::bootes::lib::framework::GameTime* gt, const Scene* scene);
 
  public:
    virtual size_t getRenderedModels(std::vector<const IMove*>*) const;
@@ -30,7 +30,7 @@ public:
    virtual bool   presentNearestEdge(float rx, float ry, MoveEditee* o) const;
 
  protected:
-   virtual void onEvent(const ::bootes::lib::framework::Event* ev);
+   virtual void onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* ev);
 
  private:
    bool _editable;

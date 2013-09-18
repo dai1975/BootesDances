@@ -14,7 +14,7 @@ public:
    virtual ~GameImpl();
 
 public:
-   void onUpdate(double currentTime, int elapsedTime);
+   void onUpdate(const GameTime* gt);
    void addView(View*);
    typedef Game::t_views t_views;
    inline const t_views& getViews() const { return _views; }
