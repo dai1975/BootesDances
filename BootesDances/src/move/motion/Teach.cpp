@@ -1,4 +1,5 @@
 #include "Teach.h"
+#include <iterator>
 
 TeachSequence::TeachSequence()
    : succeed(false)
