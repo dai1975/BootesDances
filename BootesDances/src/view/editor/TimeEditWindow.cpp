@@ -135,7 +135,7 @@ void TimeEditWindow::layout()
 }
 
 
-void TimeEditWindow::onEvent(const ::bootes::lib::framework::Event* ev)
+void TimeEditWindow::onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* ev)
 {
    if (tryDispatch(ev, &TimeEditWindow::onLoad)) { return; }
 }

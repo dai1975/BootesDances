@@ -28,7 +28,7 @@ bool MovePresenterImpl::initStage(MoveSequence* moves, IMoveEditor* editor)
    return true;
 }
 
-void MovePresenterImpl::onEvent(const ::bootes::lib::framework::Event* ev)
+void MovePresenterImpl::onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* ev)
 {
    int eid = ev->getEventId();
    if (eid == EvMoviePlay::GetEventId()) {
@@ -52,13 +52,13 @@ void MovePresenterImpl::onResetDevice()
    if (_editable) { _rend_edit.onResetDevice(); }
 }
 
-void MovePresenterImpl::onRender(const Scene* scene, double currentTime, int elapsedTime)
+void MovePresenterImpl::onRender(const ::bootes::lib::framework::GameTime* gt, const Scene* scene)
 {
    if (! scene->isValid()) { return; }
    if (_editable && !_playing) {
-      _rend_edit.onRender(scene, _moves, currentTime, elapsedTime);
+      _rend_edit.onRender(gt, scene, _moves);
    } else {
-      _rend_play.onRender(scene, _moves, currentTime, elapsedTime);
+      _rend_play.onRender(gt, scene, _moves);
    }
 }
 

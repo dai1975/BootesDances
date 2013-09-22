@@ -19,10 +19,10 @@ public:
 
    virtual bool subscribe(intptr_t eventId, EventListener*);
    virtual bool unsubscribe(intptr_t eventId, EventListener*);
-   virtual void clock(double t1);
+   virtual void clock(const GameTime*, double t1);
 
    virtual void queue(const Event*);
-   virtual void deliver(const Event*);
+   virtual void deliver(const GameTime*, const Event*);
 
 protected:
    virtual bool registerEvent(const char* name, intptr_t* ret_evid);

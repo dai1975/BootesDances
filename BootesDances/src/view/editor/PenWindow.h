@@ -24,7 +24,7 @@ public:
    virtual void layout();
 
 public:
-   virtual void onEvent(const ::bootes::lib::framework::Event* ev);
+   virtual void onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* ev);
    bool onPush(const CEGUI::EventArgs&);
 protected:
    void onPen(const EvEditorPen*);

@@ -5,17 +5,34 @@
 #include <bootes/dances/IBootesGame.h>
 #include "../view/RootView.h"
 
+struct BootesGameOption
+{
+   std::basic_string< TCHAR > datadir;
+   bool editable;
+
+   inline BootesGameOption() {
+      datadir = _T("");
+      editable = false;
+   }
+   inline BootesGameOption(const BootesGameOption& r) { operator=(r); }
+   inline BootesGameOption& operator=(const BootesGameOption& r) {
+      datadir = r.datadir;
+      editable = r.editable;
+      return *this;
+   }
+};
+
 class BootesGame: public IBootesGame
 {
 public:
-   explicit BootesGame(const TCHAR* dir, bool editable);
+   explicit BootesGame(const BootesGameOption& opt);
    virtual ~BootesGame();
 
    virtual IStageManager* getStageManager();
-   inline virtual const TCHAR* getUserDir() const { return _dir.c_str(); }
+   inline virtual const TCHAR* getUserDir() const { return _opt.datadir.c_str(); }
 
 public:
-   virtual void onUpdate(double currentTime, int elapsedTime);
+   virtual void onUpdate(const ::bootes::lib::framework::GameTime*);
 
 private:
    const ::bootes::lib::framework::WiimoteEvent* filter(const ::bootes::lib::framework::WiimoteEvent*);
@@ -26,8 +43,7 @@ private:
       S_0, S_RUN,
    };
    STATE m_state;
-   std::basic_string< TCHAR > _dir;
-   bool _editable;
+   BootesGameOption _opt;
    IStageManager* _pStageManager;
 };
 

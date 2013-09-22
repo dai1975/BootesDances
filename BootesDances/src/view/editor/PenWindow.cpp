@@ -101,7 +101,7 @@ void PenWindow::layout()
    }
 }
 
-void PenWindow::onEvent(const ::bootes::lib::framework::Event* ev)
+void PenWindow::onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* ev)
 {
    if (tryDispatch(ev, &PenWindow::onPen)) { return; }
 }
@@ -117,7 +117,7 @@ bool PenWindow::onPush(const CEGUI::EventArgs& args)
             EvEditorPen ev;
             ev._main = i;
             ev._sub  = j;
-            g_pFnd->getEventManager()->deliver(&ev);
+            g_pFnd->getEventManager()->deliver(g_pFnd->getGameTime(), &ev);
             break;
          }
       }

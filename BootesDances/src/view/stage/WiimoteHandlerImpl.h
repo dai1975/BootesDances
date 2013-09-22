@@ -24,11 +24,11 @@ public:
    virtual void teachCommit(bool succeed);
    virtual void teachRollback();
 
-   virtual void handleWiimote(const Scene*, const ::bootes::lib::framework::WiimoteEvent*);
+   virtual void handleWiimote(const GameTime*, const Scene*, const WiimoteEvent*);
 
    virtual void onSubscribe(::bootes::lib::framework::EventManager*);
    virtual void onUnsubscribe(::bootes::lib::framework::EventManager*);
-   virtual void onEvent(const ::bootes::lib::framework::Event* ev);
+   virtual void onEvent(const GameTime*, const ::bootes::lib::framework::Event* ev);
    void onLoad(const EvLoadStageResult* ev);
    void onPlay(const EvMoviePlay* ev);
    void onPause(const EvMoviePause* ev);

@@ -2,6 +2,7 @@
 #define BOOTES_LIB_FRAMEWORK_GAME_H
 
 #include "macros.h"
+#include "GameTime.h"
 #include "View.h"
 #include <deque>
 
@@ -14,7 +15,7 @@ public:
    virtual ~Game();
 
 public:
-   virtual void onUpdate(double currentTime, int elapsedTime);
+   virtual void onUpdate(const GameTime* gt);
 
    typedef std::deque< View* > t_views;
    const t_views getViews() const;

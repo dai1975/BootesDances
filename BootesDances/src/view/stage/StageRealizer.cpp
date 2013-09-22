@@ -22,7 +22,7 @@ bool StageRealizer::Idealize(::pb::Stage* pOut, const Stage& in)
    return true;
 }
 
-bool StageRealizer::Realize(Stage** ppOut, const pb::Stage& in, const TCHAR* name)
+bool StageRealizer::Realize(Stage** ppOut, const pb::Stage& in, const TCHAR* name, const TCHAR* dirpath)
 {
    Stage* pStage = new Stage();
 
@@ -43,6 +43,23 @@ bool StageRealizer::Realize(Stage** ppOut, const pb::Stage& in, const TCHAR* nam
       tmp = ::bootes::lib::util::TChar::T2C(pStage->tc_basename.c_str());
       if (tmp == NULL) { goto fail; }
       pStage->basename = tmp;
+      delete[] tmp;
+   }
+
+   if (pStage->tc_moviepath[0] == _T('\0') ||
+       pStage->tc_moviepath[0] == _T('\\') ||
+       (pStage->tc_moviepath[0] != _T('\0') && pStage->tc_moviepath[1] == _T(':'))
+   ) {
+      ;
+   } else {
+      std::basic_ostringstream< TCHAR > o;
+      o << dirpath << _T("\\") << pStage->tc_moviepath;
+      pStage->tc_moviepath = o.str();
+
+      char* tmp;
+      tmp = ::bootes::lib::util::TChar::T2C(pStage->tc_moviepath.c_str());
+      if (tmp == NULL) { goto fail; }
+      pStage->moviepath = tmp;
       delete[] tmp;
    }
 
@@ -79,25 +96,11 @@ std::basic_string< TCHAR > GetDirPath(const TCHAR* dir, const TCHAR* name)
 std::basic_string< TCHAR > GetFilePath(const TCHAR* dir, const TCHAR* name)
 {
    std::basic_ostringstream< TCHAR > o;
-   o << dir << _T("\\") << name << _T("\\stage.txt");
+   o << GetDirPath(dir, name) << _T("\\stage.txt");
    return o.str();
 }
 }
 
-/*
-bool StageRealizer::SetFactory(MoveSequence* pSeq, const MotionGuidePair& mg)
-{
-   char* c;
-   c = ::bootes::lib::util::TChar::T2C(mg.guide.c_str());
-   pSeq->setGuideFactory(GuideFactory::GetFactory(c));
-   delete[] c;
-
-   c = ::bootes::lib::util::TChar::T2C(mg.motion.c_str());
-   pSeq->setMotionFactory(MotionFactory::GetFactory(c));
-   delete[] c;
-   return true;
-}
-*/
 bool StageRealizer::New(Stage** ppStage, MoveSequence** ppSeq, const MotionGuidePair& mg)
 {
    const GuideRealizer*  pGuideRealizer = NULL;
@@ -165,7 +168,9 @@ bool StageRealizer::Load(Stage** ppStage, MoveSequence** ppSeq, const TCHAR* bas
          return false;
       }
 
-      if (! StageRealizer::Realize(&pStage, idea, subdir)) {
+      
+      std::basic_string< TCHAR > dirpath = GetDirPath(basepath, subdir);
+      if (! StageRealizer::Realize(&pStage, idea, subdir, dirpath.c_str())) {
          return false;
       }
    }
@@ -188,48 +193,22 @@ fail:
    return true;
 }
 
-bool StageRealizer::Save(std::basic_string<TCHAR>* o_basename, const TCHAR* dir, const TCHAR* basename0, bool neu, const Stage& stage, const MoveSequence& seq)
+bool StageRealizer::Save(const TCHAR* dir, const TCHAR* basename, const Stage& stage, const MoveSequence& seq)
 {
-   std::basic_string< TCHAR > basename;
    {
       DWORD attr;
       std::basic_string< TCHAR > stagedir;
 
-      basename = basename0;
-      stagedir = GetDirPath(dir, basename0);
+      stagedir = GetDirPath(dir, basename);
       attr = GetFileAttributes(stagedir.c_str());
       if (attr == -1) {
-         ;
-      } else if (neu) {
-         int n = 0;
-         const TCHAR* pc;
-         for (pc = basename0; *pc != _T('\0'); ++pc);
-         for (--pc; _T('0') <= *pc && *pc <= _T('9'); --pc) {
-            n *= 10;
-            n += (*pc - _T('0'));
-         }
-         ++pc;
-         std::basic_string<TCHAR> alpha(basename0, pc-basename0);
-         for (++n; attr != -1; ++n) {
-            std::basic_ostringstream< TCHAR > o;
-            o << alpha << n;
-            basename = o.str();
-            stagedir = GetDirPath(dir, basename.c_str());
-            attr = GetFileAttributes(stagedir.c_str());
-            if (attr == -1) { break; }
-         }
-      }
-
-      if (attr == -1) {
-         if (! CreateDirectory(stagedir.c_str(), NULL)) {
-            return false;
-         }
+         return false;
       } else if ((attr & FILE_ATTRIBUTE_DIRECTORY) == 0) {
          return false;
       }
    }
 
-   if (! MoveRealizer::Save(dir, basename.c_str(), seq)) {
+   if (! MoveRealizer::Save(dir, basename, seq)) {
       return false;
    }
 
@@ -239,7 +218,7 @@ bool StageRealizer::Save(std::basic_string<TCHAR>* o_basename, const TCHAR* dir,
    }
 
    std::basic_string< TCHAR > path, tmppath, oldpath;
-   path = GetFilePath(dir, basename.c_str());
+   path = GetFilePath(dir, basename);
    tmppath.append(path).append(_T(".tmp"));
    oldpath.append(path).append(_T(".old"));
 
@@ -264,11 +243,82 @@ bool StageRealizer::Save(std::basic_string<TCHAR>* o_basename, const TCHAR* dir,
 
    MoveFile(path.c_str(), oldpath.c_str());
    if (! MoveFile(tmppath.c_str(), path.c_str())) { goto fail; }
-   *o_basename = basename;
    return true;
 
 fail:
    return false;
+}
+
+
+bool StageRealizer::SaveNew(const TCHAR* dir, const TCHAR* basename0, Stage& stage, const MoveSequence& seq)
+{
+   std::basic_string< TCHAR > basename;
+   std::basic_string< TCHAR > stagedir;
+   {
+      basename = basename0;
+      stagedir = GetDirPath(dir, basename0);
+      DWORD attr = GetFileAttributes(stagedir.c_str());
+      if (attr == -1) {
+         ;
+      } else {
+         const TCHAR* pc;
+         int n = 0;
+         for (pc = basename0; *pc != _T('\0'); ++pc);
+         for (--pc; _T('0') <= *pc && *pc <= _T('9'); --pc) {
+            n *= 10;
+            n += (*pc - _T('0'));
+         }
+         ++pc;
+         std::basic_string<TCHAR> alpha(basename0, pc-basename0);
+         for (++n; ; ++n) {
+            std::basic_ostringstream< TCHAR > o;
+            o << alpha << n;
+            basename = o.str();
+            stagedir = GetDirPath(dir, basename.c_str());
+            attr = GetFileAttributes(stagedir.c_str());
+            if (attr == -1) { break; }
+         }
+      }
+      if (attr != -1) {
+         return false;
+      }
+   }
+
+   if (! CreateDirectory(stagedir.c_str(), NULL)) {
+      return false;
+   }
+
+   const TCHAR *moviefile;
+   {
+      moviefile = stage.tc_moviepath.c_str();
+      for (const TCHAR* pc=moviefile; *pc != _T('\0'); ++pc) {
+         if (*pc == _T('\\') || *pc == _T('/')) { moviefile = pc+1; }
+      }
+      std::basic_ostringstream< TCHAR > o;
+      o << stagedir << _T("\\") << moviefile;
+      std::basic_string< TCHAR > moviepath1 = o.str();
+      if (! CopyFile(stage.tc_moviepath.c_str(), moviepath1.c_str(), true)) {
+         RemoveDirectory(stagedir.c_str());
+         return false;
+      }
+   }
+   stage.tc_moviepath = moviefile;
+   stage.tc_basename = basename;
+   {
+      char* tmp;
+      tmp = ::bootes::lib::util::TChar::T2C(stage.tc_moviepath.c_str());
+      if (tmp == NULL) { return false; }
+      stage.moviepath = tmp;
+      delete[] tmp;
+      tmp = ::bootes::lib::util::TChar::T2C(stage.tc_basename.c_str());
+      if (tmp == NULL) { return false; }
+      stage.basename = tmp;
+      delete[] tmp;
+   }
+   if (! Save(dir, basename.c_str(), stage, seq)) {
+      return false;
+   }
+   return true;
 }
 
 bool StageRealizer::Search(void(*cb)(bool,Stage*,void*), void* data, const TCHAR* basepath, const MotionGuideList& mgl)

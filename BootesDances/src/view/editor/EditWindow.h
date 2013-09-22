@@ -26,6 +26,8 @@ class EditWindow
    : public CEGUI::LayoutContainer
    , public ::bootes::lib::framework::EventListener
 {
+   typedef ::bootes::lib::framework::GameTime   GameTime;
+   typedef ::bootes::lib::framework::InputEvent InputEvent;
 public:
    static const CEGUI::String WidgetTypeName;
 
@@ -33,12 +35,12 @@ public:
    ~EditWindow();
    bool init(CeguiTextureImage*);
 
-   void onEvent(const ::bootes::lib::framework::Event* ev);
+   void onEvent(const GameTime* gt, const ::bootes::lib::framework::Event* ev);
 
    virtual void layout();
-   void onUpdate(double currentTime, int elapsedTime);
-   void onRender(double currentTime, int elapsedTime);
-   void onInput(const ::bootes::lib::framework::InputEvent* ev);
+   void onUpdate(const GameTime* gt);
+   void onRender(const GameTime* gt);
+   void onInput(const GameTime* gt, const InputEvent* ev);
 
    bool doPlay(const CEGUI::EventArgs&);
    bool doPause(const CEGUI::EventArgs&);

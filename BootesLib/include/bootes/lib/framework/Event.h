@@ -2,6 +2,7 @@
 #define BOOTES_LIB_FRAMEWORK_EVENT_H
 
 #include "macros.h"
+#include "GameTime.h"
 #include <boost/cstdint.hpp>
 
 namespace bootes { namespace lib { namespace framework {
@@ -59,7 +60,7 @@ template <typename T> intptr_t EventTmpl< T >::s_eventId = reinterpret_cast< int
 class EventListener
 {
 public:
-   virtual void onEvent(const Event* ev) = 0;
+   virtual void onEvent(const GameTime* gt, const Event* ev) = 0;
    virtual void onSubscribe(EventManager*) { }
    virtual void onUnsubscribe(EventManager*) { }
    
@@ -92,9 +93,9 @@ public:
       return unsubscribe(T::GetEventId(), p);
    }
 
-   virtual void clock(double t1) = 0;
+   virtual void clock(const GameTime* gt, double t1) = 0;
    virtual void queue(const Event* ev) = 0;
-   virtual void deliver(const Event* ev) = 0;
+   virtual void deliver(const GameTime* gt, const Event* ev) = 0;
    
 protected:
    virtual bool registerEvent(const char* name, intptr_t* ret_evid) = 0;

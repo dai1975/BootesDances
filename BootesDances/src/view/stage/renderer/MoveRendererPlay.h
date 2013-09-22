@@ -17,7 +17,7 @@ public:
 public:
    virtual void onLostDevice();
    virtual void onResetDevice();
-   virtual void onRender(const Scene* scene, const MoveSequence* moves, double currentTime, int elapsedTime);
+   virtual void onRender(const ::bootes::lib::framework::GameTime* gt, const Scene* scene, const MoveSequence* moves);
 
 protected:
    void scaleVertex(std::vector< TriangleVertex >& vtx, const D3DXVECTOR3& center, float scale);

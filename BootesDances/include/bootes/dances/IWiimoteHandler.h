@@ -6,6 +6,9 @@
 
 class IWiimoteHandler
 {
+protected:
+   typedef ::bootes::lib::framework::GameTime GameTime;
+   typedef ::bootes::lib::framework::WiimoteEvent WiimoteEvent;
 public:
    virtual void teachClear(const IMove*) = 0;
 
@@ -13,7 +16,7 @@ public:
    virtual void teachCommit(bool succeed) = 0;
    virtual void teachRollback() = 0;
 
-   virtual void handleWiimote(const Scene*, const ::bootes::lib::framework::WiimoteEvent*) = 0;
+   virtual void handleWiimote(const GameTime*, const Scene*, const WiimoteEvent*) = 0;
 };
 
 #endif

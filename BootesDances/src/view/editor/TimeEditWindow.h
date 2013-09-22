@@ -27,7 +27,7 @@ public:
 public:
    bool onScalePlus(const CEGUI::EventArgs&);
    bool onScaleMinus(const CEGUI::EventArgs&);
-   virtual void onEvent(const ::bootes::lib::framework::Event* ev);
+   virtual void onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* ev);
 protected:
    void onLoad(const EvLoadStageResult* ev);
 

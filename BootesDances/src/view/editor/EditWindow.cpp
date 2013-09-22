@@ -51,7 +51,7 @@ EditWindow::~EditWindow()
 #undef SAFE_DEL
 }
 
-void EditWindow::onEvent(const ::bootes::lib::framework::Event* ev)
+void EditWindow::onEvent(const GameTime* gt, const ::bootes::lib::framework::Event* ev)
 {
    if (ev->getEventId() == EvLoadStageResult::GetEventId()) {
       const EvLoadStageResult* e = static_cast< const EvLoadStageResult* >(ev);
@@ -219,7 +219,7 @@ bool EditWindow::doFrame(const CEGUI::EventArgs& e)
    return true;
 }
 
-void EditWindow::onInput(const ::bootes::lib::framework::InputEvent* ev)
+void EditWindow::onInput(const GameTime* gt, const ::bootes::lib::framework::InputEvent* ev)
 {
    switch (ev->_type) {
    case ::bootes::lib::framework::InputEvent::T_WNDMSG:
@@ -300,7 +300,7 @@ bool EditWindow::onTeachBeginDialog(const CEGUI::EventArgs&)
    return true;
 }
 
-void EditWindow::onUpdate(double currentTime, int elapsedTime)
+void EditWindow::onUpdate(const GameTime* gt)
 {
    if (_play && _teach_stage == TEACH_TEACHING) {
       ISceneSequencer* pSceneSeq = g_pGame->getStageManager()->getSceneSequencer();
@@ -751,7 +751,7 @@ void EditWindow::layout()
    }
 }
 
-void EditWindow::onRender(double currentTime, int elapsedTime)
+void EditWindow::onRender(const GameTime* gt)
 {
    {
       const CEGUI::Size& s0 = _pImage->getSize();

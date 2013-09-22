@@ -65,6 +65,11 @@ Wiimote* Foundation::getWiimote()
    return static_cast< FoundationImpl* >(_data)->getWiimote();
 }
 
+const GameTime* Foundation::getGameTime() const
+{
+   return static_cast< FoundationImpl* >(_data)->getGameTime();
+}
+
 void Foundation::queue(const Event* e)
 {
    static_cast< FoundationImpl* >(_data)->queue_(e);
@@ -75,9 +80,14 @@ std::string Foundation::toString(void* p) const
    return static_cast< FoundationImpl* >(_data)->toString(p);
 }
 
-bool Foundation::notifyInputEvent(const InputEvent* ev)
+bool Foundation::notifyInputEvent(const GameTime* gt, const InputEvent* ev)
 {
-   return static_cast< FoundationImpl* >(_data)->notifyInputEvent_(ev);
+   return static_cast< FoundationImpl* >(_data)->notifyInputEvent_(gt, ev);
+}
+
+bool Foundation::notifySensorEvent(const GameTime* gt, const InputEvent* ev)
+{
+   return static_cast< FoundationImpl* >(_data)->notifySensorEvent_(gt, ev);
 }
 
 } } }
