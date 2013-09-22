@@ -114,7 +114,7 @@ void EventManagerImpl::unsubscribeNow(intptr_t eventId, EventListener* pListener
    }
 }
 
-void EventManagerImpl::deliver(const Event* ev)
+void EventManagerImpl::deliver(const GameTime* gt, const Event* ev)
 {
    intptr_t id = ev->getEventId();
    t_subscribes::iterator i = _subscribes.find(id);
@@ -122,7 +122,7 @@ void EventManagerImpl::deliver(const Event* ev)
    t_listeners& l = i->second;
    
    for (t_listeners::iterator j = l.begin(); j != l.end(); ++j) {
-      (*j)->onEvent(ev);
+      (*j)->onEvent(gt, ev);
    }
 }
 
@@ -133,7 +133,7 @@ void EventManagerImpl::queue(const Event* ev)
    unlock();
 }
 
-void EventManagerImpl::clock(double t1)
+void EventManagerImpl::clock(const GameTime* gt, double t1)
 {
    double t;
    _timer.reset();
@@ -155,7 +155,7 @@ void EventManagerImpl::clock(double t1)
 
       Event* ev = _tmp_queue.front();
       _tmp_queue.pop_front();
-      deliver(ev);
+      deliver(gt, ev);
       delete ev;
    }
    lock(); {

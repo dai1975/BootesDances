@@ -14,9 +14,9 @@ Game::~Game()
    delete static_cast< GameImpl* >(_data);
 }
 
-void Game::onUpdate(double currentTime, int elapsedTime)
+void Game::onUpdate(const GameTime* gt)
 {
-   static_cast< GameImpl* >(_data)->onUpdate(currentTime, elapsedTime);
+   static_cast< GameImpl* >(_data)->onUpdate(gt);
 }
 
 void Game::addView(View* v)

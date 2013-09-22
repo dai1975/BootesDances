@@ -28,7 +28,8 @@ void RootViewPlay::onSubscribe(::bootes::lib::framework::EventManager*)
 void RootViewPlay::onUnsubscribe(::bootes::lib::framework::EventManager*)
 {
 }
-void RootViewPlay::onEvent(const ::bootes::lib::framework::Event* p)
+
+void RootViewPlay::onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* p)
 {
    if (p->getEventId() == EvLoadStageResult::GetEventId()) {
       EvPlayMovie e;
@@ -46,12 +47,12 @@ void RootViewPlay::onResetDevice()
    _pGameView->onResetDevice();
 }
 
-void RootViewPlay::onUpdate(double currentTime, int elapsedTime)
+void RootViewPlay::onUpdate(const ::bootes::lib::framework::GameTime* gt)
 {
-   _pGameView->onUpdate(currentTime, elapsedTime);
+   _pGameView->onUpdate(gt);
 }
 
-void RootViewPlay::onRender(double currentTime, int elapsedTime)
+void RootViewPlay::onRender(const ::bootes::lib::framework::GameTime* gt)
 {
    HRESULT hr;
    ::bootes::lib::util::Timer timer;
@@ -63,7 +64,7 @@ void RootViewPlay::onRender(double currentTime, int elapsedTime)
    hr = pDev->Clear(0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1, 0  );
 
    timer.start();
-   _pGameView->onRender(currentTime, elapsedTime);
+   _pGameView->onRender(gt);
    timer.get(NULL, &dt[ti++]);
 
    timer.start();
@@ -74,7 +75,7 @@ void RootViewPlay::onRender(double currentTime, int elapsedTime)
       if (pTex == NULL) { break; }
       IDirect3DSurface9* pSrc;
       pTex->GetSurfaceLevel(0, &pSrc);
-
+      
       IDirect3DSurface9* pDst;
       hr = pDev->GetRenderTarget(0, &pDst);
 
@@ -103,16 +104,21 @@ void RootViewPlay::onRender(double currentTime, int elapsedTime)
    timer.reset();
 }
 
-bool RootViewPlay::onInput(const ::bootes::lib::framework::InputEvent* ev)
+bool RootViewPlay::onInput(const GameTime* gt, const ::bootes::lib::framework::InputEvent* ev)
 {
 //   if (_ceguiView.onInput(ev)) { return true; }
+   _pGameView->onInput(gt, ev);
+   return false;
+}
 
+bool RootViewPlay::onSensorInput(const GameTime* gt, const ::bootes::lib::framework::InputEvent* ev)
+{
    switch (ev->_type) {
    case ::bootes::lib::framework::InputEvent::T_WNDMSG:
       return false;
    case ::bootes::lib::framework::InputEvent::T_WIIMOTE:
    case ::bootes::lib::framework::InputEvent::T_KINECT:
-      _pGameView->onInput(ev);
+      _pGameView->onSensorInput(gt, ev);
       return false;
    }
    return false;

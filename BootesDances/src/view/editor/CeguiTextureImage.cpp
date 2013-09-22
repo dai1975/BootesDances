@@ -81,7 +81,7 @@ bool CeguiTextureImage::addLook(std::string* id_)
 const CEGUI::Size& CeguiTextureImage::getSize() const { return _size; }
 __int64            CeguiTextureImage::getTime() const { return _time; }
 
-void CeguiTextureImage::onRender(double currentTime, int elapsedTime)
+void CeguiTextureImage::onRender(const ::bootes::lib::framework::GameTime* gt)
 {
    if (_pSceneSeq == NULL) {
       IStageManager* p = g_pGame->getStageManager();

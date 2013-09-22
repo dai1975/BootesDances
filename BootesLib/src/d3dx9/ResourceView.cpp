@@ -69,15 +69,20 @@ void ResourceView::onResetDevice()
    }
 }
 
-void ResourceView::onUpdate(double currentTime, int elapsedTime)
+void ResourceView::onUpdate(const ::bootes::lib::framework::GameTime* gt)
 {
 }
 
-void ResourceView::onRender(double currentTime, int elapsedTime)
+void ResourceView::onRender(const ::bootes::lib::framework::GameTime* gt)
 {
 }
 
-bool ResourceView::onInput(const ::bootes::lib::framework::InputEvent*)
+bool ResourceView::onInput(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::InputEvent*)
+{
+   return false;
+}
+
+bool ResourceView::onSensorInput(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::InputEvent*)
 {
    return false;
 }

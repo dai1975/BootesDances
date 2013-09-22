@@ -99,7 +99,7 @@ void MoveRendererPlay::getMarkerTriangles(
    }
 }
 
-void MoveRendererPlay::onRender(const Scene* scene, const MoveSequence* moves, double currentTime, int elapsedTime)
+void MoveRendererPlay::onRender(const ::bootes::lib::framework::GameTime* gt, const Scene* scene, const MoveSequence* moves)
 {
    IDirect3DDevice9* pDev = g_pFnd->getD3D9Device();
 

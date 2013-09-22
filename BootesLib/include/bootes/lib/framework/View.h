@@ -2,22 +2,28 @@
 #define BOOTES_LIB_FRAMEWORK_VIEW_H
 
 #include "macros.h"
+#include "GameTime.h"
 #include "InputEvent.h"
 
 namespace bootes { namespace lib { namespace framework {
 
 class View
 {
-public:
-   inline View() { }
-	inline virtual ~View() { }
+protected:
+   typedef ::bootes::lib::framework::InputEvent InputEvent;
+   typedef ::bootes::lib::framework::GameTime   GameTime;
 
 public:
-	virtual void onUpdate(double currentTime, int elapsedTime) = 0;
-	virtual void onRender(double currentTime, int elapsedTime) = 0;
-	virtual bool onInput(const InputEvent*) = 0;
-	virtual void onLostDevice() = 0;
-	virtual void onResetDevice() = 0;
+   inline View() { }
+   inline virtual ~View() { }
+
+public:
+   virtual void onUpdate(const GameTime* gt) = 0;
+   virtual void onRender(const GameTime* gt) = 0;
+   virtual bool onInput(const GameTime* gt, const InputEvent*) = 0;
+   virtual bool onSensorInput(const GameTime* gt, const InputEvent*) = 0;
+   virtual void onLostDevice() = 0;
+   virtual void onResetDevice() = 0;
 };
 
 } } }

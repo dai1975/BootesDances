@@ -27,7 +27,7 @@ GameView::~GameView()
 //   clearBuffer();
 }
 
-void GameView::onEvent(const ::bootes::lib::framework::Event* ev)
+void GameView::onEvent(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::Event* ev)
 {
    int eid = ev->getEventId();
    if (false) {
@@ -75,7 +75,22 @@ void GameView::onLostDevice()
    _pMovePresenter->onLostDevice();
 }
 
-bool GameView::onInput(const ::bootes::lib::framework::InputEvent* ev)
+bool GameView::onInput(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::InputEvent* ev)
+{
+   switch (ev->_type) {
+   case ::bootes::lib::framework::InputEvent::T_WNDMSG:
+      return false;
+
+   case ::bootes::lib::framework::InputEvent::T_WIIMOTE:
+      return false;
+
+   case ::bootes::lib::framework::InputEvent::T_KINECT:
+      return false;
+   }
+   return false;
+}
+
+bool GameView::onSensorInput(const ::bootes::lib::framework::GameTime* gt, const ::bootes::lib::framework::InputEvent* ev)
 {
    switch (ev->_type) {
    case ::bootes::lib::framework::InputEvent::T_WNDMSG:
@@ -86,14 +101,7 @@ bool GameView::onInput(const ::bootes::lib::framework::InputEvent* ev)
          const ::bootes::lib::framework::WiimoteEvent* wev = static_cast< const ::bootes::lib::framework::WiimoteEvent* >(ev);
          Scene scene = _pMoviePlayer->getScene(false);
          if (_pWiimoteHandler != NULL && scene.isValid()) {
-            _pWiimoteHandler->handleWiimote(&scene, wev);
-/*
-            if (wev->isHeld1sec(::bootes::lib::framework::WiimoteEvent::BTN_A)) {
-               _pWiimoteHandler->teach(&scene, wev);
-            } else {
-               _pWiimoteHandler->test(&scene, wev);
-            }
-*/
+            _pWiimoteHandler->handleWiimote(gt, &scene, wev);
          }
       }
       return false;
@@ -104,7 +112,7 @@ bool GameView::onInput(const ::bootes::lib::framework::InputEvent* ev)
    return false;
 }
 
-void GameView::onUpdate(double currentTime, int elapsedTime)
+void GameView::onUpdate(const ::bootes::lib::framework::GameTime* gt)
 {
    switch (_state) {
    case S_0:
@@ -174,9 +182,9 @@ fail:
 }
 */
 
-void GameView::drawFps(IDirect3DDevice9* pDev, const Scene* scene, int currentTime, int elapsedTime)
+void GameView::drawFps(IDirect3DDevice9* pDev, const ::bootes::lib::framework::GameTime* gt, const Scene* scene)
 {
-   float fps = 1000.0f / elapsedTime;
+   float fps = 1000.0f / gt->elapsed;
    if (fps > 1000) { fps = 999; }
    char buf[7] = {0};
    sprintf_s(buf, 7, "%6.2f", fps);
@@ -189,9 +197,9 @@ void GameView::drawFps(IDirect3DDevice9* pDev, const Scene* scene, int currentTi
    _label.draw();
 }
 
-void GameView::onRender(double currentTime, int elapsedTime)
+void GameView::onRender(const ::bootes::lib::framework::GameTime* gt)
 {
-   _pMoviePlayer->onRender(currentTime, elapsedTime);
+   _pMoviePlayer->onRender(gt);
 
    HRESULT hr;
    IDirect3DDevice9* pDev = g_pFnd->getD3D9Device();
@@ -203,11 +211,11 @@ void GameView::onRender(double currentTime, int elapsedTime)
    if (scene.texture() == NULL) { return; }
 
    pDev->EndScene();
-   onRender0(pDev, &scene, currentTime, elapsedTime);
+   onRender0(pDev, gt, &scene);
    pDev->BeginScene();
 }
 
-void GameView::onRender0(IDirect3DDevice9* pDev, const Scene* scene, double currentTime, int elapsedTime)
+void GameView::onRender0(IDirect3DDevice9* pDev, const ::bootes::lib::framework::GameTime* gt, const Scene* scene)
 {
    HRESULT hr;
    ::bootes::lib::util::Timer timer;
@@ -291,11 +299,11 @@ void GameView::onRender0(IDirect3DDevice9* pDev, const Scene* scene, double curr
       timer.get(NULL, &dt[di++]);
 
       timer.start();
-      _pMovePresenter->onRender(scene, currentTime, elapsedTime);
+      _pMovePresenter->onRender(gt, scene);
       timer.get(NULL, &dt[di++]);
 
       timer.start();
-      drawFps(pDev, scene, currentTime, elapsedTime);
+      drawFps(pDev, gt, scene);
       timer.get(NULL, &dt[di++]);
 
       //pBufSurface->Release();

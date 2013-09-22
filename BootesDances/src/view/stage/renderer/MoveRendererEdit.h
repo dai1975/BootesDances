@@ -19,7 +19,7 @@ public:
 public:
    virtual void onLostDevice();
    virtual void onResetDevice();
-   virtual void onRender(const Scene* scene, const MoveSequence* moves, double currentTime, int elapsedTime);
+   virtual void onRender(const ::bootes::lib::framework::GameTime* gt, const Scene* scene, const MoveSequence* moves);
 
 public:
    size_t getRenderedModels(std::vector<const IMove*>* v) const;
