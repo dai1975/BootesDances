@@ -11,6 +11,7 @@ WindowDialog::WindowDialog(const CEGUI::String& type, const CEGUI::String& name)
    : ::CEGUI::FrameWindow(type, name)
 {
    _pChild = NULL;
+   _child_type = "";
    addEvent(WindowDialog::EventSubmit);
    addEvent(WindowDialog::EventCancel);
 }

@@ -121,9 +121,8 @@ void EditorView::createSheet()
       {
          CEGUI::String& type = LoadWindow::WidgetTypeName;
          CEGUI::WindowFactoryManager::addFactory< CEGUI::TplWindowFactory< LoadWindow > >();
-         wfm.addFalagardWindowMapping(type, type, "TaharezLook/FrameWindow", "Falagard/FrameWindow");
+         //wfm.addFalagardWindowMapping(type, type, "TaharezLook/FrameWindow", "Falagard/FrameWindow");
       }
-      
       createSheet0();
 
    } catch (CEGUI::Exception& e) {

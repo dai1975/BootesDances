@@ -57,7 +57,7 @@ public:
       }
       CEGUI::WindowManager& wm = CEGUI::WindowManager::getSingleton();
       SELF* p = static_cast< SELF* >(wm.createWindow(SELF::WidgetTypeName, name));
-      p->setChildType( T::WidgetTypeName );
+//      p->setChildType( T::WidgetTypeName );
       return p;
    }
 

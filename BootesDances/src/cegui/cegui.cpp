@@ -22,7 +22,7 @@ bool Initialize()
 #define SETUP_WIDGET(T) {\
       pType = & T ::WidgetTypeName;\
       CEGUI::WindowFactoryManager::addFactory< CEGUI::TplWindowFactory< T > >(); \
-      wfm.addFalagardWindowMapping(*pType, *pType, "TaharezLook/FrameWindow", "Falagard/FrameWindow");\
+      /*      wfm.addFalagardWindowMapping(*pType, *pType, "TaharezLook/FrameWindow", "Falagard/FrameWindow");*/ \
    }
    SETUP_WIDGET( MessageWindow );
 //   SETUP_WIDGET( MessageWindowLayout );

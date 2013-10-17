@@ -120,8 +120,11 @@ bool CeguiTextureImage::renderImage(const std::string& im_name, CEGUI::DefaultWi
    if (i == _items.end()) { return false; }
    Item* pi = i->second;
 
-   pWindow->setProperty("Image", pi->setter_string.c_str());
-   //pWindow->invalidate(); //setProperty("Image", ...) で呼ばれるので不要
+   CEGUI::Imageset& is = CEGUI::ImagesetManager::getSingleton().get(_is_name.c_str());
+   if (is.isImageDefined(pi->im_name)) {
+      pWindow->setProperty("Image", pi->setter_string.c_str());
+      //pWindow->invalidate(); //setProperty("Image", ...) で呼ばれるので不要
+   }
    return true;
 }
 

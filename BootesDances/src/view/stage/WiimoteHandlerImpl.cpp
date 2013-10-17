@@ -178,6 +178,10 @@ void WiimoteHandlerImpl::handleWiimoteTest(__int64 t, const ::bootes::lib::frame
          switch (_test_mode) {
          case M_TEST:
             if (_pTestMove->getMotion()) {
+               __int64 t0,t1,rt;
+               _pTestMove->getTime(&t0, &t1);
+               rt = t - t0;
+               _pTestMove->getMotion()->test(rt, ev);
                _pTestMove->getMotion()->testEnd(true);
             }
          }
