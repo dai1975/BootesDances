@@ -398,16 +398,11 @@ int FoundationImpl::mainLoop_()
    struct {
       double event;
       double wiimote, game, render;
-      double min;
-
-      inline void calc_min() {
-         this->min = this->wiimote;
-         if (this->game < this->min) this->min = this->game;
-         if (this->render < this->min) this->min = this->render;
-      }
    } t0,t1;
-   t0.event = t0.wiimote = t0.game = t0.render = 0;
-   t1.event = t1.wiimote = t1.game = t1.render = 0;
+   _timer.get(&_gt.total, NULL); //msec
+   t0.event = t0.wiimote = t0.game = t0.render = _gt.total;
+   t1.event = t1.wiimote = t1.game = t1.render = _gt.total;
+   double t1_min = _gt.total;
 
    double frame_msec = 1000.0 / 60;
    bool quit = false;
@@ -423,7 +418,6 @@ int FoundationImpl::mainLoop_()
       _timer.get(&rec[ri][0], NULL); //msec
 
       wev_given = false;
-      t1.calc_min(); //consume event message until time of other routine run
       _timer.get(&_gt.total, NULL); //msec
       while (true) {
          _gt.elapsed = _gt.total - t0.event; //used in wndproc
@@ -435,7 +429,7 @@ int FoundationImpl::mainLoop_()
             if (10 < ++cnt) { break; }
          }
          _timer.get(&rec[ri][1], NULL); //msec
-         _pEventManager->clock(&_gt, t1.min);
+         _pEventManager->clock(&_gt, t1_min - _gt.total);
          _timer.get(&rec[ri][2], NULL); //msec
 
          if (_pWiimote && _pWiimote->isConnected()) {
@@ -451,8 +445,9 @@ int FoundationImpl::mainLoop_()
             }
          }
 
+         t0.event = _gt.total;
          _timer.get(&_gt.total, NULL); //msec
-         if (t1.min <= _gt.total) { break; }
+         if (t1_min <= _gt.total) { break; }
       }
 
       if (_pWiimote && _pWiimote->isConnected() && t1.wiimote <= _gt.total) {
@@ -463,6 +458,7 @@ int FoundationImpl::mainLoop_()
          _timer.get(&_gt.total, NULL); //msec
          t0.wiimote = _gt.total;
          t1.wiimote = t0.wiimote + 3;
+         if (t1_min < t1.wiimote) { t1_min = t1.wiimote; }
          _timer.get(&rec[ri][3], NULL); //msec
       }
 
@@ -473,6 +469,7 @@ int FoundationImpl::mainLoop_()
          t0.game = _gt.total;
          //t1.game = t + (frame_msec / 2);
          t1.game = t0.game + 3;
+         if (t1_min < t1.game) { t1_min = t1.game; }
          _timer.get(&rec[ri][4], NULL); //msec
       }
 
@@ -484,6 +481,7 @@ int FoundationImpl::mainLoop_()
          _timer.get(&_gt.total, NULL); //msec
          t0.render = _gt.total;
          t1.render = t0.render + frame_msec;
+         if (t1_min < t1.render) { t1_min = t1.render; }
          _timer.get(&rec[ri][5], NULL); //msec
       }
    }

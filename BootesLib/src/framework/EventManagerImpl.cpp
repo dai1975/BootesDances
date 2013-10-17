@@ -141,7 +141,7 @@ void EventManagerImpl::clock(const GameTime* gt, double t1)
 
    processSubscribeLater();
    _timer.get(&t, NULL);
-   if (t1 <= t) { return; }
+   //if (t1 <= t) { return; }
 
    // _tmp_queue はコンストラクタの負荷を省くためメンバにしているだけ
    // 関数を越えて状態は持たない
@@ -149,14 +149,19 @@ void EventManagerImpl::clock(const GameTime* gt, double t1)
    lock(); {
       _tmp_queue.swap(_queue);
    }; unlock();
+   int cnt = 0;
    while (! _tmp_queue.empty()) {
-      _timer.get(&t, NULL);
-      if (t1 <= t) { return; }
-
       Event* ev = _tmp_queue.front();
       _tmp_queue.pop_front();
       deliver(gt, ev);
       delete ev;
+
+      if (10 < cnt) {
+         _timer.get(&t, NULL);
+         if (t1 <= t) { return; }
+      } else {
+         ++cnt;
+      }
    }
    lock(); {
       _tmp_queue.swap(_queue);
