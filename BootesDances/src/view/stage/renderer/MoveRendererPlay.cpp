@@ -51,8 +51,7 @@ D3DXVECTOR3 GetCenter(LONG w, LONG h, std::vector< const std::vector< D3DXVECTOR
 
 void MoveRendererPlay::scaleVertex(std::vector< TriangleVertex >& vtx, const D3DXVECTOR3& center, float scale)
 {
-   if (scale < 1.0f) { //縮小処理
-      //拡大の中心として、直線群を包む四角形の中心を得る
+   if (scale < 0.95f || 1.05f < scale) {
       for (size_t i=0; i<vtx.size(); ++i) {
          vtx[i].x = (vtx[i].x - center.x) * scale + center.x;
          vtx[i].y = (vtx[i].y - center.y) * scale + center.y;
@@ -103,15 +102,17 @@ void MoveRendererPlay::onRender(const ::bootes::lib::framework::GameTime* gt, co
 {
    IDirect3DDevice9* pDev = g_pFnd->getD3D9Device();
 
-   // 現在からinterval時間経過後までの間に開始時刻があるMoveの取得(複数)
-   int interval = 50000000; //sec
-   __int64 t0 = scene->clock().clock;
-   __int64 t1 = t0 + interval;
+   // 現在時刻より前後に伸ばした範囲と重なるMoveの取得(複数)
+   int dt_pre  = 50000000; //5sec
+   int dt_post = 20000000; //2sec
+   __int64 t  = scene->clock().clock;
    int width  = scene->videoinfo().width;
    int height = scene->videoinfo().height;
 
    MoveSequence::const_iterator i0,i1; //[i0,i1)
    {
+      __int64 t0 = t - dt_post;
+      __int64 t1 = t + dt_pre;
       std::pair< MoveSequence::const_iterator,
          MoveSequence::const_iterator > p;
       p = moves->search(t0, t1);
@@ -123,28 +124,44 @@ void MoveRendererPlay::onRender(const ::bootes::lib::framework::GameTime* gt, co
       // [i0,i1)
   }
 
-   for (MoveSequence::const_iterator i=i0; i!=i1; ) {
+   for (MoveSequence::const_iterator i=i0; i!=i1; i=i.group_end()) {
       MoveSequence::const_iterator j0 = i;
       MoveSequence::const_iterator j1 = i.group_end();
-      size_t n = 0;
-      for (i=j0; i!=j1; ++i) { ++n; }
 
-      // 開始時刻前の Move は縮小表示
+      size_t n = 0;
       float scale = 1.0f;
       {
-         const IMove* pMove = *j0;
-         if (t0 < pMove->getBeginTime()) {
-            float dt = (float)pMove->getBeginTime() - t0;
-            scale = 1.0f - (dt / interval);
+         const IMove* pMove0 = *j0;
+         const IMove* pMove1;
+         for (MoveSequence::const_iterator j=j0; j!=j1; ++j) {
+            pMove1 = *j;
+            ++n;
+         }
+
+         if (t < pMove0->getBeginTime()) {
+            // 開始時刻前の Move は縮小表示
+            float dt = (float)(pMove0->getBeginTime() - t);
+            scale = 1.0f - (dt / dt_pre);
             if (scale < 0.0f) {
                scale = 0.0f;
             } else if (1.0f < scale) {
                scale = 1.0f;
             }
+
+         } else if (pMove1->getEndTime() < t) {
+            // 終了後の Move は拡大表示
+            float dt = (float)(t - pMove1->getEndTime());
+            scale = 1.0f + 2 * (dt / dt_post);
+            if (scale < 1.0f) {
+               scale = 1.0f;
+            } else if (3.0f < scale) {
+               scale = 3.0f;
+            }
          }
       }
 
-      D3DXVECTOR3 center; // セットで扱うMoveModel群の中心点を求める
+      D3DXVECTOR3 screen_center(width/2, height/2, 0);
+      D3DXVECTOR3 move_center; // セットで扱うMoveModel群の中心点を求める
       {
          std::vector< const std::vector< D3DXVECTOR3 >* > vpoints(n);
          size_t vi = 0;
@@ -154,7 +171,7 @@ void MoveRendererPlay::onRender(const ::bootes::lib::framework::GameTime* gt, co
                vpoints[vi++] = &pGuide->getPlayPoints();
             }
          }
-         center = GetCenter(width, height, vpoints);
+         move_center = GetCenter(width, height, vpoints);
       }
 
       //描画
@@ -173,30 +190,42 @@ void MoveRendererPlay::onRender(const ::bootes::lib::framework::GameTime* gt, co
                case IMotion::TEST_FAILED:
                   color = D3DCOLOR_ARGB(128,255,0,0);
                   break;
-               default:
-                  {
-                     unsigned char a = static_cast<int>((255 * scale));
-                     color = D3DCOLOR_ARGB(255-a,0,0,0);
-                  }
-                  break;
+               default: {
+                  unsigned char a = (1.0f < scale)? 255: static_cast<int>((255 * scale));
+                  color = D3DCOLOR_ARGB(255-a,0,0,0);
+               } break;
                }
             }
-            pointsToTriangles(vtx, points, width, height, color);
-            scaleVertex(vtx, center, scale);
-            drawTriangles(pDev, vtx, TEX_RIBBON, BLEND_DIFFUSEALPHA_TEXALPHA);
+            if (scale < 0.95f) {
+               pointsToTriangles(vtx, points, width, height, color);
+               scaleVertex(vtx, move_center, scale);
+               drawTriangles(pDev, vtx, TEX_RIBBON, BLEND_DIFFUSEALPHA_TEXALPHA);
+            } else if (1.05f < scale) {
+               ; //scaleVertex(vtx, screen_center, scale);
+            } else {
+               pointsToTriangles(vtx, points, width, height, color);
+               drawTriangles(pDev, vtx, TEX_RIBBON, BLEND_DIFFUSEALPHA_TEXALPHA);
+            }
          }
 
          if (pGuide) { //マーカー描画
-            color = D3DCOLOR_ARGB(255, 255, 255, 0);
+            color = D3DCOLOR_ARGB(255, 0, 255, 0);
             if (pMotion) {
-               switch (pMotion->getTeachState()) {
-               case IMotion::TEACH_TEACHING:
+               if (pMotion->getTeachState() == IMotion::TEACH_TEACHING) {
+                  color = D3DCOLOR_ARGB(255, 0, 255, 255);
+               } else if (pMotion->getTestState() == IMotion::TEST_FAILED) {
                   color = D3DCOLOR_ARGB(255, 255, 0, 0);
+               } else if (pMotion->getTestState() == IMotion::TEST_SUCCEED) {
+                  color = D3DCOLOR_ARGB(255, 255, 255, 0);
                }
             }
             D3DXVECTOR3 v = pGuide->getPlayPointAt(scene->clock().clock);
             getMarkerTriangles(vtx, v, width, height, color);
-            scaleVertex(vtx, center, scale);
+            if (scale < 0.95f) {
+               scaleVertex(vtx, move_center, scale);
+            } else if (1.05f < scale) {
+               scaleVertex(vtx, screen_center, scale);
+            }
             drawTriangles(pDev, vtx, TEX_MARKER, BLEND_MODULATE_TEXALPHA);
          }
       }
