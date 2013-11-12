@@ -256,15 +256,59 @@ void EditWindow::onWiimote(const ::bootes::lib::framework::WiimoteEvent* ev)
    }
 }
 
+bool EditWindow::prepareTeach(const IMove* newMove)
+{
+   IWiimoteHandler* pWHandler = g_pGame->getStageManager()->getWiimoteHandler();
+   IMoveEditor* pEditor = g_pGame->getStageManager()->getMoveEditor();
+   if (pWHandler == NULL || pEditor == NULL) { return false; }
+
+   pWHandler->teachRollback();
+   if (newMove == NULL || _pTeachMove == newMove) {
+      if (_pTeachMove == NULL) { return false; }
+   } else {
+      MoveEditee me;
+      me.pMove = newMove;
+      pEditor->editeeSelect(me);
+      _pTeachMove = newMove;
+   }
+   pWHandler->teachBegin(_pTeachMove);
+
+   __int64 t0 = _pTeachMove->getBeginTime();
+   if (30000000 < t0) {
+      t0 -= 30000000;
+   } else {
+      t0 = 0;
+   }
+
+   EvSeekMovie ev;
+   ev._origin = EvSeekMovie::SET;
+   ev._offset = t0;
+   ev._play = true;
+   g_pFnd->getEventManager()->queue(&ev);
+   return true;
+}
+
 bool EditWindow::onTeachBeginDialog(const CEGUI::EventArgs&)
 {
    int i = _pTeachBeginDialog->window()->getDialogedButton();
-   int next_stage;
+   int next_stage = TEACH_NONE;
 
    if (i == TEACH_BEGIN_CANCEL) {
       next_stage = TEACH_NONE;
       
    } else {
+      next_stage = TEACH_NONE;
+      do {
+         MoveEditee me;
+         IMoveEditor* pEditor = g_pGame->getStageManager()->getMoveEditor();
+         if (pEditor == NULL) { break; }
+         if (! pEditor->editeeSelected(&me)) { break; }
+
+         if (prepareTeach(me.pMove)) {
+            next_stage = TEACH_PREPARE;
+         }
+      } while (0);
+      /*
       next_stage = TEACH_NONE;
       do {
          MoveEditee me;
@@ -294,6 +338,7 @@ bool EditWindow::onTeachBeginDialog(const CEGUI::EventArgs&)
          g_pFnd->getEventManager()->queue(&ev);
          next_stage = TEACH_TEACHING;
       } while (0);
+      */
    }
 
    _teach_stage = next_stage;
@@ -302,7 +347,21 @@ bool EditWindow::onTeachBeginDialog(const CEGUI::EventArgs&)
 
 void EditWindow::onUpdate(const GameTime* gt)
 {
-   if (_play && _teach_stage == TEACH_TEACHING) {
+   if (!_play) { return; }
+
+   if (_teach_stage != TEACH_PREPARE && _teach_stage != TEACH_TEACHING) {
+      return;
+   }
+
+   if (_teach_stage == TEACH_PREPARE) {
+      ISceneSequencer* pSceneSeq = g_pGame->getStageManager()->getSceneSequencer();
+      __int64 t = pSceneSeq->getScene(false).clock().clock;
+
+      if (t < _pTeachMove->getBeginTime()) {
+         _teach_stage = TEACH_TEACHING;
+      }
+
+   } else if (_teach_stage == TEACH_TEACHING) {
       ISceneSequencer* pSceneSeq = g_pGame->getStageManager()->getSceneSequencer();
       __int64 t = pSceneSeq->getScene(false).clock().clock;
 
@@ -338,6 +397,36 @@ bool EditWindow::onTeachResultDialog(const CEGUI::EventArgs&)
 bool EditWindow::onTeachContDialog(const CEGUI::EventArgs&)
 {
    int i = _pTeachContDialog->window()->getDialogedButton();
+
+   int next_stage = TEACH_NONE;
+   if (i == TEACH_CONT_RETRY) {
+      if (prepareTeach(NULL)) {
+         next_stage = TEACH_PREPARE;
+      }
+
+   } else if (i == TEACH_CONT_NEXT) {
+      do {
+         IMoveEditor* pEditor = g_pGame->getStageManager()->getMoveEditor();
+         if (pEditor == NULL) { break; }
+
+         std::vector< const IMove* > moves;
+         pEditor->getModels(&moves);
+         size_t mi;
+         for (mi=0; mi<moves.size(); ++mi) {
+            if (moves[mi] == _pTeachMove) { break; }
+         }
+         ++mi;
+         if (moves.size() <= mi) { break; }
+
+         if (prepareTeach(moves[mi])) {
+            next_stage = TEACH_PREPARE;
+         }
+      } while (0);
+   }
+   _teach_stage = next_stage;
+   return true;
+
+/*
    int next_stage;
 
    next_stage = TEACH_NONE;
@@ -378,12 +467,13 @@ bool EditWindow::onTeachContDialog(const CEGUI::EventArgs&)
          ev._offset = t0;
          ev._play = true;
          g_pFnd->getEventManager()->queue(&ev);
-         next_stage = TEACH_TEACHING;
+         next_stage = TEACH_PREPARE;
       } while (0);
    }
 
    _teach_stage = next_stage;
    return true;
+*/
 }
 
 //-------------------------------------------------------------

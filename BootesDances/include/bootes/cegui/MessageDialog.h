@@ -3,6 +3,7 @@
 
 #include <CEGUI.h>
 #include "WindowDialog.h"
+#include <bootes/lib/framework/InputEvent.h>
 
 namespace bootes { namespace cegui {
 
@@ -38,6 +39,7 @@ private:
    CEGUI::DefaultWindow* _pMessageWindow;
    std::vector< ButtonEntry > _buttons;
    int _pushed;
+   ::bootes::lib::framework::WiimoteEvent _ev0;
 };
 
 typedef Dialog< MessageWindow > MessageDialog;

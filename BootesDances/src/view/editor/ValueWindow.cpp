@@ -72,6 +72,10 @@ bool ValueWindow::init()
       _pOrienRoll  = CreateLabel(wm, "OrienRoll", font);
       this->addChildWindow(_pOrienRoll);
    }
+   {
+      _pButton = CreateLabel(wm, "Button", font);
+      this->addChildWindow(_pButton);
+   }
 
    onWiimote(NULL);
    return true;
@@ -89,6 +93,17 @@ void ValueWindow::layout()
 
       {
          x.d_offset = 0;
+
+         _pButton->setSize(CEGUI::UVector2(w,h));
+         _pButton->setPosition(CEGUI::UVector2(x,y));
+         x.d_offset += w.d_offset;
+
+         y.d_offset += h.d_offset;
+      }
+
+      {
+         x.d_offset = 0;
+         y.d_offset += SPACE_SIZE;
 
          _pAccelX->setSize(CEGUI::UVector2(w,h));
          _pAccelX->setPosition(CEGUI::UVector2(x,y));
@@ -148,6 +163,26 @@ void ValueWindow::layout()
 void ValueWindow::onWiimote(const ::bootes::lib::framework::WiimoteEvent* ev)
 {
    char buf[128];
+
+   if (ev != NULL && ev->_bConnect) {
+      int i = 0;
+      buf[i++] = (ev->isPressedA())? 'A': ' ';
+      buf[i++] = (ev->isPressedB())? 'B': ' ';
+      buf[i++] = (ev->isPressedPlus())? '+': ' ';
+      buf[i++] = (ev->isPressedHome())? 'H': ' ';
+      buf[i++] = (ev->isPressedMinus())? '-': ' ';
+      buf[i++] = (ev->isPressed1())? '1': ' ';
+      buf[i++] = (ev->isPressed2())? '2': ' ';
+      buf[i++] = (ev->isPressedUp())? 'u': ' ';
+      buf[i++] = (ev->isPressedDown())? 'd': ' ';
+      buf[i++] = (ev->isPressedLeft())? 'l': ' ';
+      buf[i++] = (ev->isPressedRight())? 'r': ' ';
+      buf[i++] = '\0';
+      _pButton->setText(buf);
+   } else {
+      //                 AB+H-12udlr
+      _pButton->setText("no wiimote ");
+   }
 
    if (ev != NULL && ev->_bConnect) {
       _snprintf_s(buf, 128, _TRUNCATE, "X: %.2f", ev->_accel.x);

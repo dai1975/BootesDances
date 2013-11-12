@@ -259,11 +259,12 @@ void MotionWiimoteSimple::testEnd(bool completed)
       _test_min_nexti = _test_seq_min.end();
       _test_max_nexti = _test_seq_max.end();
       _test_state = TEST_FAILED;
-   }
-   if (_test_min_nexti != _test_seq_min.end()) {
-      _test_state = TEST_FAILED;
    } else {
-      _test_state = TEST_SUCCEED;
+      if (_test_min_nexti != _test_seq_min.end()) {
+         _test_state = TEST_FAILED;
+      } else {
+         _test_state = TEST_SUCCEED;
+      }
    }
 }
 

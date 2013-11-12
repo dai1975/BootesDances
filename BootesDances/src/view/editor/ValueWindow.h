@@ -40,6 +40,7 @@ private:
    CEGUI::DefaultWindow *_pAccelX, *_pAccelY, *_pAccelZ;
    CEGUI::DefaultWindow *_pGyroYaw, *_pGyroPitch, *_pGyroRoll;
    CEGUI::DefaultWindow *_pOrienYaw, *_pOrienPitch, *_pOrienRoll;
+   CEGUI::DefaultWindow *_pButton;
 };
 
 } } }

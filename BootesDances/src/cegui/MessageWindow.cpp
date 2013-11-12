@@ -123,6 +123,7 @@ void MessageWindow::setup()
 */
    _pushed = -1;
    _state = S_WAIT_RELEASE;
+   _ev0.clear();
 }
 void MessageWindow::teardown()
 {
@@ -142,13 +143,15 @@ void MessageWindow::update(float elapsed)
    ::bootes::lib::framework::Wiimote* pWiimote = g_pFnd->getWiimote();
    if (pWiimote == NULL || !pWiimote->isConnected()) { return; }
 
+   const ::bootes::lib::framework::WiimoteEvent* ev = pWiimote->getEvent();
    if (_state == S_WAIT_RELEASE) {
       for (size_t i=0; i<_buttons.size(); ++i) {
-         ButtonEntry& be = _buttons[i];
+        ButtonEntry& be = _buttons[i];
          if (be.pButton == NULL || be.wiimote_button < 0) { continue; }
 
-         if (pWiimote->isPressed(be.wiimote_button)) { return; }
+         if (ev->isPressed(be.wiimote_button)) { return; }
       }
+      _ev0 = *ev;
       _state = S_WAIT_PRESS;
 
    } else if (_state == S_WAIT_PRESS) {
@@ -157,15 +160,16 @@ void MessageWindow::update(float elapsed)
          ButtonEntry& be = _buttons[i];
          if (be.pButton == NULL || be.wiimote_button < 0) { continue; }
 
-         if (pWiimote->isChangePressed(be.wiimote_button)) {
+         if (!_ev0.isPressed(be.wiimote_button) && ev->isPressed(be.wiimote_button)) {
             p = &be;
             break;
          }
       }
+      _ev0 = *ev;
       if (p) {
          _state = S_COMPLETE;
-         CEGUI::WindowEventArgs ev(p->pButton);
-         p->pButton->fireEvent(::CEGUI::PushButton::EventClicked, ev);
+         CEGUI::WindowEventArgs e(p->pButton);
+         p->pButton->fireEvent(::CEGUI::PushButton::EventClicked, e);
       }
    }
 }

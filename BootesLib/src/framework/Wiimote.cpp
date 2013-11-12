@@ -63,9 +63,10 @@ size_t Wiimote::consumeEvents(std::list< WiimoteEvent >* pOut)
    size_t r = proxy->consumeEvents(pOut);
    if (r == 0) { return 0; }
 
-   int ei = _ei ^ 1;
-   _ev[ei] = pOut->back();
-   _ei = ei;
+//   int ei = _ei ^ 1;
+//   _ev[ei] = pOut->back();
+//   _ei = ei;
+   _ev[_ei] = pOut->back();
    return r;
 }
 

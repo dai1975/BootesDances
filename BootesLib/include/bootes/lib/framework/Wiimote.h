@@ -23,9 +23,9 @@ public:
    inline const WiimoteEvent* getEvent() const { return &_ev[_ei]; }
    inline bool isPressed(int b) const { return _ev[_ei].isPressed(b); }
    inline bool isHeld1sec(int b) const { return _ev[_ei].isHeld1sec(b); }
-   inline bool isChanged(int b) const { return _ev[_ei^1].isPressed(b) ^ _ev[_ei].isPressed(b); }
-   inline bool isChangePressed(int b) const { return isChanged(b) && isPressed(b); }
-   inline bool isChangeReleased(int b) const { return isChanged(b) && !isPressed(b); }
+//   inline bool isChanged(int b) const { return _ev[_ei^1].isPressed(b) ^ _ev[_ei].isPressed(b); }
+//   inline bool isChangePressed(int b) const { return isChanged(b) && isPressed(b); }
+//   inline bool isChangeReleased(int b) const { return isChanged(b) && !isPressed(b); }
 
    inline const WiimoteEvent::Accel& accel() const { return _ev[_ei].accel(); }
    inline const WiimoteEvent::Gyro&  gyro()  const { return _ev[_ei].gyro(); }
@@ -58,7 +58,8 @@ public:
 
 private:
    void* _proxy;
-   WiimoteEvent _ev[2];
+//   WiimoteEvent _ev[2];
+   WiimoteEvent _ev[1];
    int _ei;
 };
 

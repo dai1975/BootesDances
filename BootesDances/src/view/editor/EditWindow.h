@@ -69,6 +69,8 @@ public:
    bool onTeachContDialog(const CEGUI::EventArgs&);
 
 private:
+   bool prepareTeach(const IMove*);
+
    void onLoad(bool result, const VideoInfo&);
    void onPlay(const EvMoviePlay*);
    void onPause(const EvMoviePause*);
@@ -121,7 +123,7 @@ private:
    CEGUI::PushButton *_pCtrlBtn[NUM_CTRL];
 
    enum TeachStage {
-      TEACH_NONE, TEACH_TEACHDIALOG, TEACH_TEACHING, TEACH_RESULTDIALOG, TEACH_CONTDIALOG,
+      TEACH_NONE, TEACH_TEACHDIALOG, TEACH_PREPARE, TEACH_TEACHING, TEACH_RESULTDIALOG, TEACH_CONTDIALOG,
    };
    int _teach_stage;
    enum {
