@@ -59,6 +59,21 @@ void MoveRendererPlay::scaleVertex(std::vector< TriangleVertex >& vtx, const D3D
    }
 }
 
+void MoveRendererPlay::slideVertex(std::vector< TriangleVertex >& vtx, const D3DXVECTOR3& vtxcenter, LONG w, LONG h, float scale)
+{
+   if (1.0f < scale) {
+      float r = scale - 1.0f; // 0.0f .. 1.0f
+      w /= 2;
+      h /= 2;
+      float dx = (w < vtxcenter.x)? r*w: -r*w;
+      float dy = (h < vtxcenter.y)? r*h: -r*h;
+      for (size_t i=0; i<vtx.size(); ++i) {
+         vtx[i].x += dx;
+         vtx[i].y += dy;
+      }
+   }
+}
+
 void MoveRendererPlay::getMarkerTriangles(
     std::vector< TriangleVertex >& vtx,
     const D3DXVECTOR3 point,
@@ -139,7 +154,7 @@ void MoveRendererPlay::onRender(const ::bootes::lib::framework::GameTime* gt, co
          }
 
          if (t < pMove0->getBeginTime()) {
-            // 開始時刻前の Move は縮小表示
+            // 開始時刻前の Move は 0.0 .. 1.0f に正規化
             float dt = (float)(pMove0->getBeginTime() - t);
             scale = 1.0f - (dt / dt_pre);
             if (scale < 0.0f) {
@@ -149,18 +164,17 @@ void MoveRendererPlay::onRender(const ::bootes::lib::framework::GameTime* gt, co
             }
 
          } else if (pMove1->getEndTime() < t) {
-            // 終了後の Move は拡大表示
+            // 開始時刻前の Move は 1.0 .. 2.0f に正規化
             float dt = (float)(t - pMove1->getEndTime());
-            scale = 1.0f + 2 * (dt / dt_post);
+            scale = 1.0f + (dt / dt_post);
             if (scale < 1.0f) {
                scale = 1.0f;
-            } else if (3.0f < scale) {
-               scale = 3.0f;
+            } else if (2.0f < scale) {
+               scale = 2.0f;
             }
          }
       }
 
-      D3DXVECTOR3 screen_center(width/2, height/2, 0);
       D3DXVECTOR3 move_center; // セットで扱うMoveModel群の中心点を求める
       {
          std::vector< const std::vector< D3DXVECTOR3 >* > vpoints(n);
@@ -191,20 +205,19 @@ void MoveRendererPlay::onRender(const ::bootes::lib::framework::GameTime* gt, co
                   color = D3DCOLOR_ARGB(128,255,0,0);
                   break;
                default: {
-                  unsigned char a = (1.0f < scale)? 255: static_cast<int>((255 * scale));
+                  unsigned char a = (1.0f <= scale)? 255: static_cast<int>(255 * scale);
                   color = D3DCOLOR_ARGB(255-a,0,0,0);
                } break;
                }
             }
+            pointsToTriangles(vtx, points, width, height, color);
             if (scale < 0.95f) {
-               pointsToTriangles(vtx, points, width, height, color);
                scaleVertex(vtx, move_center, scale);
                drawTriangles(pDev, vtx, TEX_RIBBON, BLEND_DIFFUSEALPHA_TEXALPHA);
-            } else if (1.05f < scale) {
-               ; //scaleVertex(vtx, screen_center, scale);
-            } else {
-               pointsToTriangles(vtx, points, width, height, color);
+            } else if (scale < 1.05f) {
                drawTriangles(pDev, vtx, TEX_RIBBON, BLEND_DIFFUSEALPHA_TEXALPHA);
+            } else {
+               ;
             }
          }
 
@@ -223,10 +236,16 @@ void MoveRendererPlay::onRender(const ::bootes::lib::framework::GameTime* gt, co
             getMarkerTriangles(vtx, v, width, height, color);
             if (scale < 0.95f) {
                scaleVertex(vtx, move_center, scale);
-            } else if (1.05f < scale) {
-               scaleVertex(vtx, screen_center, scale);
+               drawTriangles(pDev, vtx, TEX_MARKER, BLEND_MODULATE_TEXALPHA);
+            } else if (scale < 1.05f) {
+               drawTriangles(pDev, vtx, TEX_MARKER, BLEND_MODULATE_TEXALPHA);
+            } else {
+               if (pMotion->getTestState() == IMotion::TEST_SUCCEED) {
+                  D3DXVECTOR3 vtxcenter(v.x * width, v.y * height, 0);
+                  slideVertex(vtx, vtxcenter, width, height, scale);
+                  drawTriangles(pDev, vtx, TEX_MARKER, BLEND_MODULATE_TEXALPHA);
+               }
             }
-            drawTriangles(pDev, vtx, TEX_MARKER, BLEND_MODULATE_TEXALPHA);
          }
       }
    };

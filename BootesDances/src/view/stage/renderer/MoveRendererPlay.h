@@ -21,6 +21,7 @@ public:
 
 protected:
    void scaleVertex(std::vector< TriangleVertex >& vtx, const D3DXVECTOR3& center, float scale);
+   void slideVertex(std::vector< TriangleVertex >& vtx, const D3DXVECTOR3& vtxcenter, LONG w, LONG h, float scale);
    void getMarkerTriangles(
       std::vector< TriangleVertex >& vtx,
       const D3DXVECTOR3 point,
