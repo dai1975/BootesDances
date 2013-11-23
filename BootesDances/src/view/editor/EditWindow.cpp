@@ -700,9 +700,9 @@ bool EditWindow::init(CeguiTextureImage* pImage)
       w = ::std::max(w, (int)(CONTROL_MIN_WIDTH));
 
       int h = 0;
-      h  = SCREEN_MIN_HEIGHT;
-      h += CONTROL_HEIGHT;
-      h += TIMEEDIT_HEIGHT;
+      h  = SCREEN_MIN_HEIGHT + PADDING_HEIGHT * 2;
+      h += CONTROL_HEIGHT    + PADDING_HEIGHT * 2;
+      h += TIMEEDIT_HEIGHT   + PADDING_HEIGHT * 2;
 
       CEGUI::UDim uw(0.0f, (float)w);
       CEGUI::UDim uh(0.0f, (float)h);
@@ -750,13 +750,12 @@ bool EditWindow::init(CeguiTextureImage* pImage)
 
 void EditWindow::layout()
 {
-/*
    CEGUI::Rect rect = getUnclippedInnerRect();
    CEGUI::Size size;
    size.d_width  = rect.d_right - rect.d_left;
    size.d_height = rect.d_bottom - rect.d_top;
-*/
-   CEGUI::Size size = getPixelSize();
+   //getPixelSize() は装飾領域も含んだサイズになるみたい
+   //CEGUI::Size size = getPixelSize();
 
    // 子ウィンドウのサイズと位置の計算。
    {
@@ -765,12 +764,12 @@ void EditWindow::layout()
 
       { //上部。中央に動画表示画面、左に操作ペン、右に値表示。高さは可変。
          int xpad = 10;
-         int ypad = 10;
-         int h0 = size.d_height - CONTROL_HEIGHT - TIMEEDIT_HEIGHT - ypad*2;
+         int h0 = size.d_height
+            - (CONTROL_HEIGHT  + PADDING_HEIGHT*2) - (TIMEEDIT_HEIGHT + PADDING_HEIGHT*2);
          x.d_offset = xpad;
-         y.d_offset = y0 + ypad;
+         y.d_offset = y0 + PADDING_HEIGHT;
          w.d_offset = SIDE_WIDTH;
-         h.d_offset = h0;
+         h.d_offset = h0 - (PADDING_HEIGHT*2);
 
          _pPenWin->setSize(CEGUI::UVector2(w,h));
          _pPenWin->setPosition(CEGUI::UVector2(x,y));
@@ -790,17 +789,16 @@ void EditWindow::layout()
          _pWiimoteWin->setSize(CEGUI::UVector2(w,h));
          _pWiimoteWin->setPosition(CEGUI::UVector2(x,y));
 */
-         y0 = h0 + ypad*2;
+         y0 += h0;
       }
 
       {  // スクリーンの下にコントロールバーをとる
          // ボタン他の固定サイズを確定し、余りをスライダーに
          int xpad = 10;
-         int ypad = 5;
          x.d_offset = xpad;
-         y.d_offset = y0 + ypad;
+         y.d_offset = y0 + PADDING_HEIGHT;
          w.d_offset = CONTROL_BUTTON_WIDTH - xpad*2;
-         h.d_offset = CONTROL_HEIGHT - ypad*2;
+         h.d_offset = CONTROL_HEIGHT - PADDING_HEIGHT*2;
          _pCtrl->setSize(CEGUI::UVector2(w,h));
          _pCtrl->setPosition(CEGUI::UVector2(x,y));
 
@@ -819,22 +817,24 @@ void EditWindow::layout()
          _pFrameBar->getIncreaseButton()->setSize(CEGUI::UVector2(x,y));
 */
          x.d_offset += w.d_offset + xpad;
+         y.d_offset = y0 + PADDING_HEIGHT;
          w.d_offset = CONTROL_FRAMETEXT_WIDTH;
          h.d_offset = CONTROL_FRAMETEXT_HEIGHT;
          _pFrameText->setSize(CEGUI::UVector2(w,h));
          _pFrameText->setPosition(CEGUI::UVector2(x,y));
 
-         y.d_offset += CONTROL_FRAMETEXT_HEIGHT;
+         y.d_offset += h.d_offset;
          _pTimeText->setSize(CEGUI::UVector2(w,h));
          _pTimeText->setPosition(CEGUI::UVector2(x,y));
 
-         y0 += CONTROL_HEIGHT;
+         y0 += CONTROL_HEIGHT + PADDING_HEIGHT*2;
       }
       {
+         y0 = size.d_height - (TIMEEDIT_HEIGHT + PADDING_HEIGHT*2);
          x.d_offset = 10;
-         y.d_offset = y0 + 5;
+         y.d_offset = y0 + PADDING_HEIGHT;
          w.d_offset = size.d_width - 20;
-         h.d_offset = TIMEEDIT_HEIGHT - 10;
+         h.d_offset = TIMEEDIT_HEIGHT;
          _pTimeEdit->setSize(CEGUI::UVector2(w,h));
          _pTimeEdit->setPosition(CEGUI::UVector2(x,y));
       }

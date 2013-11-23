@@ -59,7 +59,11 @@ bool TimeEditWindow::init()
 
 void TimeEditWindow::layout()
 {
-   CEGUI::Size size = getPixelSize();
+   CEGUI::Rect rect = getUnclippedInnerRect();
+   CEGUI::Size size;
+   size.d_width  = rect.d_right - rect.d_left;
+   size.d_height = rect.d_bottom - rect.d_top;
+   //CEGUI::Size size = getPixelSize();
    int y0 = 0;
 
    /*
@@ -119,6 +123,7 @@ void TimeEditWindow::layout()
       CEGUI::UDim y(0, y0 + 5);
       CEGUI::UDim w(0, size.d_width - 20);
       CEGUI::UDim h(0, TIMEEDIT_GRID_HEIGHT - 10);
+      //CEGUI::UDim h(0, size.d_height - y0 - 20);
       _scrollablePane->setPosition(CEGUI::UVector2(x,y));
       _scrollablePane->setSize(CEGUI::UVector2(w,h));
 
@@ -128,7 +133,7 @@ void TimeEditWindow::layout()
          CEGUI::UDim mh(0, area.getHeight());
          _grid->setMinSize(CEGUI::UVector2(mw, mh));
          _grid->setMaxSize(CEGUI::UVector2(CEGUI::UDim(0,10000), CEGUI::UDim(0,10000)));
-//         _grid->resize();
+         //_grid->resize();
       }
       y0 += TIMEEDIT_GRID_HEIGHT;
    }

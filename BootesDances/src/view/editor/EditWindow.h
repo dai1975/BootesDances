@@ -135,6 +135,7 @@ private:
    const IMove* _pTeachMove;
 
    enum {
+      PADDING_HEIGHT = 5,
       SIDE_WIDTH = 200,
       SCREEN_MIN_WIDTH = 400,
       SCREEN_MIN_HEIGHT = 300,
